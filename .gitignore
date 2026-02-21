@@ -1,0 +1,32 @@
+# Environment & secrets
+.env
+.env.local
+.env.production
+
+# Key material – NEVER commit real keys
+keys/*.export
+keys/*.pem
+keys/*.key
+keys/*.json
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.turbo/
+npm-debug.log*
+yarn-error.log*
+
+# Docker artefacts (images exported as tarballs, etc.)
+*.tar
+*.tar.gz
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

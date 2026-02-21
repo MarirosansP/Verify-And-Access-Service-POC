@@ -1,0 +1,85 @@
+services:
+  console-web:
+    build: ./console-web
+    working_dir: /app
+    volumes:
+      - ./console-web:/app
+      - console_web_node_modules:/app/node_modules
+      - console_data:/app/data
+    environment:
+      - PORT=3001
+      - DATABASE_URL=file:/app/data/console.db
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXTAUTH_SECRET=change-me-long-random
+      - USAGE_SHARED_SECRET=change-me-shared
+    ports:
+      - "3001:3001"
+
+  credential-verifier:
+    image: concordium/credential-verification-service:0.1.0
+    environment:
+      - CREDENTIAL_VERIFICATION_SERVICE_NODE_GRPC_ENDPOINT=http://217.154.61.118:20000
+      - CREDENTIAL_VERIFICATION_SERVICE_API_ADDRESS=0.0.0.0:8000
+      - CREDENTIAL_VERIFICATION_SERVICE_MONITORING_ADDRESS=0.0.0.0:8001
+      - LOG_LEVEL=info
+      - CREDENTIAL_VERIFICATION_SERVICE_ACCOUNT=/keys/verifier_account.export
+    volumes:
+      - ./keys/verifier_account.export:/keys/verifier_account.export:ro
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+
+  verify-gateway:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./verify-gateway:/app
+      - verify_gateway_node_modules:/app/node_modules
+    command: sh -lc "npm i --no-audit --no-fund && node src/index.js"
+    environment:
+      - PORT=3002
+      - CONSOLE_BASE_URL=http://console-web:3001
+      - VERIFIER_BASE_URL=http://credential-verifier:8000
+      - REQUEST_TIMEOUT_MS=20000
+      - USAGE_SHARED_SECRET=change-me-shared
+    ports:
+      - "3002:3002"
+
+  adult-joke-site:
+    build:
+      context: ./adult-joke-site
+    container_name: adult-joke-site
+    env_file:
+      - ./.env
+    environment:
+      # Calls Phase-1 verify-gateway internally (API key stays server-side)
+      VERIFY_GATEWAY_BASE_URL: "http://verify-gateway:3002"
+      VERIFY_API_KEY: "${VERIFY_API_KEY}"
+
+      # What you are verifying
+      RESOURCE_ID: "peachy-pints.local"
+      CONTEXT_STRING: "over18"
+
+      # publicInfo: key (string) -> value (CBOR-hex string)
+      PUBLIC_INFO_KEY: "sessionIdRef"
+      PUBLIC_INFO_CBOR_HEX: "7673616d706c652d73657373696f6e2d69642d31323334"
+
+      # WalletConnect project id (not secret)
+      WALLETCONNECT_PROJECT_ID: "${WALLETCONNECT_PROJECT_ID}"
+
+      # Concordium network (mainnet/testnet)
+      CCD_NETWORK: "mainnet"
+
+      # Session cookie signing
+      SESSION_SECRET: "${SESSION_SECRET}"
+    ports:
+      - "3003:3003"
+    depends_on:
+      - console-web
+      - credential-verifier
+      - verify-gateway
+
+volumes:
+  console_data:
+  console_web_node_modules:
+  verify_gateway_node_modules:

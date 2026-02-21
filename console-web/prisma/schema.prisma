@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  apiKeys      ApiKey[]
+  usageEvents  UsageEvent[]
+}
+
+model ApiKey {
+  id         String   @id @default(cuid())
+  userId     String
+  name       String
+  prefix     String   @unique
+  keyHash    String
+  status     String   @default("active") // active|paused|revoked
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime?
+
+  user        User      @relation(fields: [userId], references: [id])
+  usageEvents UsageEvent[]
+}
+
+model UsageEvent {
+  id            String   @id @default(cuid())
+  userId        String
+  apiKeyId      String
+  ts            DateTime @default(now())
+  endpoint      String
+  statusCode    Int
+  durationMs    Int
+  merchantOrigin String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  apiKey ApiKey @relation(fields: [apiKeyId], references: [id])
+}
