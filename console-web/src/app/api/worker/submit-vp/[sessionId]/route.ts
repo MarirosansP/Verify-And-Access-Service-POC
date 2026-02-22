@@ -14,9 +14,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, markVerified, markFailed } from "@/lib/worker-sessions";
 
-const GATEWAY_URL    = process.env.GATEWAY_INTERNAL_URL || "http://verify-gateway:3002";
-const SYSTEM_API_KEY = process.env.SYSTEM_API_KEY || "";
-
 export async function POST(
   req: NextRequest,
   { params }: { params: { sessionId: string } }
@@ -28,6 +25,11 @@ export async function POST(
   if (session.status !== "pending") {
     return NextResponse.json({ error: `Session already ${session.status}` }, { status: 409 });
   }
+
+  // Read env vars at request time, not module load time
+  const GATEWAY_URL    = process.env.GATEWAY_INTERNAL_URL || "http://verify-gateway:3002";
+  const SYSTEM_API_KEY = process.env.SYSTEM_API_KEY || "";
+
   if (!SYSTEM_API_KEY) {
     return NextResponse.json(
       { error: "SYSTEM_API_KEY not configured on server" },
@@ -44,8 +46,6 @@ export async function POST(
   }
 
   try {
-    // Build the payload the credential-verifier expects.
-    // It needs the VP wrapped with the challenge context.
     const verifyPayload = {
       verifiablePresentationJson: JSON.stringify(body.verifiablePresentation),
       auditRecordId: `worker-session-${params.sessionId}`,
@@ -75,9 +75,6 @@ export async function POST(
     }
 
     const result = await resp.json();
-
-    // The verifier returns something like { "result": true/false }
-    // or it returns 200 if the proof is valid.
     const isValid = result.result !== false;
 
     if (isValid) {

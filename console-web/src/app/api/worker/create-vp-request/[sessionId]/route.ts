@@ -15,9 +15,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, setVerificationRequestUrl } from "@/lib/worker-sessions";
 
-const GATEWAY_URL    = process.env.GATEWAY_INTERNAL_URL || "http://verify-gateway:3002";
-const SYSTEM_API_KEY = process.env.SYSTEM_API_KEY || "";
-
 /* Challenge → verification request payload mapping */
 function buildVPRequestBody(challenge: string) {
   if (challenge === "age_over_18") {
@@ -62,7 +59,13 @@ export async function POST(
   if (session.status !== "pending") {
     return NextResponse.json({ error: `Session already ${session.status}` }, { status: 409 });
   }
+
+  // Read env vars at request time, not module load time
+  const GATEWAY_URL    = process.env.GATEWAY_INTERNAL_URL || "http://verify-gateway:3002";
+  const SYSTEM_API_KEY = process.env.SYSTEM_API_KEY || "";
+
   if (!SYSTEM_API_KEY) {
+    console.error("SYSTEM_API_KEY is not set. Current env keys:", Object.keys(process.env).filter(k => k.includes("SYSTEM") || k.includes("API")));
     return NextResponse.json(
       { error: "SYSTEM_API_KEY not configured on server" },
       { status: 500 }
