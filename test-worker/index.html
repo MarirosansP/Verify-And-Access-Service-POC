@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CF Worker Test — Verify &amp; Access</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 640px;
+      width: 100%;
+    }
+    h1 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .badge {
+      display: inline-block;
+      background: #0f766e;
+      color: #ccfbf1;
+      border-radius: 999px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    p { font-size: 0.9rem; color: #94a3b8; line-height: 1.6; margin-bottom: 1rem; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: #cbd5e1; margin-bottom: 0.25rem; }
+    input, select {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: #2563eb; }
+    button {
+      padding: 0.75rem 1.5rem;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+    button:hover { background: #1d4ed8; }
+    button.secondary { background: #334155; }
+    button.secondary:hover { background: #475569; }
+    .output {
+      margin-top: 1.5rem;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+      font-family: 'Fira Code', monospace;
+      white-space: pre-wrap;
+      color: #a5f3fc;
+    }
+    .step { color: #22d3ee; font-weight: bold; }
+    .ok   { color: #4ade80; }
+    .err  { color: #f87171; }
+    .info { color: #94a3b8; }
+    hr { border: none; border-top: 1px solid #334155; margin: 1.5rem 0; }
+    .curl-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: #fde68a;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">🧪 TEST HARNESS</div>
+    <h1>CloudFlare Worker Simulator</h1>
+    <p>
+      This page simulates what a CloudFlare Worker would do:
+      call the Verify &amp; Access API to initiate a verification, then redirect
+      the user to the verification page and poll for results.
+    </p>
+
+    <label>Console URL</label>
+    <input id="consoleUrl" value="http://localhost:3001" placeholder="http://localhost:3001"/>
+
+    <label>Worker Key (wk_…)</label>
+    <input id="workerKey" placeholder="wk_abc123…"/>
+
+    <label>Challenge</label>
+    <select id="challenge">
+      <option value="age_over_18">Age Over 18</option>
+    </select>
+
+    <label>Callback URL (where verified user returns)</label>
+    <input id="callbackUrl" value="http://localhost:3004" placeholder="http://localhost:3004"/>
+
+    <button onclick="runFullFlow()">▶ Run Full Flow (Redirect)</button>
+    <button class="secondary" onclick="runInitiateOnly()">📡 Initiate Only (no redirect)</button>
+    <button class="secondary" onclick="pollStatus()">🔄 Poll Status</button>
+
+    <div class="output" id="output">Ready. Fill in your worker key and click a button.\n</div>
+
+    <hr/>
+    <h2 style="font-size:1rem;margin-bottom:0.5rem;">Curl Commands</h2>
+    <p>Alternatively, test from your terminal:</p>
+    <div class="curl-box" id="curlBox">
+# Step 1 — Initiate verification
+curl -X POST http://localhost:3001/api/worker/initiate \
+  -H "Content-Type: application/json" \
+  -H "X-Worker-Key: wk_YOUR_KEY_HERE" \
+  -d '{"challenge":"age_over_18","callbackUrl":"http://localhost:3004"}'
+
+# Step 2 — Open verifyUrl in browser (from step 1 response)
+
+# Step 3 — Poll for result
+curl http://localhost:3001/api/worker/status/SESSION_ID_HERE \
+  -H "X-Worker-Key: wk_YOUR_KEY_HERE"
+    </div>
+  </div>
+
+<script>
+const log = (cls, msg) => {
+  const el = document.getElementById("output");
+  const line = document.createElement("div");
+  line.className = cls;
+  line.textContent = msg;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+};
+
+let lastSessionId = null;
+
+async function initiateSession() {
+  const consoleUrl = document.getElementById("consoleUrl").value.replace(/\/+$/, "");
+  const workerKey  = document.getElementById("workerKey").value.trim();
+  const challenge  = document.getElementById("challenge").value;
+  const callbackUrl = document.getElementById("callbackUrl").value.trim();
+
+  if (!workerKey) { alert("Enter a worker key first"); return null; }
+
+  log("step", "\n── Step 1: Initiate verification session ──");
+  log("info", `POST ${consoleUrl}/api/worker/initiate`);
+  log("info", `X-Worker-Key: ${workerKey.slice(0, 10)}…`);
+
+  try {
+    const resp = await fetch(`${consoleUrl}/api/worker/initiate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Worker-Key": workerKey,
+      },
+      body: JSON.stringify({ challenge, callbackUrl }),
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      log("err", `✗ ${resp.status}: ${JSON.stringify(data)}`);
+      return null;
+    }
+
+    log("ok", `✓ Session created: ${data.sessionId}`);
+    log("info", `  verifyUrl: ${data.verifyUrl}`);
+    log("info", `  statusUrl: ${data.statusUrl}`);
+    log("info", `  expiresAt: ${data.expiresAt}`);
+
+    lastSessionId = data.sessionId;
+    return data;
+  } catch (err) {
+    log("err", `✗ Network error: ${err.message}`);
+    return null;
+  }
+}
+
+async function runInitiateOnly() {
+  await initiateSession();
+}
+
+async function runFullFlow() {
+  const data = await initiateSession();
+  if (!data) return;
+
+  log("step", "\n── Step 2: Redirecting user to verification page ──");
+  log("info", `Opening: ${data.verifyUrl}`);
+
+  // Open in a new tab (simulates CF Worker redirect)
+  window.open(data.verifyUrl, "_blank");
+
+  log("info", "Verification page opened in new tab.");
+  log("info", "Complete the verification there, then click 'Poll Status'.");
+}
+
+async function pollStatus() {
+  const consoleUrl = document.getElementById("consoleUrl").value.replace(/\/+$/, "");
+  const workerKey  = document.getElementById("workerKey").value.trim();
+
+  if (!lastSessionId) {
+    log("err", "No session to poll. Run 'Initiate' first.");
+    return;
+  }
+
+  log("step", "\n── Step 3: Poll session status ──");
+  log("info", `GET ${consoleUrl}/api/worker/status/${lastSessionId}`);
+
+  try {
+    const resp = await fetch(`${consoleUrl}/api/worker/status/${lastSessionId}`, {
+      headers: { "X-Worker-Key": workerKey },
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      log("err", `✗ ${resp.status}: ${JSON.stringify(data)}`);
+      return;
+    }
+
+    const emoji = data.status === "verified" ? "✅"
+                : data.status === "failed"   ? "❌"
+                : data.status === "expired"  ? "⏰"
+                : "⏳";
+
+    log(data.status === "verified" ? "ok" : data.status === "pending" ? "info" : "err",
+      `${emoji} Status: ${data.status}`);
+    log("info", `  result: ${data.result}`);
+    if (data.failureReason) log("err", `  reason: ${data.failureReason}`);
+
+    if (data.status === "verified") {
+      log("ok", "\n🎉 SUCCESS — The CF Worker would now grant access to the site.");
+      log("ok", "It would set a cookie and return the protected content.");
+    } else if (data.status === "pending") {
+      log("info", "Still waiting… Click 'Poll Status' again after completing verification.");
+    }
+  } catch (err) {
+    log("err", `✗ Network error: ${err.message}`);
+  }
+}
+
+// Update curl box dynamically
+document.getElementById("workerKey").addEventListener("input", updateCurl);
+document.getElementById("consoleUrl").addEventListener("input", updateCurl);
+function updateCurl() {
+  const url = document.getElementById("consoleUrl").value.replace(/\/+$/, "");
+  const key = document.getElementById("workerKey").value || "wk_YOUR_KEY_HERE";
+  const sid = lastSessionId || "SESSION_ID_HERE";
+  document.getElementById("curlBox").textContent =
+`# Step 1 — Initiate verification
+curl -X POST ${url}/api/worker/initiate \\
+  -H "Content-Type: application/json" \\
+  -H "X-Worker-Key: ${key}" \\
+  -d '{"challenge":"age_over_18","callbackUrl":"http://localhost:3004"}'
+
+# Step 2 — Open verifyUrl in browser (from step 1 response)
+
+# Step 3 — Poll for result
+curl ${url}/api/worker/status/${sid} \\
+  -H "X-Worker-Key: ${key}"`;
+}
+</script>
+</body>
+</html>

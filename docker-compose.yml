@@ -44,6 +44,18 @@ services:
       - USAGE_SHARED_SECRET=change-me-shared
     ports:
       - "3002:3002"
+  services:
+    test-worker:
+      build: ./test-worker
+      container_name: test-worker
+      ports:
+        - "3004:3004"
+      environment:
+        - PORT=3004
+        - CONSOLE_URL=http://console-web:3001
+      depends_on:
+        - console-web
+      restart: unless-stopped
 
   adult-joke-site:
     build:
