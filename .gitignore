@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.production
+*.zip
 
 # Key material – NEVER commit real keys
 keys/*.export
