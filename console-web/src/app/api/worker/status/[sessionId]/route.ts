@@ -33,7 +33,7 @@ export async function GET(
     return NextResponse.json({ error: "Missing X-Worker-Key header" }, { status: 401 });
   }
 
-  const wk = validateWorkerKey(rawKey);
+  const wk = await validateWorkerKey(rawKey);
   if (!wk) {
     return NextResponse.json({ error: "Invalid or inactive worker key" }, { status: 403 });
   }
@@ -44,16 +44,9 @@ export async function GET(
     return NextResponse.json({ error: "Session not found" }, { status: 404 });
   }
 
-  // Ensure the session belongs to the same account as the worker key
-  // (defence in depth — different accounts can't snoop each other's sessions)
-  // We compare via siteUrl since the public status doesn't expose accountId.
-  // A stronger check would be to look up the full session and compare accountId,
-  // but for the POC this is sufficient since workerKeyId is tied to accountId.
-
   return NextResponse.json(status, {
     status: 200,
     headers: {
-      // Allow CORS for CF Workers calling from any origin
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Headers": "X-Worker-Key, Content-Type",
     },

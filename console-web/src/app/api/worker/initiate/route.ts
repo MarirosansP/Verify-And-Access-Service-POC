@@ -20,9 +20,6 @@
  *     "statusUrl":  "https://<console>/api/worker/status/<sessionId>",
  *     "expiresAt":  "<ISO>"
  *   }
- *
- * The CF Worker should redirect the end-user's browser to verifyUrl.
- * Then poll statusUrl (with X-Worker-Key header) until status != "pending".
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -41,7 +38,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const wk = validateWorkerKey(rawKey);
+  const wk = await validateWorkerKey(rawKey);
   if (!wk) {
     return NextResponse.json(
       { error: "Invalid or inactive worker key" },

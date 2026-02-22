@@ -20,7 +20,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const keys = listWorkerKeys(session.user.email);
+  const keys = await listWorkerKeys(session.user.email);
   return NextResponse.json({ keys });
 }
 
@@ -47,18 +47,18 @@ export async function POST(req: NextRequest) {
   }
 
   const callbackPath = body.callbackPath || "/";
-  const wk = createWorkerKey(
+  const wk = await createWorkerKey(
     session.user.email,
     body.siteName,
     body.siteUrl,
     callbackPath
   );
 
-  // Return the full key ONCE (the raw key field).  After this the
+  // Return the full key ONCE (the raw `key` field).  After this the
   // raw key is never retrievable again — only the hash is stored.
   return NextResponse.json({
     id: wk.id,
-    key: wk.key,
+    key: wk.key,                   // ← show this once
     siteName: wk.siteName,
     siteUrl: wk.siteUrl,
     callbackPath: wk.callbackPath,

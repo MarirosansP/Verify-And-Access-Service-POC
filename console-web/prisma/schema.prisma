@@ -8,40 +8,51 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String    @id @default(cuid())
+  email        String    @unique
   name         String?
   passwordHash String
-  createdAt    DateTime @default(now())
-
+  createdAt    DateTime  @default(now())
   apiKeys      ApiKey[]
   usageEvents  UsageEvent[]
+  workerKeys   WorkerKey[]
 }
 
 model ApiKey {
-  id         String   @id @default(cuid())
+  id         String       @id @default(cuid())
   userId     String
   name       String
-  prefix     String   @unique
+  prefix     String       @unique
   keyHash    String
-  status     String   @default("active") // active|paused|revoked
-  createdAt  DateTime @default(now())
+  status     String       @default("active") // active|paused|revoked
+  createdAt  DateTime     @default(now())
   lastUsedAt DateTime?
-
-  user        User      @relation(fields: [userId], references: [id])
+  user       User         @relation(fields: [userId], references: [id])
   usageEvents UsageEvent[]
 }
 
 model UsageEvent {
-  id            String   @id @default(cuid())
-  userId        String
-  apiKeyId      String
-  ts            DateTime @default(now())
-  endpoint      String
-  statusCode    Int
-  durationMs    Int
+  id             String   @id @default(cuid())
+  userId         String
+  apiKeyId       String
+  ts             DateTime @default(now())
+  endpoint       String
+  statusCode     Int
+  durationMs     Int
   merchantOrigin String?
+  user           User     @relation(fields: [userId], references: [id])
+  apiKey         ApiKey   @relation(fields: [apiKeyId], references: [id])
+}
 
-  user   User   @relation(fields: [userId], references: [id])
-  apiKey ApiKey @relation(fields: [apiKeyId], references: [id])
+model WorkerKey {
+  id           String   @id @default(cuid())
+  userId       String
+  keyHash      String   @unique
+  siteName     String
+  siteUrl      String
+  callbackPath String   @default("/")
+  status       String   @default("active") // active|paused|revoked
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
 }

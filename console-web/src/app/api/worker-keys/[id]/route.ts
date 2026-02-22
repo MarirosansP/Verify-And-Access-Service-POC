@@ -30,7 +30,7 @@ export async function PATCH(
     );
   }
 
-  const updated = updateWorkerKeyStatus(params.id, session.user.email, body.status);
+  const updated = await updateWorkerKeyStatus(params.id, session.user.email, body.status);
   if (!updated) {
     return NextResponse.json({ error: "Key not found or cannot change status" }, { status: 404 });
   }
@@ -48,7 +48,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const ok = deleteWorkerKey(params.id, session.user.email);
+  const ok = await deleteWorkerKey(params.id, session.user.email);
   if (!ok) {
     return NextResponse.json({ error: "Key not found" }, { status: 404 });
   }

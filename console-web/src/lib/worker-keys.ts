@@ -5,25 +5,24 @@
  * Worker keys are distinct from API keys — they use a `wk_` prefix and
  * include a bound siteUrl so each key is scoped to one domain.
  *
- * Storage: JSON file at /data/worker-keys.json (Docker volume)
+ * Storage: Prisma/SQLite (same database as API keys)
  */
 
 import { randomBytes, createHash } from "crypto";
-import fs from "fs";
-import path from "path";
+import { prisma } from "@/lib/db";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
 export interface WorkerKey {
-  id: string;              // internal uuid
-  accountId: string;       // owner (from NextAuth session)
+  id: string;
+  accountId: string;       // maps to userId in DB
   key: string;             // the actual key shown once: wk_<64-hex>
   keyHash: string;         // sha256 of the key (stored, used for lookups)
-  siteName: string;        // display label, e.g. "My Blog"
-  siteUrl: string;         // origin the key is bound to, e.g. https://myblog.com
-  callbackPath: string;    // path on siteUrl that receives the redirect, default "/"
+  siteName: string;
+  siteUrl: string;
+  callbackPath: string;
   status: "active" | "paused" | "revoked";
   createdAt: string;       // ISO
   updatedAt: string;       // ISO
@@ -32,34 +31,8 @@ export interface WorkerKey {
 export type WorkerKeyPublic = Omit<WorkerKey, "key" | "keyHash">;
 
 /* ------------------------------------------------------------------ */
-/*  Persistence helpers                                                */
-/* ------------------------------------------------------------------ */
-
-const DATA_DIR  = process.env.DATA_DIR || "/data";
-const KEYS_FILE = path.join(DATA_DIR, "worker-keys.json");
-
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-
-function readKeys(): WorkerKey[] {
-  ensureDataDir();
-  if (!fs.existsSync(KEYS_FILE)) return [];
-  return JSON.parse(fs.readFileSync(KEYS_FILE, "utf-8"));
-}
-
-function writeKeys(keys: WorkerKey[]) {
-  ensureDataDir();
-  fs.writeFileSync(KEYS_FILE, JSON.stringify(keys, null, 2));
-}
-
-/* ------------------------------------------------------------------ */
 /*  Key generation                                                     */
 /* ------------------------------------------------------------------ */
-
-function generateKeyId(): string {
-  return randomBytes(12).toString("hex");           // 24-char hex id
-}
 
 function generateRawKey(): string {
   return `wk_${randomBytes(32).toString("hex")}`;   // wk_ + 64 hex chars
@@ -70,89 +43,118 @@ function hashKey(raw: string): string {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Helper: map Prisma record → our WorkerKey/WorkerKeyPublic types    */
+/* ------------------------------------------------------------------ */
+
+function toPublic(row: any): WorkerKeyPublic {
+  return {
+    id: row.id,
+    accountId: row.userId,
+    siteName: row.siteName,
+    siteUrl: row.siteUrl,
+    callbackPath: row.callbackPath,
+    status: row.status as "active" | "paused" | "revoked",
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
+function toFull(row: any, rawKey?: string): WorkerKey {
+  return {
+    ...toPublic(row),
+    key: rawKey || "",
+    keyHash: row.keyHash,
+  };
+}
+
+/* ------------------------------------------------------------------ */
 /*  Public API                                                         */
 /* ------------------------------------------------------------------ */
 
 /** Create a new worker key. Returns the full object INCLUDING the raw key (show once). */
-export function createWorkerKey(
+export async function createWorkerKey(
   accountId: string,
   siteName: string,
   siteUrl: string,
   callbackPath: string = "/"
-): WorkerKey {
-  const keys = readKeys();
-
+): Promise<WorkerKey> {
   // Normalise siteUrl — strip trailing slash
   const normUrl = siteUrl.replace(/\/+$/, "");
-
   const raw = generateRawKey();
-  const now = new Date().toISOString();
 
-  const wk: WorkerKey = {
-    id: generateKeyId(),
-    accountId,
-    key: raw,                       // only returned at creation
-    keyHash: hashKey(raw),
-    siteName,
-    siteUrl: normUrl,
-    callbackPath,
-    status: "active",
-    createdAt: now,
-    updatedAt: now,
-  };
+  const row = await prisma.workerKey.create({
+    data: {
+      userId: accountId,
+      keyHash: hashKey(raw),
+      siteName,
+      siteUrl: normUrl,
+      callbackPath,
+      status: "active",
+    },
+  });
 
-  keys.push(wk);
-  writeKeys(keys);
-  return wk;
+  return toFull(row, raw);
 }
 
 /** List all worker keys for an account (public view — no raw key). */
-export function listWorkerKeys(accountId: string): WorkerKeyPublic[] {
-  return readKeys()
-    .filter((k) => k.accountId === accountId)
-    .map(({ key, keyHash, ...pub }) => pub);
+export async function listWorkerKeys(accountId: string): Promise<WorkerKeyPublic[]> {
+  const rows = await prisma.workerKey.findMany({
+    where: { userId: accountId },
+    orderBy: { createdAt: "desc" },
+  });
+  return rows.map(toPublic);
 }
 
 /** Find a key by its raw value. Returns null if not found or not active. */
-export function validateWorkerKey(rawKey: string): WorkerKey | null {
+export async function validateWorkerKey(rawKey: string): Promise<WorkerKey | null> {
   const h = hashKey(rawKey);
-  const keys = readKeys();
-  const found = keys.find((k) => k.keyHash === h);
-  if (!found) return null;
-  if (found.status !== "active") return null;
-  return found;
+  const row = await prisma.workerKey.findUnique({
+    where: { keyHash: h },
+  });
+  if (!row) return null;
+  if (row.status !== "active") return null;
+  return toFull(row);
 }
 
 /** Find a key by id (for dashboard display). */
-export function getWorkerKeyById(id: string, accountId: string): WorkerKey | null {
-  return readKeys().find((k) => k.id === id && k.accountId === accountId) ?? null;
+export async function getWorkerKeyById(id: string, accountId: string): Promise<WorkerKey | null> {
+  const row = await prisma.workerKey.findFirst({
+    where: { id, userId: accountId },
+  });
+  if (!row) return null;
+  return toFull(row);
 }
 
 /** Update status of a key. */
-export function updateWorkerKeyStatus(
+export async function updateWorkerKeyStatus(
   id: string,
   accountId: string,
   status: "active" | "paused" | "revoked"
-): WorkerKeyPublic | null {
-  const keys = readKeys();
-  const idx = keys.findIndex((k) => k.id === id && k.accountId === accountId);
-  if (idx === -1) return null;
+): Promise<WorkerKeyPublic | null> {
+  // Find the key first
+  const existing = await prisma.workerKey.findFirst({
+    where: { id, userId: accountId },
+  });
+  if (!existing) return null;
 
   // Once revoked, cannot be reactivated
-  if (keys[idx].status === "revoked" && status !== "revoked") return null;
+  if (existing.status === "revoked" && status !== "revoked") return null;
 
-  keys[idx].status = status;
-  keys[idx].updatedAt = new Date().toISOString();
-  writeKeys(keys);
-  const { key, keyHash, ...pub } = keys[idx];
-  return pub;
+  const row = await prisma.workerKey.update({
+    where: { id },
+    data: { status },
+  });
+
+  return toPublic(row);
 }
 
 /** Delete a key permanently. */
-export function deleteWorkerKey(id: string, accountId: string): boolean {
-  const keys = readKeys();
-  const filtered = keys.filter((k) => !(k.id === id && k.accountId === accountId));
-  if (filtered.length === keys.length) return false;
-  writeKeys(filtered);
+export async function deleteWorkerKey(id: string, accountId: string): Promise<boolean> {
+  const existing = await prisma.workerKey.findFirst({
+    where: { id, userId: accountId },
+  });
+  if (!existing) return false;
+
+  await prisma.workerKey.delete({ where: { id } });
   return true;
 }
