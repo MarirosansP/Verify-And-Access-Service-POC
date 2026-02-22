@@ -12,6 +12,8 @@ services:
       - NEXTAUTH_URL=http://localhost:3001
       - NEXTAUTH_SECRET=change-me-long-random
       - USAGE_SHARED_SECRET=change-me-shared
+      - SYSTEM_API_KEY=${SYSTEM_API_KEY}
+      - GATEWAY_INTERNAL_URL=http://verify-gateway:3002
     ports:
       - "3001:3001"
 
