@@ -71,6 +71,20 @@ function toFull(row: any, rawKey?: string): WorkerKey {
 /*  Public API                                                         */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/*  Helper: resolve email → User.id                                    */
+/* ------------------------------------------------------------------ */
+
+async function resolveUserId(emailOrId: string): Promise<string> {
+  // If it looks like an email, look up the user; otherwise assume it's already an id
+  if (emailOrId.includes("@")) {
+    const user = await prisma.user.findUnique({ where: { email: emailOrId } });
+    if (!user) throw new Error(`User not found: ${emailOrId}`);
+    return user.id;
+  }
+  return emailOrId;
+}
+
 /** Create a new worker key. Returns the full object INCLUDING the raw key (show once). */
 export async function createWorkerKey(
   accountId: string,
@@ -78,13 +92,15 @@ export async function createWorkerKey(
   siteUrl: string,
   callbackPath: string = "/"
 ): Promise<WorkerKey> {
+  const userId = await resolveUserId(accountId);
+
   // Normalise siteUrl — strip trailing slash
   const normUrl = siteUrl.replace(/\/+$/, "");
   const raw = generateRawKey();
 
   const row = await prisma.workerKey.create({
     data: {
-      userId: accountId,
+      userId,
       keyHash: hashKey(raw),
       siteName,
       siteUrl: normUrl,
@@ -98,8 +114,9 @@ export async function createWorkerKey(
 
 /** List all worker keys for an account (public view — no raw key). */
 export async function listWorkerKeys(accountId: string): Promise<WorkerKeyPublic[]> {
+  const userId = await resolveUserId(accountId);
   const rows = await prisma.workerKey.findMany({
-    where: { userId: accountId },
+    where: { userId },
     orderBy: { createdAt: "desc" },
   });
   return rows.map(toPublic);
@@ -118,8 +135,9 @@ export async function validateWorkerKey(rawKey: string): Promise<WorkerKey | nul
 
 /** Find a key by id (for dashboard display). */
 export async function getWorkerKeyById(id: string, accountId: string): Promise<WorkerKey | null> {
+  const userId = await resolveUserId(accountId);
   const row = await prisma.workerKey.findFirst({
-    where: { id, userId: accountId },
+    where: { id, userId },
   });
   if (!row) return null;
   return toFull(row);
@@ -131,9 +149,10 @@ export async function updateWorkerKeyStatus(
   accountId: string,
   status: "active" | "paused" | "revoked"
 ): Promise<WorkerKeyPublic | null> {
-  // Find the key first
+  const userId = await resolveUserId(accountId);
+
   const existing = await prisma.workerKey.findFirst({
-    where: { id, userId: accountId },
+    where: { id, userId },
   });
   if (!existing) return null;
 
@@ -150,8 +169,10 @@ export async function updateWorkerKeyStatus(
 
 /** Delete a key permanently. */
 export async function deleteWorkerKey(id: string, accountId: string): Promise<boolean> {
+  const userId = await resolveUserId(accountId);
+
   const existing = await prisma.workerKey.findFirst({
-    where: { id, userId: accountId },
+    where: { id, userId },
   });
   if (!existing) return false;
 
