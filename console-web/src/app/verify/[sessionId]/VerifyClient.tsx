@@ -1,21 +1,21 @@
 "use client";
 
 /**
- * VerifyClient — handles the full WalletConnect ↔ Concordium ID flow
+ * VerifyClient — uses @concordium/verification-web-ui SDK
  *
- * Steps:
- *   1. Create a VP request (via our API proxy to the gateway)
- *   2. Show a QR code so the user can connect their Concordium ID app
- *   3. Once connected, send the VP request to the wallet
- *   4. Receive the VP back
- *   5. Submit the VP to our API for validation
- *   6. On success → redirect back to the originating site
+ * The SDK is pre-bundled by esbuild into /build/verification-sdk.js
+ * (bypassing Next.js webpack). It exposes ConcordiumVerificationWebUI
+ * on `window` and handles all WalletConnect complexity.
  *
- * This mirrors the adult-joke-site flow but is self-contained in
- * the console-web verify page.
+ * We use the event-driven API:
+ *   1. sdk.renderUIModals()       → shows QR code / connect modal
+ *   2. session_approved event     → wallet connected, send VP request
+ *   3. presentation_received event→ got ZKP proof, submit to backend
+ *   4. sdk.showSuccessState()     → show success in SDK UI
  */
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import Script from "next/script";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -30,11 +30,10 @@ interface Props {
 }
 
 type FlowState =
+  | "loading-sdk"
   | "idle"
-  | "creating-request"
-  | "show-qr"
-  | "connecting"
-  | "requesting-vp"
+  | "starting"
+  | "wallet-flow"
   | "verifying"
   | "success"
   | "failed";
@@ -50,58 +49,179 @@ export default function VerifyClient({
   siteUrl,
   callbackUrl,
 }: Props) {
-  const [state, setState]             = useState<FlowState>("idle");
-  const [statusMsg, setStatusMsg]     = useState("Click below to start verification.");
-  const [qrUri, setQrUri]            = useState<string | null>(null);
-  const [error, setError]            = useState<string | null>(null);
+  const [state, setState] = useState<FlowState>("loading-sdk");
+  const [statusMsg, setStatusMsg] = useState("Loading verification SDK…");
+  const [error, setError] = useState<string | null>(null);
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
-  const signClientRef                 = useRef<any>(null);
-  const sessionTopicRef               = useRef<string | null>(null);
 
-  /* ---- Cleanup on unmount ---- */
-  useEffect(() => {
-    return () => {
-      if (signClientRef.current && sessionTopicRef.current) {
-        try {
-          signClientRef.current.disconnect({
-            topic: sessionTopicRef.current,
-            reason: { code: 6000, message: "Component unmounted" },
-          });
-        } catch {}
-      }
-    };
+  const sdkRef = useRef<any>(null);
+  const vpRequestRef = useRef<any>(null);
+  const handledRef = useRef(false);
+
+  /* ---- SDK loaded callback ---- */
+  const onSdkReady = useCallback(() => {
+    console.log("[VerifyClient] SDK script loaded");
+    setState("idle");
+    setStatusMsg("Click below to start verification.");
   }, []);
 
-  /* ---- Start the flow ---- */
+  /* ---- SDK event handler ---- */
+  useEffect(() => {
+    const handler = async (event: Event) => {
+      const { type, data } = (event as CustomEvent).detail || {};
+      console.log("[VerifyClient] SDK event:", type, data);
+
+      switch (type) {
+        case "session_approved": {
+          console.log("[VerifyClient] Wallet connected, creating VP request…");
+          setStatusMsg("Wallet connected! Creating verification request…");
+
+          try {
+            // Create the VP request via our backend
+            const resp = await fetch(
+              `/api/worker/create-vp-request/${sessionId}`,
+              { method: "POST" }
+            );
+            if (!resp.ok) {
+              const err = await resp.json().catch(() => ({ error: "Unknown" }));
+              throw new Error(err.error || err.detail || `HTTP ${resp.status}`);
+            }
+
+            const vpData = await resp.json();
+            console.log("[VerifyClient] VP request created:", vpData);
+            vpRequestRef.current = vpData;
+
+            setStatusMsg("Check your Concordium ID app to approve…");
+
+            // Send the presentation request through the SDK's WalletConnect
+            if (sdkRef.current?.sendPresentationRequest) {
+              await sdkRef.current.sendPresentationRequest(vpData);
+            }
+          } catch (err: any) {
+            console.error("[VerifyClient] VP request error:", err);
+            setState("failed");
+            setError(err.message || "Failed to create verification request");
+            setStatusMsg("❌ Something went wrong.");
+          }
+          break;
+        }
+
+        case "presentation_received": {
+          if (handledRef.current) return;
+          handledRef.current = true;
+
+          console.log("[VerifyClient] Presentation received, verifying…");
+          setState("verifying");
+          setStatusMsg("Verifying your proof…");
+
+          try {
+            // Extract VP — SDK may wrap it differently
+            const vp =
+              data?.verifiablePresentation ||
+              data?.proof ||
+              data;
+
+            const resp = await fetch(
+              `/api/worker/submit-vp/${sessionId}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  presentation: vp,
+                  verificationRequest: vpRequestRef.current,
+                }),
+              }
+            );
+
+            const result = await resp.json();
+
+            if (result.verified) {
+              setState("success");
+              setStatusMsg("✅ Verification successful! Redirecting…");
+
+              // Show success state in SDK modal
+              if (sdkRef.current?.showSuccessState) {
+                await sdkRef.current.showSuccessState();
+              }
+
+              const sep = callbackUrl.includes("?") ? "&" : "?";
+              const redirect = `${callbackUrl}${sep}va_session=${sessionId}&va_status=verified`;
+              setRedirectUrl(redirect);
+
+              setTimeout(() => {
+                window.location.href = redirect;
+              }, 2000);
+            } else {
+              setState("failed");
+              setError(result.reason || "Verification failed");
+              setStatusMsg("❌ Verification failed.");
+            }
+          } catch (err: any) {
+            console.error("[VerifyClient] Verify error:", err);
+            setState("failed");
+            setError(err.message || "Verification request failed");
+            setStatusMsg("❌ Something went wrong.");
+          }
+          break;
+        }
+
+        case "session_disconnected": {
+          console.log("[VerifyClient] Session disconnected");
+          if (state !== "success") {
+            setState("idle");
+            setStatusMsg("Session disconnected. Click below to try again.");
+            handledRef.current = false;
+          }
+          break;
+        }
+
+        case "error": {
+          console.error("[VerifyClient] SDK error:", data);
+          if (state !== "success") {
+            setState("failed");
+            setError(data?.message || "SDK error");
+            setStatusMsg("❌ Something went wrong.");
+          }
+          break;
+        }
+      }
+    };
+
+    // Listen for SDK events (documented event name)
+    window.addEventListener(
+      "@concordium/verification-web-ui-event",
+      handler
+    );
+
+    return () => {
+      window.removeEventListener(
+        "@concordium/verification-web-ui-event",
+        handler
+      );
+    };
+  }, [sessionId, callbackUrl, state]);
+
+  /* ---- Start the verification flow ---- */
   const startVerification = useCallback(async () => {
-    setState("creating-request");
-    setStatusMsg("Creating verification request…");
+    setState("starting");
+    setStatusMsg("Initializing wallet connection…");
     setError(null);
+    handledRef.current = false;
 
     try {
-      /* Step 1 — create the VP request via our server-side proxy */
-      const vpResp = await fetch(`/api/worker/create-vp-request/${sessionId}`, {
-        method: "POST",
-      });
+      const ConcordiumVerificationWebUI = (window as any)
+        .ConcordiumVerificationWebUI;
 
-      if (!vpResp.ok) {
-        const err = await vpResp.json().catch(() => ({ error: "Unknown error" }));
-        throw new Error(err.error || err.detail || "Failed to create VP request");
+      if (!ConcordiumVerificationWebUI) {
+        throw new Error("SDK not loaded — please refresh and try again");
       }
 
-      const vpData = await vpResp.json();
-      console.log("[VerifyClient] VP request created:", vpData);
+      const projectId =
+        process.env.NEXT_PUBLIC_WC_PROJECT_ID ||
+        "76324905a70fe5c388bab46d3e0564dc";
 
-      /* Step 2 — initialise WalletConnect */
-      setState("show-qr");
-      setStatusMsg("Scan the QR code with your Concordium ID app…");
-
-      // Dynamic import so we don't SSR WalletConnect
-      const { default: SignClient } = await import("@walletconnect/sign-client");
-
-      const projectId = process.env.NEXT_PUBLIC_WC_PROJECT_ID || "76324905a70fe5c388bab46d3e0564dc";
-
-      const client = await SignClient.init({
+      const sdk = new ConcordiumVerificationWebUI({
+        network: "mainnet",
         projectId,
         metadata: {
           name: "Verify & Access",
@@ -110,157 +230,77 @@ export default function VerifyClient({
           icons: [],
         },
       });
-      signClientRef.current = client;
 
-      /* Step 3 — create a WalletConnect session */
-      const { uri, approval } = await client.connect({
-        requiredNamespaces: {
-          ccd: {
-            methods: [
-              "request_verifiable_presentation",
-            ],
-            chains: ["ccd:mainnet"],
-            events: ["concordium-event"],
-          },
-        },
-      });
+      sdkRef.current = sdk;
 
-      if (uri) {
-        setQrUri(uri);
-      }
+      // This shows the QR code / WalletConnect modal
+      await sdk.renderUIModals();
 
-      setState("connecting");
-      setStatusMsg("Waiting for wallet to connect…");
-
-      const wcSession = await approval();
-      sessionTopicRef.current = wcSession.topic;
-      console.log("[VerifyClient] WalletConnect session established:", wcSession.topic);
-
-      /* Step 4 — request the VP from the wallet */
-      setState("requesting-vp");
-      setStatusMsg("Requesting proof from your wallet… Please approve in the app.");
-
-      // Build the WalletConnect request
-      const vpRequest = {
-        topic: wcSession.topic,
-        chainId: "ccd:mainnet",
-        request: {
-          method: "request_verifiable_presentation",
-          params: {
-            challenge: vpData.challenge || vpData.challengeUrl || vpData.url,
-            credentialStatements: vpData.credentialStatements || vpData.statements,
-          },
-        },
-      };
-
-      const vpResponse = await client.request(vpRequest);
-      console.log("[VerifyClient] VP received from wallet:", vpResponse);
-
-      // The response may be wrapped in various ways depending on the
-      // wallet version.  Unwrap to get the actual VP.
-      const vp =
-        vpResponse?.verifiablePresentationJson
-          ? JSON.parse(vpResponse.verifiablePresentationJson)
-          : vpResponse?.verifiablePresentation || vpResponse;
-
-      /* Step 5 — submit the VP to our server for validation */
-      setState("verifying");
-      setStatusMsg("Verifying your proof…");
-
-      const verifyResp = await fetch(`/api/worker/submit-vp/${sessionId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ verifiablePresentation: vp }),
-      });
-
-      const verifyData = await verifyResp.json();
-
-      if (verifyData.verified) {
-        setState("success");
-        setStatusMsg("✅ Verification successful! Redirecting…");
-
-        // Build redirect URL with session token
-        const sep = callbackUrl.includes("?") ? "&" : "?";
-        const redirect = `${callbackUrl}${sep}va_session=${sessionId}&va_status=verified`;
-        setRedirectUrl(redirect);
-
-        // Auto-redirect after a short delay
-        setTimeout(() => {
-          window.location.href = redirect;
-        }, 2000);
-      } else {
-        setState("failed");
-        setError(verifyData.reason || "Verification failed");
-        setStatusMsg("❌ Verification failed.");
-      }
-
-      /* Disconnect WalletConnect session */
-      try {
-        await client.disconnect({
-          topic: wcSession.topic,
-          reason: { code: 6000, message: "Verification complete" },
-        });
-      } catch {}
-
+      setState("wallet-flow");
+      setStatusMsg("Scan the QR code with Concordium ID…");
     } catch (err: any) {
-      console.error("[VerifyClient] Error:", err);
+      console.error("[VerifyClient] Start error:", err);
       setState("failed");
-      setError(err.message || "An unexpected error occurred");
+      setError(err.message || "Failed to start verification");
       setStatusMsg("❌ Something went wrong.");
     }
-  }, [sessionId, challenge, siteName, callbackUrl]);
+  }, [siteName]);
 
   /* ---- Render ---- */
   return (
     <div style={styles.wrapper}>
+      {/* Load the pre-bundled SDK (esbuild output) */}
+      <Script
+        src="/build/verification-sdk.js"
+        strategy="afterInteractive"
+        onReady={onSdkReady}
+        onError={() => {
+          setState("failed");
+          setError("Failed to load verification SDK");
+        }}
+      />
+      {/* SDK CSS */}
+      {/* eslint-disable-next-line @next/next/no-css-tags */}
+      <link rel="stylesheet" href="/build/verification-sdk.css" />
+
       {/* Status message */}
       <div style={styles.statusBar}>
-        {state === "creating-request" || state === "connecting" || state === "requesting-vp" || state === "verifying"
-          ? <Spinner />
-          : null}
+        {(state === "starting" || state === "verifying" || state === "loading-sdk") && (
+          <Spinner />
+        )}
         <span style={styles.statusText}>{statusMsg}</span>
       </div>
 
-      {/* QR code */}
-      {qrUri && state !== "success" && state !== "failed" && (
-        <div style={styles.qrSection}>
-          <div style={styles.qrBox}>
-            <QRCode value={qrUri} />
-          </div>
-          <p style={styles.qrHint}>
-            Open your <strong>Concordium ID</strong> app and scan this code.
-          </p>
-          <p style={styles.qrSubHint}>
-            Don't have the app?{" "}
-            <a href="https://concordium.com/identity" target="_blank" rel="noopener noreferrer" style={styles.link}>
-              Download it here
-            </a>
-          </p>
-        </div>
-      )}
-
-      {/* Start button */}
+      {/* Start button — shown only when idle */}
       {state === "idle" && (
         <button onClick={startVerification} style={styles.startBtn}>
           Start Private Verification →
         </button>
       )}
 
-      {/* Error display */}
+      {/* Error display with retry */}
       {error && (
         <div style={styles.errorBox}>
           <strong>Error:</strong> {error}
           <br />
-          <button onClick={startVerification} style={styles.retryBtn}>
+          <button
+            onClick={() => {
+              setError(null);
+              startVerification();
+            }}
+            style={styles.retryBtn}
+          >
             Try Again
           </button>
         </div>
       )}
 
-      {/* Success with manual link */}
+      {/* Success with manual redirect link */}
       {state === "success" && redirectUrl && (
         <div style={styles.successBox}>
-          <p>Redirecting to <strong>{siteName}</strong>…</p>
+          <p>
+            Redirecting to <strong>{siteName}</strong>…
+          </p>
           <a href={redirectUrl} style={styles.link}>
             Click here if not redirected automatically
           </a>
@@ -271,50 +311,30 @@ export default function VerifyClient({
 }
 
 /* ------------------------------------------------------------------ */
-/*  QR Code component (inline SVG — no external dependency)            */
-/* ------------------------------------------------------------------ */
-
-function QRCode({ value }: { value: string }) {
-  const [svgHtml, setSvgHtml] = useState<string>("");
-
-  useEffect(() => {
-    // Use a CDN-loaded QR library for the POC
-    const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js";
-    script.onload = () => {
-      try {
-        // @ts-ignore
-        const qr = qrcode(0, "M");
-        qr.addData(value);
-        qr.make();
-        setSvgHtml(qr.createSvgTag({ cellSize: 4, margin: 4 }));
-      } catch (e) {
-        console.error("QR generation failed:", e);
-        // Fallback: show a link
-        setSvgHtml(`<p style="word-break:break-all;font-size:0.7rem;">${value}</p>`);
-      }
-    };
-    document.body.appendChild(script);
-    return () => { try { document.body.removeChild(script); } catch {} };
-  }, [value]);
-
-  if (!svgHtml) return <div style={{ padding: "2rem", color: "#94a3b8" }}>Generating QR code…</div>;
-
-  return <div dangerouslySetInnerHTML={{ __html: svgHtml }} />;
-}
-
-/* ------------------------------------------------------------------ */
 /*  Spinner                                                            */
 /* ------------------------------------------------------------------ */
 
 function Spinner() {
   return (
     <span style={styles.spinner}>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83">
-          <animateTransform attributeName="transform" type="rotate"
-            values="0 12 12;360 12 12" dur="1s" repeatCount="indefinite"/>
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            values="0 12 12;360 12 12"
+            dur="1s"
+            repeatCount="indefinite"
+          />
         </path>
       </svg>
     </span>
@@ -345,32 +365,6 @@ const styles: Record<string, React.CSSProperties> = {
   spinner: {
     display: "inline-flex",
     color: "#2563eb",
-    animation: "spin 1s linear infinite",
-  },
-  qrSection: {
-    textAlign: "center" as const,
-    margin: "1.5rem 0",
-  },
-  qrBox: {
-    display: "inline-block",
-    background: "#fff",
-    border: "2px solid #e2e8f0",
-    borderRadius: "12px",
-    padding: "1rem",
-  },
-  qrHint: {
-    fontSize: "0.9rem",
-    color: "#475569",
-    marginTop: "0.75rem",
-  },
-  qrSubHint: {
-    fontSize: "0.8rem",
-    color: "#94a3b8",
-    marginTop: "0.25rem",
-  },
-  link: {
-    color: "#2563eb",
-    textDecoration: "underline",
   },
   startBtn: {
     width: "100%",
@@ -411,5 +405,9 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "0.9rem",
     textAlign: "center" as const,
     marginTop: "1rem",
+  },
+  link: {
+    color: "#2563eb",
+    textDecoration: "underline",
   },
 };

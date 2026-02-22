@@ -2,8 +2,8 @@ FROM node:20-bookworm-slim
 
 # Prisma engines require OpenSSL available in the container
 RUN apt-get update -y \
-  && apt-get install -y --no-install-recommends openssl ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --no-install-recommends openssl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -15,6 +15,9 @@ RUN npm install
 
 # Copy the rest of the app
 COPY . .
+
+# Bundle the Concordium Verification SDK for browser use (same approach as adult-joke-site)
+RUN npm run build-sdk
 
 # Generate Prisma client using the local Prisma binary (avoid auto-fetching Prisma 7)
 RUN ./node_modules/.bin/prisma generate

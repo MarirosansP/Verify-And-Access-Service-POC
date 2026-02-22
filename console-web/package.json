@@ -7,14 +7,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "build-sdk": "node scripts/build-sdk.mjs",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
+    "@concordium/verification-web-ui": "latest",
     "@prisma/client": "5.19.1",
-    "@walletconnect/sign-client": "^2.23.6",
     "bcryptjs": "2.4.3",
+    "esbuild": "^0.25.0",
     "next": "14.2.7",
     "next-auth": "4.24.7",
     "react": "18.3.1",

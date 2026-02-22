@@ -1,18 +1,15 @@
 /**
  * POST /api/worker/submit-vp/:sessionId
  * ----------------------------------------
- * Called by the client-side VerifyClient after receiving the
- * Verifiable Presentation from the Concordium ID app via WalletConnect.
+ * Called by VerifyClient after receiving the Verifiable Presentation
+ * from the Concordium ID app via the SDK.
  *
- * Body (JSON):
- *   { "verifiablePresentation": { ... } }
- *
- * This route submits the VP to the credential-verifier (through the
- * gateway) for validation, then marks the session verified / failed.
+ * Body: { presentation, verificationRequest }
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, markVerified, markFailed } from "@/lib/worker-sessions";
+import { randomUUID } from "crypto";
 
 export async function POST(
   req: NextRequest,
@@ -20,14 +17,20 @@ export async function POST(
 ) {
   const session = getSession(params.sessionId);
   if (!session) {
-    return NextResponse.json({ error: "Session not found or expired" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Session not found or expired" },
+      { status: 404 }
+    );
   }
   if (session.status !== "pending") {
-    return NextResponse.json({ error: `Session already ${session.status}` }, { status: 409 });
+    return NextResponse.json(
+      { error: `Session already ${session.status}` },
+      { status: 409 }
+    );
   }
 
-  // Read env vars at request time, not module load time
-  const GATEWAY_URL    = process.env.GATEWAY_INTERNAL_URL || "http://verify-gateway:3002";
+  const GATEWAY_URL =
+    process.env.GATEWAY_INTERNAL_URL || "http://verify-gateway:3002";
   const SYSTEM_API_KEY = process.env.SYSTEM_API_KEY || "";
 
   if (!SYSTEM_API_KEY) {
@@ -38,18 +41,29 @@ export async function POST(
   }
 
   const body = await req.json().catch(() => null);
-  if (!body?.verifiablePresentation) {
+  const presentation =
+    body?.presentation || body?.verifiablePresentation;
+
+  if (!presentation) {
     return NextResponse.json(
-      { error: "verifiablePresentation is required" },
+      { error: "presentation is required in request body" },
       { status: 400 }
     );
   }
 
   try {
+    // Build verify payload matching the credential-verifier format
     const verifyPayload = {
-      verifiablePresentationJson: JSON.stringify(body.verifiablePresentation),
-      auditRecordId: `worker-session-${params.sessionId}`,
+      auditRecordId: randomUUID(),
+      publicInfo: {},
+      presentation:
+        typeof presentation === "string"
+          ? presentation
+          : JSON.stringify(presentation),
+      verificationRequest: body?.verificationRequest || null,
     };
+
+    console.log("[submit-vp] Verifying VP for session:", params.sessionId);
 
     const resp = await fetch(
       `${GATEWAY_URL}/v1/verifiable-presentations/verify`,
@@ -75,7 +89,16 @@ export async function POST(
     }
 
     const result = await resp.json();
-    const isValid = result.result !== false;
+    console.log("[submit-vp] Verification result:", result);
+
+    const isValid = Boolean(
+      result?.verified === true ||
+        result?.isValid === true ||
+        result?.result === "verified" ||
+        result?.result === true ||
+        result?.outcome === true ||
+        result?.decision === true
+    );
 
     if (isValid) {
       markVerified(params.sessionId);
