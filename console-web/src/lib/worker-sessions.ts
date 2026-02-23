@@ -2,8 +2,8 @@
  * Worker Verification Sessions
  * ----------------------------
  * Each time a CloudFlare Worker (or test page) initiates a verification
- * request, a session is created.  The end-user is redirected to
- *   /verify/<sessionId>
+ * request, a session is created. The end-user is redirected to
+ *    /verify/<sessionId>
  * where they complete the WalletConnect + VP flow.
  *
  * The CF Worker then polls GET /api/worker/status/<sessionId> until
@@ -11,7 +11,7 @@
  *
  * Sessions auto-expire after SESSION_TTL_MS (default 5 minutes).
  *
- * Storage: JSON file at /data/worker-sessions.json  (Docker volume)
+ * Storage: JSON file at /data/worker-sessions.json (Docker volume)
  */
 
 import { randomBytes } from "crypto";
@@ -19,40 +19,46 @@ import fs from "fs";
 import path from "path";
 
 /* ------------------------------------------------------------------ */
-/*  Types                                                              */
+/* Types                                                              */
 /* ------------------------------------------------------------------ */
 
 export interface WorkerSession {
   sessionId: string;
-  workerKeyId: string;       // which worker key initiated this
-  accountId: string;         // key owner
-  challenge: string;         // e.g. "age_over_18"
-  siteUrl: string;           // from the worker key
+  workerKeyId: string; // which worker key initiated this
+  accountId: string; // key owner
+  challenge: string; // e.g. "age_over_18"
+  siteUrl: string; // from the worker key
   siteName: string;
-  callbackUrl: string;       // full URL to redirect back to
+  callbackUrl: string; // full URL to redirect back to
   status: "pending" | "verified" | "failed" | "expired";
   result: boolean | null;
   failureReason: string | null;
-  verificationRequestUrl: string | null;   // URL to the credential-verifier request
+  verificationRequestUrl: string | null; // URL to the credential-verifier request
+  vpRequest: any | null; // ← NEW: pre-created VPR data (stored at initiation)
   createdAt: string;
   expiresAt: string;
 }
 
 export type WorkerSessionPublic = Pick<
   WorkerSession,
-  "sessionId" | "challenge" | "siteUrl" | "siteName" | "status" | "result" | "failureReason"
+  | "sessionId"
+  | "challenge"
+  | "siteUrl"
+  | "siteName"
+  | "status"
+  | "result"
+  | "failureReason"
 >;
 
 /* ------------------------------------------------------------------ */
-/*  Config                                                             */
+/* Config                                                             */
 /* ------------------------------------------------------------------ */
-
-const SESSION_TTL_MS = 5 * 60 * 1000;   // 5 minutes
-const DATA_DIR  = process.env.DATA_DIR || "/data";
+const SESSION_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const DATA_DIR = process.env.DATA_DIR || "/data";
 const SESS_FILE = path.join(DATA_DIR, "worker-sessions.json");
 
 /* ------------------------------------------------------------------ */
-/*  Persistence                                                        */
+/* Persistence                                                        */
 /* ------------------------------------------------------------------ */
 
 function ensureDataDir() {
@@ -75,14 +81,19 @@ function purgeExpired(sessions: WorkerSession[]): WorkerSession[] {
   const now = Date.now();
   return sessions.map((s) => {
     if (s.status === "pending" && new Date(s.expiresAt).getTime() < now) {
-      return { ...s, status: "expired" as const, result: false, failureReason: "Session expired" };
+      return {
+        ...s,
+        status: "expired" as const,
+        result: false,
+        failureReason: "Session expired",
+      };
     }
     return s;
   });
 }
 
 /* ------------------------------------------------------------------ */
-/*  Public API                                                         */
+/* Public API                                                         */
 /* ------------------------------------------------------------------ */
 
 /** Create a new verification session. */
@@ -95,8 +106,8 @@ export function createSession(params: {
   callbackUrl: string;
 }): WorkerSession {
   const sessions = purgeExpired(readSessions());
-
   const now = new Date();
+
   const session: WorkerSession = {
     sessionId: randomBytes(16).toString("hex"),
     workerKeyId: params.workerKeyId,
@@ -109,6 +120,7 @@ export function createSession(params: {
     result: null,
     failureReason: null,
     verificationRequestUrl: null,
+    vpRequest: null, // ← NEW: populated after gateway call in initiate route
     createdAt: now.toISOString(),
     expiresAt: new Date(now.getTime() + SESSION_TTL_MS).toISOString(),
   };
@@ -127,7 +139,9 @@ export function getSession(sessionId: string): WorkerSession | null {
 }
 
 /** Get session status (public subset — safe to return to CF worker). */
-export function getSessionStatus(sessionId: string): WorkerSessionPublic | null {
+export function getSessionStatus(
+  sessionId: string
+): WorkerSessionPublic | null {
   const s = getSession(sessionId);
   if (!s) return null;
   return {
@@ -147,7 +161,6 @@ export function markVerified(sessionId: string): WorkerSession | null {
   const idx = sessions.findIndex((s) => s.sessionId === sessionId);
   if (idx === -1) return null;
   if (sessions[idx].status !== "pending") return sessions[idx]; // idempotent
-
   sessions[idx].status = "verified";
   sessions[idx].result = true;
   sessions[idx].failureReason = null;
@@ -156,12 +169,14 @@ export function markVerified(sessionId: string): WorkerSession | null {
 }
 
 /** Mark session as failed. */
-export function markFailed(sessionId: string, reason: string): WorkerSession | null {
+export function markFailed(
+  sessionId: string,
+  reason: string
+): WorkerSession | null {
   const sessions = purgeExpired(readSessions());
   const idx = sessions.findIndex((s) => s.sessionId === sessionId);
   if (idx === -1) return null;
   if (sessions[idx].status !== "pending") return sessions[idx];
-
   sessions[idx].status = "failed";
   sessions[idx].result = false;
   sessions[idx].failureReason = reason;
@@ -170,10 +185,22 @@ export function markFailed(sessionId: string, reason: string): WorkerSession | n
 }
 
 /** Store the verification request URL (from credential-verifier) on the session. */
-export function setVerificationRequestUrl(sessionId: string, url: string): void {
+export function setVerificationRequestUrl(
+  sessionId: string,
+  url: string
+): void {
   const sessions = readSessions();
   const idx = sessions.findIndex((s) => s.sessionId === sessionId);
   if (idx === -1) return;
   sessions[idx].verificationRequestUrl = url;
+  writeSessions(sessions);
+}
+
+/** Store the pre-created VPR data on the session. */
+export function setVpRequest(sessionId: string, vpRequest: any): void {
+  const sessions = readSessions();
+  const idx = sessions.findIndex((s) => s.sessionId === sessionId);
+  if (idx === -1) return;
+  sessions[idx].vpRequest = vpRequest;
   writeSessions(sessions);
 }

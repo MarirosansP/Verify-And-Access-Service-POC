@@ -5,32 +5,45 @@
  * verification session.
  *
  * Headers:
- *   X-Worker-Key: wk_<hex>          ← the worker key
+ *   X-Worker-Key: wk_<hex>   ← the worker key
  *
  * Body (JSON):
  *   {
- *     "challenge":    "age_over_18",       // verification type
- *     "callbackUrl":  "https://mysite.com/__va_callback"  // optional override
+ *     "challenge": "age_over_18",                     // verification type
+ *     "callbackUrl": "https://mysite.com/__va_callback" // optional override
  *   }
  *
  * Response 201:
  *   {
- *     "sessionId":  "<hex>",
+ *     "sessionId": "<hex>",
  *     "verifyUrl":  "https://<console>/verify/<sessionId>",
  *     "statusUrl":  "https://<console>/api/worker/status/<sessionId>",
  *     "expiresAt":  "<ISO>"
  *   }
+ *
+ * CHANGE: Now also pre-creates the VPR via the gateway so it's ready
+ *         by the time the user scans the QR code. This eliminates the
+ *         race condition where the session could expire between QR scan
+ *         and the create-vp-request call.
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { validateWorkerKey }         from "@/lib/worker-keys";
-import { createSession }             from "@/lib/worker-sessions";
+import { validateWorkerKey } from "@/lib/worker-keys";
+import {
+  createSession,
+  setVpRequest,
+  setVerificationRequestUrl,
+} from "@/lib/worker-sessions";
+import { createVpRequest } from "@/lib/create-vpr";
 
 const SUPPORTED_CHALLENGES = ["age_over_18"];
 
 export async function POST(req: NextRequest) {
   /* ---- Authenticate with worker key ---- */
-  const rawKey = req.headers.get("x-worker-key") || req.headers.get("X-Worker-Key") || "";
+  const rawKey =
+    req.headers.get("x-worker-key") ||
+    req.headers.get("X-Worker-Key") ||
+    "";
   if (!rawKey) {
     return NextResponse.json(
       { error: "Missing X-Worker-Key header" },
@@ -52,7 +65,9 @@ export async function POST(req: NextRequest) {
 
   if (!SUPPORTED_CHALLENGES.includes(challenge)) {
     return NextResponse.json(
-      { error: `Unsupported challenge. Supported: ${SUPPORTED_CHALLENGES.join(", ")}` },
+      {
+        error: `Unsupported challenge. Supported: ${SUPPORTED_CHALLENGES.join(", ")}`,
+      },
       { status: 400 }
     );
   }
@@ -65,12 +80,38 @@ export async function POST(req: NextRequest) {
   /* ---- Create session ---- */
   const session = createSession({
     workerKeyId: wk.id,
-    accountId:   wk.accountId,
+    accountId: wk.accountId,
     challenge,
-    siteUrl:     wk.siteUrl,
-    siteName:    wk.siteName,
+    siteUrl: wk.siteUrl,
+    siteName: wk.siteName,
     callbackUrl,
   });
+
+  /* ---- Pre-create VPR (Option 2: eager creation) ---- */
+  try {
+    const vpData = await createVpRequest(challenge, session.sessionId);
+    console.log(
+      "[initiate] VPR pre-created for session:",
+      session.sessionId,
+      "transactionRef:",
+      vpData.transactionRef ? "yes" : "no"
+    );
+
+    // Store VPR data on the session so the verify page can use it
+    setVpRequest(session.sessionId, vpData);
+
+    // Also store the transactionRef for auditing
+    if (vpData.transactionRef) {
+      setVerificationRequestUrl(session.sessionId, vpData.transactionRef);
+    }
+  } catch (err: any) {
+    // Log but don't fail — the client can still fall back to
+    // create-vp-request on session_approved
+    console.warn(
+      "[initiate] Failed to pre-create VPR (will use fallback):",
+      err.message
+    );
+  }
 
   /* ---- Build response URLs ---- */
   const origin = process.env.NEXTAUTH_URL || `http://localhost:3001`;

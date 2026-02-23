@@ -1,15 +1,19 @@
 /**
- * /verify/:sessionId  — Public page (no login required)
+ * /verify/:sessionId — Public page (no login required)
  *
  * This is the page that end-users see when a CloudFlare Worker
- * redirects them here.  It shows:
- *   1. Site branding (name + URL they came from)
- *   2. The verification challenge description
- *   3. The WalletConnect QR flow (connect → verify → redirect back)
+ * redirects them here. It shows:
+ * 1. Site branding (name + URL they came from)
+ * 2. The verification challenge description
+ * 3. The WalletConnect QR flow (connect → verify → redirect back)
+ *
+ * CHANGE: Now passes pre-created vpRequest to VerifyClient so the
+ *         VPR can be sent to the wallet immediately on connection,
+ *         without a separate API call that could race with session expiry.
  */
 
 import { getSession } from "@/lib/worker-sessions";
-import VerifyClient   from "./VerifyClient";
+import VerifyClient from "./VerifyClient";
 
 interface Props {
   params: { sessionId: string };
@@ -24,8 +28,8 @@ export default async function VerifyPage({ params }: Props) {
         <div style={styles.card}>
           <h1 style={styles.title}>Session Not Found</h1>
           <p style={styles.text}>
-            This verification link is invalid or has expired.
-            Please go back to the site and try again.
+            This verification link is invalid or has expired. Please go back to
+            the site and try again.
           </p>
         </div>
       </div>
@@ -41,8 +45,10 @@ export default async function VerifyPage({ params }: Props) {
             You have already completed verification for{" "}
             <strong>{session.siteName}</strong>.
           </p>
-          <a href={`${session.callbackUrl}?va_session=${session.sessionId}&va_status=verified`}
-             style={styles.button}>
+          <a
+            href={`${session.callbackUrl}?va_session=${session.sessionId}&va_status=verified`}
+            style={styles.button}
+          >
             Return to {session.siteName} →
           </a>
         </div>
@@ -55,12 +61,17 @@ export default async function VerifyPage({ params }: Props) {
       <div style={styles.container}>
         <div style={styles.card}>
           <h1 style={styles.title}>
-            {session.status === "expired" ? "⏰ Session Expired" : "❌ Verification Failed"}
+            {session.status === "expired"
+              ? "⏰ Session Expired"
+              : "❌ Verification Failed"}
           </h1>
           <p style={styles.text}>
-            {session.failureReason || "This verification session is no longer valid."}
+            {session.failureReason ||
+              "This verification session is no longer valid."}
           </p>
-          <p style={styles.text}>Please go back to <strong>{session.siteName}</strong> and try again.</p>
+          <p style={styles.text}>
+            Please go back to <strong>{session.siteName}</strong> and try again.
+          </p>
         </div>
       </div>
     );
@@ -85,15 +96,17 @@ export default async function VerifyPage({ params }: Props) {
           siteName={session.siteName}
           siteUrl={session.siteUrl}
           callbackUrl={session.callbackUrl}
+          vpRequest={session.vpRequest}  /* ← NEW: pass pre-created VPR */
         />
 
         <div style={styles.footer}>
           <p style={styles.footerText}>
-            Your identity data never leaves your device.
-            Only a zero-knowledge proof is shared.
+            Your identity data never leaves your device. Only a zero-knowledge
+            proof is shared.
           </p>
           <p style={styles.footerText}>
-            Powered by <strong>Concordium</strong> blockchain identity verification.
+            Powered by <strong>Concordium</strong> blockchain identity
+            verification.
           </p>
         </div>
       </div>
@@ -104,8 +117,10 @@ export default async function VerifyPage({ params }: Props) {
 /* --- helpers --- */
 function challengeLabel(c: string): string {
   switch (c) {
-    case "age_over_18": return "you are 18 or older";
-    default: return c;
+    case "age_over_18":
+      return "you are 18 or older";
+    default:
+      return c;
   }
 }
 
