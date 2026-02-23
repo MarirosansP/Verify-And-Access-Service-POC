@@ -16,9 +16,20 @@
  *         Falls back to the create-vp-request API if vpRequest is null.
  *
  * CRITICAL: The SDK emits on "verification-web-ui-event" (NOT "@concordium/...")
+ * CRITICAL: SDK fires active_session / session_approved multiple times due to
+ *           React Strict Mode double-mount. Use _vpSentForSession (module-level
+ *           Set) to deduplicate — useRef values don't survive unmount/remount.
  */
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Script from "next/script";
+
+/* ------------------------------------------------------------------ */
+/* Module-level deduplication guard                                   */
+/* ------------------------------------------------------------------ */
+// This Set lives outside React so it survives Strict Mode's unmount/remount
+// cycle. Keyed by sessionId so different verify pages don't interfere.
+// Cleared on retry so the user can re-send after an error.
+const _vpSentForSession = new Set<string>();
 
 /* ------------------------------------------------------------------ */
 /* Types                                                              */
@@ -128,6 +139,22 @@ export default function VerifyClient({
         // Treat it identically — same topic shape, same VPR send.
         case "active_session":
         case "session_approved": {
+          // ── Deduplication guard ──────────────────────────────────────────
+          // React Strict Mode double-mounts the component, which creates
+          // multiple SDK instances. Each instance fires this event independently,
+          // leading to 3 competing sendPresentationRequest calls on the same
+          // WalletConnect topic — and the wallet receives nothing.
+          // _vpSentForSession is module-level so it survives unmount/remount.
+          if (_vpSentForSession.has(sessionId)) {
+            console.log(
+              "[VerifyClient] Duplicate session event ignored — VPR already sent for session:",
+              sessionId
+            );
+            return;
+          }
+          _vpSentForSession.add(sessionId);
+          // ────────────────────────────────────────────────────────────────
+
           console.log(
             "[VerifyClient] Wallet connected (event:", type, ") — creating VP request…"
           );
@@ -175,7 +202,26 @@ export default function VerifyClient({
               console.log(
                 "[VerifyClient] Calling sendPresentationRequest with topic:", data?.topic
               );
-              await sdkRef.current.sendPresentationRequest(vpData, data?.topic);
+
+              // Race against a 30 s timeout. If the wallet doesn't respond
+              // (e.g. stale / background-killed session) surface a retryable
+              // error instead of hanging indefinitely.
+              const SEND_TIMEOUT_MS = 30_000;
+              await Promise.race([
+                sdkRef.current.sendPresentationRequest(vpData, data?.topic),
+                new Promise<never>((_, reject) =>
+                  setTimeout(
+                    () =>
+                      reject(
+                        new Error(
+                          "Wallet did not respond within 30 s — please try again"
+                        )
+                      ),
+                    SEND_TIMEOUT_MS
+                  )
+                ),
+              ]);
+
               console.log(
                 "[VerifyClient] sendPresentationRequest completed"
               );
@@ -183,6 +229,8 @@ export default function VerifyClient({
               throw new Error("SDK sendPresentationRequest not available");
             }
           } catch (err: any) {
+            // Clear the dedup entry so a manual retry can re-send the VPR.
+            _vpSentForSession.delete(sessionId);
             console.error("[VerifyClient] VP request error:", err);
             setState("failed");
             setError(
@@ -326,6 +374,7 @@ export default function VerifyClient({
             onClick={() => {
               setError(null);
               startedRef.current = false;
+              _vpSentForSession.delete(sessionId); // allow re-send on retry
               startVerification();
             }}
             style={styles.retryBtn}
