@@ -53,10 +53,15 @@ function clearVprSent(sessionId: string) {
  * Wipe WalletConnect v2 state from localStorage + IndexedDB.
  * Called after sendPresentationRequest times out so the next
  * renderUIModals() shows a fresh QR code instead of the stale session.
+ *
+ * IMPORTANT: We clear the keyvaluestorage OBJECT STORE rather than
+ * deleting the database. indexedDB.deleteDatabase() is blocked while the
+ * WC SDK holds an open connection, so it silently fails.  Clearing the
+ * store directly works even with active connections.
  */
 function clearWalletConnectStorage() {
+  // localStorage
   try {
-    // localStorage keys
     for (const key of [...Object.keys(localStorage)]) {
       if (key.startsWith("wc@") || key.toLowerCase().includes("walletconnect")) {
         localStorage.removeItem(key);
@@ -65,11 +70,25 @@ function clearWalletConnectStorage() {
   } catch (e) {
     console.warn("[VerifyClient] Could not clear WC localStorage:", e);
   }
+
+  // IndexedDB — clear the keyvaluestorage store (don't delete the DB)
   try {
-    // IndexedDB databases used by WalletConnect v2 / SignClient
-    ["WALLET_CONNECT_V2_INDEXED_DB", "wc2", "walletconnect"].forEach((db) => {
-      try { indexedDB.deleteDatabase(db); } catch {}
-    });
+    const req = indexedDB.open("WALLET_CONNECT_V2_INDEXED_DB", 1);
+    req.onsuccess = (e: any) => {
+      try {
+        const db: IDBDatabase = e.target.result;
+        const tx = db.transaction("keyvaluestorage", "readwrite");
+        tx.objectStore("keyvaluestorage").clear();
+        tx.oncomplete = () =>
+          console.log("[VerifyClient] WC IndexedDB keyvaluestorage cleared ✓");
+        tx.onerror = () =>
+          console.warn("[VerifyClient] WC IDB clear tx error:", tx.error);
+      } catch (inner) {
+        console.warn("[VerifyClient] WC IDB clear inner error:", inner);
+      }
+    };
+    req.onerror = () =>
+      console.warn("[VerifyClient] WC IDB open error:", req.error);
   } catch (e) {
     console.warn("[VerifyClient] Could not clear WC IndexedDB:", e);
   }
