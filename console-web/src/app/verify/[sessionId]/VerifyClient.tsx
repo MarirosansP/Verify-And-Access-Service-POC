@@ -123,9 +123,13 @@ export default function VerifyClient({
       console.log("[VerifyClient] SDK event:", type, data);
 
       switch (type) {
+        // Returning-user flow: SDK emits "active_session" (not "session_approved")
+        // when the user clicks "Start private verification" on the returning-user modal.
+        // Treat it identically — same topic shape, same VPR send.
+        case "active_session":
         case "session_approved": {
           console.log(
-            "[VerifyClient] Wallet connected, creating VP request…"
+            "[VerifyClient] Wallet connected (event:", type, ") — creating VP request…"
           );
           setStatusMsg("Wallet connected! Creating verification request…");
 
