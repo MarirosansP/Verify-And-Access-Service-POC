@@ -18,7 +18,7 @@
  * CRITICAL: The SDK emits on "verification-web-ui-event" (NOT "@concordium/...")
  * CRITICAL: In dev (React Strict Mode + Next.js Script onReady), startVerification
  *           is called 4+ times creating duplicate SDK instances, each firing their
- *           own active_session event. Fix: module-level SDK singleton (_sdkBySession)
+ *           own active_session event. Fix: window-level SDK singleton (getSdkMap)
  *           ensures only ONE SDK instance (and thus ONE active_session) per session.
  * CRITICAL: Returning-user flow (active_session) can use a STALE WalletConnect
  *           session. If sendPresentationRequest times out, clear WC storage so
@@ -28,7 +28,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import Script from "next/script";
 
 /* ------------------------------------------------------------------ */
-/* Module-level SDK singleton                                         */
+/* Window-level SDK singleton (survives Next.js HMR re-evaluation)   */
 /* ------------------------------------------------------------------ */
 /**
  * Keeps at most ONE ConcordiumVerificationWebUI instance per session ID.
@@ -39,13 +39,22 @@ import Script from "next/script";
  * and calls renderUIModals(), which emits active_session — so we end up with
  * 4 competing sendPresentationRequest calls on the same WC topic.
  *
- * Storing the SDK here (outside React) means the second, third, fourth calls
- * to startVerification() reuse the existing instance instead of creating a new
- * one. renderUIModals() is only called once → only ONE active_session fires.
+ * Storing the SDK on `window` (not as a module-level variable) means it
+ * survives Next.js HMR re-evaluations — when the module file is re-evaluated,
+ * module-level `const` declarations are reset to their initial values, but
+ * `window` properties are never touched by HMR.
+ *
+ * The second, third, fourth calls to startVerification() reuse the existing
+ * instance instead of creating a new one. renderUIModals() is only called
+ * once → only ONE active_session fires.
  *
  * Deleted on retry (after timeout) so a fresh SDK can be created.
  */
-const _sdkBySession = new Map<string, any>();
+function getSdkMap(): Map<string, any> {
+  const w = window as any;
+  if (!w.__vaSdkBySession) w.__vaSdkBySession = new Map<string, any>();
+  return w.__vaSdkBySession as Map<string, any>;
+}
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
@@ -163,11 +172,11 @@ export default function VerifyClient({
     // If another mount already created an SDK for this session, reuse it.
     // renderUIModals() must NOT be called again — it would emit a duplicate
     // active_session event leading to competing sendPresentationRequest calls.
-    if (_sdkBySession.has(sessionId)) {
+    if (getSdkMap().has(sessionId)) {
       console.log(
         "[VerifyClient] SDK already initialised for session — reusing, skipping renderUIModals"
       );
-      sdkRef.current = _sdkBySession.get(sessionId);
+      sdkRef.current = getSdkMap().get(sessionId);
       // State may already be "wallet-flow" from the first mount; keep it.
       return;
     }
@@ -203,7 +212,7 @@ export default function VerifyClient({
 
       // Register in the singleton map BEFORE awaiting renderUIModals so
       // any concurrent startVerification calls see it immediately.
-      _sdkBySession.set(sessionId, sdk);
+      getSdkMap().set(sessionId, sdk);
       sdkRef.current = sdk;
 
       // This shows the QR code / WalletConnect modal.
@@ -217,7 +226,7 @@ export default function VerifyClient({
     } catch (err: any) {
       console.error("[VerifyClient] Start error:", err);
       startedRef.current = false; // allow retry
-      _sdkBySession.delete(sessionId); // allow fresh SDK on retry
+      getSdkMap().delete(sessionId); // allow fresh SDK on retry
       setState("failed");
       setError(err.message || "Failed to start verification");
       setStatusMsg("❌ Something went wrong.");
@@ -338,7 +347,7 @@ export default function VerifyClient({
                 "[VerifyClient] sendPresentationRequest timed out — clearing stale WC session"
               );
               clearWalletConnectStorage();
-              _sdkBySession.delete(sessionId);
+              getSdkMap().delete(sessionId);
               setState("failed");
               setError(
                 "Your wallet session has expired. Click 'Try Again' to reconnect with a new QR code."
@@ -484,7 +493,7 @@ export default function VerifyClient({
               setError(null);
               startedRef.current = false;
               clearVprSent(sessionId);       // allow re-send on retry
-              _sdkBySession.delete(sessionId); // allow fresh SDK on retry
+              getSdkMap().delete(sessionId); // allow fresh SDK on retry
               startVerification();
             }}
             style={styles.retryBtn}
