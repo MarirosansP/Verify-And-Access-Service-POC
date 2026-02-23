@@ -1,22 +1,22 @@
 "use client";
-
 /**
  * VerifyClient — uses @concordium/verification-web-ui SDK
  *
  * Flow:
- *   1. sdk.renderUIModals() → shows QR code / WalletConnect modal
- *   2. "verification-web-ui-event" type=session_approved → wallet connected
- *   3. sdk.sendPresentationRequest(vpData) → sends VP request to wallet
- *   4. "verification-web-ui-event" type=presentation_received → got proof
- *   5. Submit VP to backend for verification
+ *   1. SDK loads → auto-starts verification (no manual button click needed)
+ *   2. sdk.renderUIModals() → shows QR code / WalletConnect modal
+ *   3. "verification-web-ui-event" type=session_approved → wallet connected
+ *   4. sdk.sendPresentationRequest(vpData) → sends VP request to wallet
+ *   5. "verification-web-ui-event" type=presentation_received → got proof
+ *   6. Submit VP to backend for verification
  *
+ * CHANGE: Auto-starts verification on SDK load — no idle/button state.
  * CHANGE: Now accepts an optional vpRequest prop (pre-created at initiation).
- *         If available, step 3 uses it directly — no API call needed.
+ *         If available, step 4 uses it directly — no API call needed.
  *         Falls back to the create-vp-request API if vpRequest is null.
  *
  * CRITICAL: The SDK emits on "verification-web-ui-event" (NOT "@concordium/...")
  */
-
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Script from "next/script";
 
@@ -29,12 +29,11 @@ interface Props {
   siteName: string;
   siteUrl: string;
   callbackUrl: string;
-  vpRequest?: any | null; // ← NEW: pre-created VPR data from server
+  vpRequest?: any | null; // ← pre-created VPR data from server
 }
 
 type FlowState =
   | "loading-sdk"
-  | "idle"
   | "starting"
   | "wallet-flow"
   | "verifying"
@@ -50,7 +49,7 @@ export default function VerifyClient({
   siteName,
   siteUrl,
   callbackUrl,
-  vpRequest,          // ← NEW prop
+  vpRequest,
 }: Props) {
   const [state, setState] = useState<FlowState>("loading-sdk");
   const [statusMsg, setStatusMsg] = useState("Loading verification SDK…");
@@ -58,15 +57,64 @@ export default function VerifyClient({
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
 
   const sdkRef = useRef<any>(null);
-  const vpRequestRef = useRef<any>(vpRequest || null); // ← initialise from prop
+  const vpRequestRef = useRef<any>(vpRequest || null);
   const handledRef = useRef(false);
+  const startedRef = useRef(false); // prevent double-start
 
-  /* ---- SDK loaded callback ---- */
+  /* ---- Start the verification flow ---- */
+  const startVerification = useCallback(async () => {
+    if (startedRef.current) return; // guard against double invocation
+    startedRef.current = true;
+
+    setState("starting");
+    setStatusMsg("Initializing wallet connection…");
+    setError(null);
+    handledRef.current = false;
+
+    try {
+      const ConcordiumVerificationWebUI = (window as any)
+        .ConcordiumVerificationWebUI;
+
+      if (!ConcordiumVerificationWebUI) {
+        throw new Error("SDK not loaded — please refresh and try again");
+      }
+
+      const projectId =
+        process.env.NEXT_PUBLIC_WC_PROJECT_ID ||
+        "76324905a70fe5c388bab46d3e0564dc";
+
+      const sdk = new ConcordiumVerificationWebUI({
+        network: "mainnet",
+        projectId,
+        metadata: {
+          name: "Verify & Access",
+          description: `Age verification for ${siteName}`,
+          url: window.location.origin,
+          icons: [],
+        },
+      });
+      sdkRef.current = sdk;
+
+      // This shows the QR code / WalletConnect modal
+      // When user scans and approves, SDK emits "session_approved" event
+      await sdk.renderUIModals();
+
+      setState("wallet-flow");
+      setStatusMsg("Scan the QR code with Concordium ID…");
+    } catch (err: any) {
+      console.error("[VerifyClient] Start error:", err);
+      startedRef.current = false; // allow retry
+      setState("failed");
+      setError(err.message || "Failed to start verification");
+      setStatusMsg("❌ Something went wrong.");
+    }
+  }, [siteName]);
+
+  /* ---- SDK loaded → auto-start ---- */
   const onSdkReady = useCallback(() => {
-    console.log("[VerifyClient] SDK script loaded");
-    setState("idle");
-    setStatusMsg("Click below to start verification.");
-  }, []);
+    console.log("[VerifyClient] SDK script loaded, auto-starting…");
+    startVerification();
+  }, [startVerification]);
 
   /* ---- SDK event handler ---- */
   useEffect(() => {
@@ -84,7 +132,7 @@ export default function VerifyClient({
           try {
             let vpData: any;
 
-            // ── NEW: Use pre-created VPR if available ──
+            // ── Use pre-created VPR if available ──
             if (vpRequestRef.current) {
               console.log(
                 "[VerifyClient] Using pre-created VPR (skipping API call)"
@@ -175,15 +223,12 @@ export default function VerifyClient({
             );
 
             const result = await resp.json();
-
             if (result.verified) {
               setState("success");
               setStatusMsg("✅ Verification successful! Redirecting…");
-
               if (sdkRef.current?.showSuccessState) {
                 await sdkRef.current.showSuccessState();
               }
-
               const sep = callbackUrl.includes("?") ? "&" : "?";
               const redirect = `${callbackUrl}${sep}va_session=${sessionId}&va_status=verified`;
               setRedirectUrl(redirect);
@@ -207,10 +252,12 @@ export default function VerifyClient({
         case "session_disconnected": {
           console.log("[VerifyClient] Session disconnected");
           if (state !== "success") {
-            setState("idle");
+            startedRef.current = false; // allow restart
+            setState("failed");
             setStatusMsg(
               "Session disconnected. Click below to try again."
             );
+            setError("Session disconnected");
             handledRef.current = false;
           }
           break;
@@ -219,6 +266,7 @@ export default function VerifyClient({
         case "error": {
           console.error("[VerifyClient] SDK error:", data);
           if (state !== "success") {
+            startedRef.current = false; // allow retry
             setState("failed");
             setError(data?.message || "SDK error");
             setStatusMsg("❌ Something went wrong.");
@@ -229,56 +277,11 @@ export default function VerifyClient({
     };
 
     // CORRECT event name — the SDK dispatches "verification-web-ui-event"
-    // (NOT "@concordium/verification-web-ui-event")
     window.addEventListener("verification-web-ui-event", handler);
     return () => {
       window.removeEventListener("verification-web-ui-event", handler);
     };
   }, [sessionId, callbackUrl, state]);
-
-  /* ---- Start the verification flow ---- */
-  const startVerification = useCallback(async () => {
-    setState("starting");
-    setStatusMsg("Initializing wallet connection…");
-    setError(null);
-    handledRef.current = false;
-
-    try {
-      const ConcordiumVerificationWebUI = (window as any)
-        .ConcordiumVerificationWebUI;
-      if (!ConcordiumVerificationWebUI) {
-        throw new Error("SDK not loaded — please refresh and try again");
-      }
-
-      const projectId =
-        process.env.NEXT_PUBLIC_WC_PROJECT_ID ||
-        "76324905a70fe5c388bab46d3e0564dc";
-
-      const sdk = new ConcordiumVerificationWebUI({
-        network: "mainnet",
-        projectId,
-        metadata: {
-          name: "Verify & Access",
-          description: `Age verification for ${siteName}`,
-          url: window.location.origin,
-          icons: [],
-        },
-      });
-
-      sdkRef.current = sdk;
-
-      // This shows the QR code / WalletConnect modal
-      // When user scans and approves, SDK emits "session_approved" event
-      await sdk.renderUIModals();
-      setState("wallet-flow");
-      setStatusMsg("Scan the QR code with Concordium ID…");
-    } catch (err: any) {
-      console.error("[VerifyClient] Start error:", err);
-      setState("failed");
-      setError(err.message || "Failed to start verification");
-      setStatusMsg("❌ Something went wrong.");
-    }
-  }, [siteName]);
 
   /* ---- Render ---- */
   return (
@@ -306,13 +309,6 @@ export default function VerifyClient({
         <span style={styles.statusText}>{statusMsg}</span>
       </div>
 
-      {/* Start button — shown only when idle */}
-      {state === "idle" && (
-        <button onClick={startVerification} style={styles.startBtn}>
-          Start Private Verification →
-        </button>
-      )}
-
       {/* Error display with retry */}
       {error && (
         <div style={styles.errorBox}>
@@ -321,6 +317,7 @@ export default function VerifyClient({
           <button
             onClick={() => {
               setError(null);
+              startedRef.current = false;
               startVerification();
             }}
             style={styles.retryBtn}
@@ -398,17 +395,6 @@ const styles: Record<string, React.CSSProperties> = {
   spinner: {
     display: "inline-flex",
     color: "#2563eb",
-  },
-  startBtn: {
-    width: "100%",
-    padding: "0.9rem",
-    background: "#2563eb",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "1rem",
-    fontWeight: 600,
-    cursor: "pointer",
   },
   errorBox: {
     background: "#fef2f2",
