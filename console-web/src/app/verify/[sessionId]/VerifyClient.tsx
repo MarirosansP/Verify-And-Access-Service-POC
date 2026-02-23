@@ -3,15 +3,14 @@
 /**
  * VerifyClient — uses @concordium/verification-web-ui SDK
  *
- * The SDK is pre-bundled by esbuild into /build/verification-sdk.js
- * (bypassing Next.js webpack). It exposes ConcordiumVerificationWebUI
- * on `window` and handles all WalletConnect complexity.
+ * Flow:
+ *   1. sdk.renderUIModals()             → shows QR code / WalletConnect modal
+ *   2. "verification-web-ui-event" type=session_approved → wallet connected
+ *   3. sdk.sendPresentationRequest(vpData) → sends VP request to wallet
+ *   4. "verification-web-ui-event" type=presentation_received → got proof
+ *   5. Submit VP to backend for verification
  *
- * We use the event-driven API:
- *   1. sdk.renderUIModals()       → shows QR code / connect modal
- *   2. session_approved event     → wallet connected, send VP request
- *   3. presentation_received event→ got ZKP proof, submit to backend
- *   4. sdk.showSuccessState()     → show success in SDK UI
+ * CRITICAL: The SDK emits on "verification-web-ui-event" (NOT "@concordium/...")
  */
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
@@ -95,7 +94,11 @@ export default function VerifyClient({
 
             // Send the presentation request through the SDK's WalletConnect
             if (sdkRef.current?.sendPresentationRequest) {
+              console.log("[VerifyClient] Calling sendPresentationRequest…");
               await sdkRef.current.sendPresentationRequest(vpData);
+              console.log("[VerifyClient] sendPresentationRequest completed");
+            } else {
+              throw new Error("SDK sendPresentationRequest not available");
             }
           } catch (err: any) {
             console.error("[VerifyClient] VP request error:", err);
@@ -115,11 +118,19 @@ export default function VerifyClient({
           setStatusMsg("Verifying your proof…");
 
           try {
-            // Extract VP — SDK may wrap it differently
-            const vp =
-              data?.verifiablePresentation ||
-              data?.proof ||
-              data;
+            // Extract VP — SDK may wrap it in verifiablePresentationJson
+            let vp = data;
+            if (data?.verifiablePresentationJson) {
+              try {
+                vp = JSON.parse(data.verifiablePresentationJson);
+              } catch {
+                vp = data.verifiablePresentationJson;
+              }
+            } else if (data?.verifiablePresentation) {
+              vp = data.verifiablePresentation;
+            } else if (data?.proof) {
+              vp = data.proof;
+            }
 
             const resp = await fetch(
               `/api/worker/submit-vp/${sessionId}`,
@@ -139,7 +150,6 @@ export default function VerifyClient({
               setState("success");
               setStatusMsg("✅ Verification successful! Redirecting…");
 
-              // Show success state in SDK modal
               if (sdkRef.current?.showSuccessState) {
                 await sdkRef.current.showSuccessState();
               }
@@ -187,17 +197,12 @@ export default function VerifyClient({
       }
     };
 
-    // Listen for SDK events (documented event name)
-    window.addEventListener(
-      "@concordium/verification-web-ui-event",
-      handler
-    );
+    // CORRECT event name — the SDK dispatches "verification-web-ui-event"
+    // (NOT "@concordium/verification-web-ui-event")
+    window.addEventListener("verification-web-ui-event", handler);
 
     return () => {
-      window.removeEventListener(
-        "@concordium/verification-web-ui-event",
-        handler
-      );
+      window.removeEventListener("verification-web-ui-event", handler);
     };
   }, [sessionId, callbackUrl, state]);
 
@@ -234,6 +239,7 @@ export default function VerifyClient({
       sdkRef.current = sdk;
 
       // This shows the QR code / WalletConnect modal
+      // When user scans and approves, SDK emits "session_approved" event
       await sdk.renderUIModals();
 
       setState("wallet-flow");
