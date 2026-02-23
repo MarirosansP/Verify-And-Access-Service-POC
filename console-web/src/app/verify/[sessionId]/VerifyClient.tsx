@@ -16,20 +16,64 @@
  *         Falls back to the create-vp-request API if vpRequest is null.
  *
  * CRITICAL: The SDK emits on "verification-web-ui-event" (NOT "@concordium/...")
- * CRITICAL: SDK fires active_session / session_approved multiple times due to
- *           React Strict Mode double-mount. Use _vpSentForSession (module-level
- *           Set) to deduplicate — useRef values don't survive unmount/remount.
+ * CRITICAL: In dev (React Strict Mode + Next.js HMR), the component mounts
+ *           twice and module-level variables can be re-evaluated. Use
+ *           sessionStorage for the dedup guard — it survives all of that.
+ * CRITICAL: Returning-user flow (active_session) can use a STALE WalletConnect
+ *           session. If sendPresentationRequest times out, clear WC storage so
+ *           the next attempt shows a fresh QR code instead of looping forever.
  */
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Script from "next/script";
 
 /* ------------------------------------------------------------------ */
-/* Module-level deduplication guard                                   */
+/* Helpers                                                            */
 /* ------------------------------------------------------------------ */
-// This Set lives outside React so it survives Strict Mode's unmount/remount
-// cycle. Keyed by sessionId so different verify pages don't interfere.
-// Cleared on retry so the user can re-send after an error.
-const _vpSentForSession = new Set<string>();
+
+/**
+ * sessionStorage-based dedup guard.
+ * Survives React Strict Mode double-mount AND Next.js module re-evaluation
+ * (HMR), unlike a module-level variable.  Scoped per sessionId so different
+ * verify pages don't interfere with each other.
+ */
+function vprSentKey(sessionId: string) {
+  return `vpr_sent_${sessionId}`;
+}
+function markVprSent(sessionId: string) {
+  try { sessionStorage.setItem(vprSentKey(sessionId), "1"); } catch { /* SSR / private mode */ }
+}
+function isVprSent(sessionId: string): boolean {
+  try { return sessionStorage.getItem(vprSentKey(sessionId)) === "1"; } catch { return false; }
+}
+function clearVprSent(sessionId: string) {
+  try { sessionStorage.removeItem(vprSentKey(sessionId)); } catch {}
+}
+
+/**
+ * Wipe WalletConnect v2 state from localStorage + IndexedDB.
+ * Called after sendPresentationRequest times out so the next
+ * renderUIModals() shows a fresh QR code instead of the stale session.
+ */
+function clearWalletConnectStorage() {
+  try {
+    // localStorage keys
+    for (const key of [...Object.keys(localStorage)]) {
+      if (key.startsWith("wc@") || key.toLowerCase().includes("walletconnect")) {
+        localStorage.removeItem(key);
+      }
+    }
+  } catch (e) {
+    console.warn("[VerifyClient] Could not clear WC localStorage:", e);
+  }
+  try {
+    // IndexedDB databases used by WalletConnect v2 / SignClient
+    ["WALLET_CONNECT_V2_INDEXED_DB", "wc2", "walletconnect"].forEach((db) => {
+      try { indexedDB.deleteDatabase(db); } catch {}
+    });
+  } catch (e) {
+    console.warn("[VerifyClient] Could not clear WC IndexedDB:", e);
+  }
+}
 
 /* ------------------------------------------------------------------ */
 /* Types                                                              */
@@ -70,7 +114,7 @@ export default function VerifyClient({
   const sdkRef = useRef<any>(null);
   const vpRequestRef = useRef<any>(vpRequest || null);
   const handledRef = useRef(false);
-  const startedRef = useRef(false); // prevent double-start
+  const startedRef = useRef(false); // prevent double-start within one mount
 
   /* ---- Start the verification flow ---- */
   const startVerification = useCallback(async () => {
@@ -106,8 +150,10 @@ export default function VerifyClient({
       });
       sdkRef.current = sdk;
 
-      // This shows the QR code / WalletConnect modal
-      // When user scans and approves, SDK emits "session_approved" event
+      // This shows the QR code / WalletConnect modal.
+      // When user scans and approves, SDK emits "session_approved" event.
+      // For returning users (existing WC session), SDK emits "active_session"
+      // when they click "Start Private Verification".
       await sdk.renderUIModals();
 
       setState("wallet-flow");
@@ -139,20 +185,18 @@ export default function VerifyClient({
         // Treat it identically — same topic shape, same VPR send.
         case "active_session":
         case "session_approved": {
-          // ── Deduplication guard ──────────────────────────────────────────
-          // React Strict Mode double-mounts the component, which creates
-          // multiple SDK instances. Each instance fires this event independently,
-          // leading to 3 competing sendPresentationRequest calls on the same
-          // WalletConnect topic — and the wallet receives nothing.
-          // _vpSentForSession is module-level so it survives unmount/remount.
-          if (_vpSentForSession.has(sessionId)) {
+          // ── Deduplication guard (sessionStorage) ────────────────────────
+          // React Strict Mode mounts the component twice, and Next.js HMR can
+          // re-evaluate the module — both reset module-level variables.
+          // sessionStorage survives all of that within the same browser tab.
+          if (isVprSent(sessionId)) {
             console.log(
-              "[VerifyClient] Duplicate session event ignored — VPR already sent for session:",
+              "[VerifyClient] Duplicate session event ignored — VPR already sent for:",
               sessionId
             );
             return;
           }
-          _vpSentForSession.add(sessionId);
+          markVprSent(sessionId);
           // ────────────────────────────────────────────────────────────────
 
           console.log(
@@ -203,40 +247,50 @@ export default function VerifyClient({
                 "[VerifyClient] Calling sendPresentationRequest with topic:", data?.topic
               );
 
-              // Race against a 30 s timeout. If the wallet doesn't respond
-              // (e.g. stale / background-killed session) surface a retryable
-              // error instead of hanging indefinitely.
+              // Race against a 30 s timeout.
+              // If the wallet doesn't respond (stale/disconnected WC session),
+              // surface a retryable error. The catch block below will clear the
+              // stale WC session from storage so "Try Again" shows a fresh QR.
               const SEND_TIMEOUT_MS = 30_000;
               await Promise.race([
                 sdkRef.current.sendPresentationRequest(vpData, data?.topic),
                 new Promise<never>((_, reject) =>
                   setTimeout(
-                    () =>
-                      reject(
-                        new Error(
-                          "Wallet did not respond within 30 s — please try again"
-                        )
-                      ),
+                    () => reject(new Error("__timeout__")),
                     SEND_TIMEOUT_MS
                   )
                 ),
               ]);
 
-              console.log(
-                "[VerifyClient] sendPresentationRequest completed"
-              );
+              console.log("[VerifyClient] sendPresentationRequest completed");
             } else {
               throw new Error("SDK sendPresentationRequest not available");
             }
           } catch (err: any) {
-            // Clear the dedup entry so a manual retry can re-send the VPR.
-            _vpSentForSession.delete(sessionId);
-            console.error("[VerifyClient] VP request error:", err);
-            setState("failed");
-            setError(
-              err.message || "Failed to create verification request"
-            );
-            setStatusMsg("❌ Something went wrong.");
+            const isTimeout = err.message === "__timeout__";
+
+            // Always clear the dedup flag so a retry can re-send the VPR.
+            clearVprSent(sessionId);
+
+            if (isTimeout) {
+              // The WalletConnect session is stale (wallet didn't respond).
+              // Clear WC storage so the next renderUIModals() shows a fresh
+              // QR code instead of the dead "Start Private Verification" modal.
+              console.warn(
+                "[VerifyClient] sendPresentationRequest timed out — clearing stale WC session"
+              );
+              clearWalletConnectStorage();
+              setState("failed");
+              setError(
+                "Your wallet session has expired. Click 'Try Again' to reconnect with a new QR code."
+              );
+              setStatusMsg("❌ Wallet session expired.");
+            } else {
+              console.error("[VerifyClient] VP request error:", err);
+              setState("failed");
+              setError(err.message || "Failed to create verification request");
+              setStatusMsg("❌ Something went wrong.");
+            }
           }
           break;
         }
@@ -245,9 +299,7 @@ export default function VerifyClient({
           if (handledRef.current) return;
           handledRef.current = true;
 
-          console.log(
-            "[VerifyClient] Presentation received, verifying…"
-          );
+          console.log("[VerifyClient] Presentation received, verifying…");
           setState("verifying");
           setStatusMsg("Verifying your proof…");
 
@@ -310,9 +362,7 @@ export default function VerifyClient({
           if (state !== "success") {
             startedRef.current = false; // allow restart
             setState("failed");
-            setStatusMsg(
-              "Session disconnected. Click below to try again."
-            );
+            setStatusMsg("Session disconnected. Click below to try again.");
             setError("Session disconnected");
             handledRef.current = false;
           }
@@ -374,7 +424,7 @@ export default function VerifyClient({
             onClick={() => {
               setError(null);
               startedRef.current = false;
-              _vpSentForSession.delete(sessionId); // allow re-send on retry
+              clearVprSent(sessionId); // allow re-send on retry
               startVerification();
             }}
             style={styles.retryBtn}
