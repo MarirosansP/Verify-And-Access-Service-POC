@@ -16,9 +16,10 @@
  *         Falls back to the create-vp-request API if vpRequest is null.
  *
  * CRITICAL: The SDK emits on "verification-web-ui-event" (NOT "@concordium/...")
- * CRITICAL: In dev (React Strict Mode + Next.js HMR), the component mounts
- *           twice and module-level variables can be re-evaluated. Use
- *           sessionStorage for the dedup guard — it survives all of that.
+ * CRITICAL: In dev (React Strict Mode + Next.js Script onReady), startVerification
+ *           is called 4+ times creating duplicate SDK instances, each firing their
+ *           own active_session event. Fix: module-level SDK singleton (_sdkBySession)
+ *           ensures only ONE SDK instance (and thus ONE active_session) per session.
  * CRITICAL: Returning-user flow (active_session) can use a STALE WalletConnect
  *           session. If sendPresentationRequest times out, clear WC storage so
  *           the next attempt shows a fresh QR code instead of looping forever.
@@ -27,14 +28,32 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import Script from "next/script";
 
 /* ------------------------------------------------------------------ */
+/* Module-level SDK singleton                                         */
+/* ------------------------------------------------------------------ */
+/**
+ * Keeps at most ONE ConcordiumVerificationWebUI instance per session ID.
+ *
+ * Root cause of the duplicate-send bug: React Strict Mode mounts the component
+ * twice AND Next.js Script onReady fires on every mount, causing
+ * startVerification() to run 4+ times. Each call creates a new SDK instance
+ * and calls renderUIModals(), which emits active_session — so we end up with
+ * 4 competing sendPresentationRequest calls on the same WC topic.
+ *
+ * Storing the SDK here (outside React) means the second, third, fourth calls
+ * to startVerification() reuse the existing instance instead of creating a new
+ * one. renderUIModals() is only called once → only ONE active_session fires.
+ *
+ * Deleted on retry (after timeout) so a fresh SDK can be created.
+ */
+const _sdkBySession = new Map<string, any>();
+
+/* ------------------------------------------------------------------ */
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
 /**
- * sessionStorage-based dedup guard.
- * Survives React Strict Mode double-mount AND Next.js module re-evaluation
- * (HMR), unlike a module-level variable.  Scoped per sessionId so different
- * verify pages don't interfere with each other.
+ * sessionStorage-based dedup guard (belt-and-suspenders on top of the
+ * SDK singleton). Survives HMR module re-evaluation within the same tab.
  */
 function vprSentKey(sessionId: string) {
   return `vpr_sent_${sessionId}`;
@@ -137,8 +156,22 @@ export default function VerifyClient({
 
   /* ---- Start the verification flow ---- */
   const startVerification = useCallback(async () => {
-    if (startedRef.current) return; // guard against double invocation
+    if (startedRef.current) return; // guard against double invocation within one mount
     startedRef.current = true;
+
+    // ── SDK singleton check ────────────────────────────────────────────
+    // If another mount already created an SDK for this session, reuse it.
+    // renderUIModals() must NOT be called again — it would emit a duplicate
+    // active_session event leading to competing sendPresentationRequest calls.
+    if (_sdkBySession.has(sessionId)) {
+      console.log(
+        "[VerifyClient] SDK already initialised for session — reusing, skipping renderUIModals"
+      );
+      sdkRef.current = _sdkBySession.get(sessionId);
+      // State may already be "wallet-flow" from the first mount; keep it.
+      return;
+    }
+    // ──────────────────────────────────────────────────────────────────
 
     setState("starting");
     setStatusMsg("Initializing wallet connection…");
@@ -167,6 +200,10 @@ export default function VerifyClient({
           icons: [],
         },
       });
+
+      // Register in the singleton map BEFORE awaiting renderUIModals so
+      // any concurrent startVerification calls see it immediately.
+      _sdkBySession.set(sessionId, sdk);
       sdkRef.current = sdk;
 
       // This shows the QR code / WalletConnect modal.
@@ -180,11 +217,12 @@ export default function VerifyClient({
     } catch (err: any) {
       console.error("[VerifyClient] Start error:", err);
       startedRef.current = false; // allow retry
+      _sdkBySession.delete(sessionId); // allow fresh SDK on retry
       setState("failed");
       setError(err.message || "Failed to start verification");
       setStatusMsg("❌ Something went wrong.");
     }
-  }, [siteName]);
+  }, [sessionId, siteName]);
 
   /* ---- SDK loaded → auto-start ---- */
   const onSdkReady = useCallback(() => {
@@ -295,10 +333,12 @@ export default function VerifyClient({
               // The WalletConnect session is stale (wallet didn't respond).
               // Clear WC storage so the next renderUIModals() shows a fresh
               // QR code instead of the dead "Start Private Verification" modal.
+              // Also clear the SDK singleton so a fresh instance is created.
               console.warn(
                 "[VerifyClient] sendPresentationRequest timed out — clearing stale WC session"
               );
               clearWalletConnectStorage();
+              _sdkBySession.delete(sessionId);
               setState("failed");
               setError(
                 "Your wallet session has expired. Click 'Try Again' to reconnect with a new QR code."
@@ -443,7 +483,8 @@ export default function VerifyClient({
             onClick={() => {
               setError(null);
               startedRef.current = false;
-              clearVprSent(sessionId); // allow re-send on retry
+              clearVprSent(sessionId);       // allow re-send on retry
+              _sdkBySession.delete(sessionId); // allow fresh SDK on retry
               startVerification();
             }}
             style={styles.retryBtn}
