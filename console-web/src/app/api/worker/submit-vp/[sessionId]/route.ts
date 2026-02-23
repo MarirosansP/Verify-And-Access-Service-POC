@@ -52,18 +52,30 @@ export async function POST(
   }
 
   try {
+    // The credential-verifier expects `presentation` as a raw JSON object,
+    // NOT a JSON-encoded string. If we receive a string (e.g. the SDK returned
+    // verifiablePresentationJson and it wasn't parsed), parse it first.
+    let presentationValue: any = presentation;
+    if (typeof presentation === "string") {
+      try {
+        presentationValue = JSON.parse(presentation);
+      } catch {
+        // keep as-is if it can't be parsed
+      }
+    }
+
     // Build verify payload matching the credential-verifier format
     const verifyPayload = {
       auditRecordId: randomUUID(),
       publicInfo: {},
-      presentation:
-        typeof presentation === "string"
-          ? presentation
-          : JSON.stringify(presentation),
+      presentation: presentationValue,          // object, not a string
       verificationRequest: body?.verificationRequest || null,
     };
 
     console.log("[submit-vp] Verifying VP for session:", params.sessionId);
+    console.log("[submit-vp] presentation type:", typeof presentationValue);
+    console.log("[submit-vp] presentation keys:", presentationValue && typeof presentationValue === "object" ? Object.keys(presentationValue) : "n/a");
+    console.log("[submit-vp] verifyPayload (truncated):", JSON.stringify(verifyPayload)?.slice(0, 500));
 
     const resp = await fetch(
       `${GATEWAY_URL}/v1/verifiable-presentations/verify`,
