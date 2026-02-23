@@ -162,12 +162,16 @@ export default function VerifyClient({
             console.log("[VerifyClient] VP request ready:", vpData);
             setStatusMsg("Check your Concordium ID app to approve…");
 
-            // Send the presentation request through the SDK's WalletConnect
+            // Send the presentation request through the SDK's WalletConnect.
+            // Pass data.topic explicitly — the outer ConcordiumVerificationWebUI
+            // instance never auto-populates this.currentSession, so without the
+            // explicit topic sendPresentationRequest throws
+            // "No active WalletConnect session. Please connect first."
             if (sdkRef.current?.sendPresentationRequest) {
               console.log(
-                "[VerifyClient] Calling sendPresentationRequest…"
+                "[VerifyClient] Calling sendPresentationRequest with topic:", data?.topic
               );
-              await sdkRef.current.sendPresentationRequest(vpData);
+              await sdkRef.current.sendPresentationRequest(vpData, data?.topic);
               console.log(
                 "[VerifyClient] sendPresentationRequest completed"
               );
