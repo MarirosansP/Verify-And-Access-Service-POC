@@ -8,26 +8,27 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  name         String?
-  passwordHash String
-  createdAt    DateTime  @default(now())
-  apiKeys      ApiKey[]
-  usageEvents  UsageEvent[]
-  workerKeys   WorkerKey[]
+  id                String             @id @default(cuid())
+  email             String             @unique
+  name              String?
+  passwordHash      String
+  createdAt         DateTime           @default(now())
+  apiKeys           ApiKey[]
+  usageEvents       UsageEvent[]
+  workerKeys        WorkerKey[]
+  workerUsageEvents WorkerUsageEvent[]
 }
 
 model ApiKey {
-  id         String       @id @default(cuid())
-  userId     String
-  name       String
-  prefix     String       @unique
-  keyHash    String
-  status     String       @default("active") // active|paused|revoked
-  createdAt  DateTime     @default(now())
-  lastUsedAt DateTime?
-  user       User         @relation(fields: [userId], references: [id])
+  id          String       @id @default(cuid())
+  userId      String
+  name        String
+  prefix      String       @unique
+  keyHash     String
+  status      String       @default("active") // active|paused|revoked
+  createdAt   DateTime     @default(now())
+  lastUsedAt  DateTime?
+  user        User         @relation(fields: [userId], references: [id])
   usageEvents UsageEvent[]
 }
 
@@ -45,14 +46,27 @@ model UsageEvent {
 }
 
 model WorkerKey {
-  id           String   @id @default(cuid())
-  userId       String
-  keyHash      String   @unique
-  siteName     String
-  siteUrl      String
-  callbackPath String   @default("/")
-  status       String   @default("active") // active|paused|revoked
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id])
+  id                String             @id @default(cuid())
+  userId            String
+  keyHash           String             @unique
+  siteName          String
+  siteUrl           String
+  callbackPath      String             @default("/")
+  status            String             @default("active") // active|paused|revoked
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  user              User               @relation(fields: [userId], references: [id])
+  workerUsageEvents WorkerUsageEvent[]
+}
+
+/// Tracks each call to /api/worker/initiate (one per verification session started).
+/// Used for per-key usage stats and hourly quota enforcement.
+model WorkerUsageEvent {
+  id          String    @id @default(cuid())
+  userId      String
+  workerKeyId String
+  ts          DateTime  @default(now())
+  sessionId   String?
+  user        User      @relation(fields: [userId], references: [id])
+  workerKey   WorkerKey @relation(fields: [workerKeyId], references: [id])
 }

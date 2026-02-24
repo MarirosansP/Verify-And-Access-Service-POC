@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { Button, Card, Input, Small } from "../ui";
 
+/* ── Types ── */
 type ApiKeyRow = {
   id: string;
   name: string;
@@ -20,7 +21,6 @@ type WorkerKeyRow = {
   callbackPath: string;
   status: string;
   createdAt: string;
-  updatedAt: string;
 };
 
 type UsageRow = {
@@ -29,6 +29,142 @@ type UsageRow = {
   _count: { _all: number };
 };
 
+type AnyKeyStats = {
+  quotaUsed: number;
+  quotaLimit: number;
+  dailyRows: { date: string; count: number }[];
+  endpointRows?: { key: string; count: number }[];  // API keys only
+  totalCalls: number;
+};
+
+/* ── Per-key stats panel ── */
+function StatsPanel({ data }: { data: AnyKeyStats | "loading" | undefined }) {
+  if (data === undefined || data === "loading") {
+    return (
+      <div style={{
+        background: "#0D1825", borderTop: "1px solid rgba(255,255,255,0.06)",
+        padding: "14px 18px", color: "#9FB2D3", fontSize: 13,
+      }}>
+        Loading stats…
+      </div>
+    );
+  }
+
+  const quotaPct = data.quotaLimit > 0
+    ? Math.min(100, Math.round((data.quotaUsed / data.quotaLimit) * 100))
+    : 0;
+  const barColor = quotaPct >= 100 ? "#ef4444" : quotaPct >= 80 ? "#f59e0b" : "#28C76F";
+  const maxDay = Math.max(...data.dailyRows.map(r => r.count), 1);
+
+  return (
+    <div style={{
+      background: "#0D1825",
+      borderTop: "1px solid rgba(255,255,255,0.06)",
+      padding: "16px 18px",
+      display: "grid",
+      gap: 16,
+    }}>
+
+      {/* Quota bar */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#9FB2D3", textTransform: "uppercase", letterSpacing: "0.6px" }}>
+            Hourly Quota
+          </span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: barColor }}>
+            {data.quotaUsed} / {data.quotaLimit}
+          </span>
+        </div>
+        <div style={{ height: 5, background: "rgba(255,255,255,0.08)", borderRadius: 999 }}>
+          <div style={{
+            height: 5, borderRadius: 999, background: barColor,
+            width: `${quotaPct}%`, transition: "width 0.4s ease",
+          }} />
+        </div>
+        {quotaPct >= 100 && (
+          <div style={{ marginTop: 5, fontSize: 11, color: "#ef4444" }}>
+            Quota reached — requests returning 429
+          </div>
+        )}
+      </div>
+
+      {/* Daily bar chart */}
+      <div>
+        <div style={{
+          fontSize: 11, fontWeight: 600, color: "#9FB2D3",
+          textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8,
+        }}>
+          Calls — last 14 days
+        </div>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 3, height: 52 }}>
+          {data.dailyRows.map(r => {
+            const h = r.count > 0 ? Math.max((r.count / maxDay) * 46, 3) : 0;
+            return (
+              <div
+                key={r.date}
+                title={`${r.date}: ${r.count} call${r.count !== 1 ? "s" : ""}`}
+                style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}
+              >
+                <div style={{
+                  height: h,
+                  background: "#28C76F",
+                  opacity: 0.7,
+                  borderRadius: "2px 2px 0 0",
+                }} />
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
+          <span style={{ fontSize: 10, color: "#9FB2D3" }}>{data.dailyRows[0]?.date?.slice(5)}</span>
+          <span style={{ fontSize: 10, color: "#9FB2D3" }}>{data.dailyRows[data.dailyRows.length - 1]?.date?.slice(5)}</span>
+        </div>
+      </div>
+
+      {/* Bottom: total + endpoint breakdown */}
+      <div style={{ display: "flex", gap: 28, flexWrap: "wrap", alignItems: "flex-start" }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "#9FB2D3", textTransform: "uppercase", letterSpacing: "0.6px" }}>
+            Total (14d)
+          </div>
+          <div style={{ fontSize: 24, fontWeight: 700, color: "#e7edf7", marginTop: 2 }}>
+            {data.totalCalls}
+          </div>
+        </div>
+
+        {data.endpointRows && data.endpointRows.length > 0 && (
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{
+              fontSize: 11, fontWeight: 600, color: "#9FB2D3",
+              textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 6,
+            }}>
+              Endpoints
+            </div>
+            <div style={{ display: "grid", gap: 3 }}>
+              {data.endpointRows.slice(0, 6).map((r, i) => {
+                // key is like "/v1/verify (200)"
+                const match = r.key.match(/\((\d+)\)$/);
+                const code = match ? parseInt(match[1]) : 0;
+                const codeColor = code < 300 ? "#28C76F" : code < 500 ? "#f59e0b" : "#ef4444";
+                return (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                    <span style={{ color: "#9FB2D3", fontFamily: "monospace", fontSize: 11 }}>
+                      {r.key.replace(/\s*\(\d+\)$/, "")}
+                      {" "}<span style={{ color: codeColor }}>({code})</span>
+                    </span>
+                    <span style={{ color: "#e7edf7", fontWeight: 600, marginLeft: 12 }}>{r.count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Dashboard ── */
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const [keys, setKeys] = useState<ApiKeyRow[]>([]);
@@ -38,6 +174,10 @@ export default function Dashboard() {
   const [usage, setUsage] = useState<UsageRow[]>([]);
   const [msg, setMsg] = useState<string | null>(null);
   const [wkMsg, setWkMsg] = useState<string | null>(null);
+
+  // Per-key stats
+  const [openStatsId, setOpenStatsId] = useState<string | null>(null);
+  const [keyStats, setKeyStats] = useState<Record<string, AnyKeyStats | "loading">>({});
 
   async function load() {
     const k = await fetch("/api/keys").then(r => r.json());
@@ -52,13 +192,30 @@ export default function Dashboard() {
     if (status === "authenticated") load();
   }, [status]);
 
+  async function toggleStats(id: string, apiPath: string) {
+    if (openStatsId === id) {
+      setOpenStatsId(null);
+      return;
+    }
+    setOpenStatsId(id);
+    if (!keyStats[id]) {
+      setKeyStats(prev => ({ ...prev, [id]: "loading" }));
+      try {
+        const data = await fetch(apiPath).then(r => r.json());
+        setKeyStats(prev => ({ ...prev, [id]: data }));
+      } catch {
+        setKeyStats(prev => { const n = { ...prev }; delete n[id]; return n; });
+      }
+    }
+  }
+
   async function createKey() {
     setMsg("Creating key…");
     setApiKeyOnce(null);
     const r = await fetch("/api/keys", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name: newKeyName })
+      body: JSON.stringify({ name: newKeyName }),
     });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { setMsg(`Create failed: ${j.error || r.status}`); return; }
@@ -68,11 +225,11 @@ export default function Dashboard() {
   }
 
   async function setApiKeyStatus(keyId: string, newStatus: "active" | "paused" | "revoked") {
-    setMsg(`Updating key…`);
+    setMsg("Updating key…");
     const r = await fetch(`/api/keys/${keyId}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ status: newStatus })
+      body: JSON.stringify({ status: newStatus }),
     });
     if (!r.ok) {
       const j = await r.json().catch(() => ({}));
@@ -83,13 +240,12 @@ export default function Dashboard() {
     await load();
   }
 
-  /* ---- Worker key actions ---- */
   async function setWorkerKeyStatus(keyId: string, newStatus: "active" | "paused" | "revoked") {
     setWkMsg("Updating…");
     const r = await fetch(`/api/worker-keys/${keyId}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ status: newStatus })
+      body: JSON.stringify({ status: newStatus }),
     });
     if (!r.ok) {
       const j = await r.json().catch(() => ({}));
@@ -133,46 +289,80 @@ export default function Dashboard() {
   }
 
   const statusColor = (s: string) =>
-    s === "active" ? "#34d399" : s === "paused" ? "#fbbf24" : "#f87171";
+    s === "active" ? "#28C76F" : s === "paused" ? "#f59e0b" : "#f87171";
+
+  const actionBtn = (color = "#9FB2D3"): React.CSSProperties => ({
+    background: "transparent",
+    border: "1px solid rgba(255,255,255,0.12)",
+    color,
+    padding: "4px 10px",
+    borderRadius: 6,
+    cursor: "pointer",
+    fontSize: 12,
+    fontFamily: "inherit",
+    fontWeight: 500,
+  });
 
   return (
-    <div style={{ display: "grid", gap: 14 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <h1 style={{ margin: 0 }}>Dashboard</h1>
+    <div style={{ display: "grid", gap: 16 }}>
+
+      {/* ── Header ── */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, letterSpacing: "-0.4px" }}>
+            Dashboard
+          </h1>
+          <Small>Manage your API keys and CloudFlare Worker keys</Small>
+        </div>
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
-          style={{ background: "transparent", color: "#9fb2d3", border: "none", cursor: "pointer" }}>
+          style={{
+            background: "transparent", color: "#9FB2D3", border: "none",
+            cursor: "pointer", fontSize: 13, fontFamily: "inherit",
+          }}
+        >
           Sign out
         </button>
       </div>
 
+      {/* ── Gateway URL ── */}
       <Card title="Gateway URL">
         <Small>Use this base URL from merchants / plugins:</Small>
         <div style={{ marginTop: 8 }}>
           <code style={{
-            background: "#0b0f17", padding: "6px 8px", borderRadius: 10,
-            display: "inline-block", border: "1px solid rgba(255,255,255,0.08)"
+            background: "#0D1825", padding: "7px 10px", borderRadius: 8,
+            display: "inline-block", border: "1px solid rgba(255,255,255,0.08)", fontSize: 13,
           }}>
             http://localhost:3002/v1
           </code>
         </div>
       </Card>
 
-      {/* ─── API Keys ─────────────────────────────────────────── */}
-      <Card title="Create API key">
+      {/* ── Create API key ── */}
+      <Card title="Create API Key">
         <div style={{ display: "grid", gap: 10 }}>
           <div>
             <Small>Key name</Small>
-            <Input value={newKeyName} onChange={(e: any) => setNewKeyName(e.target.value)} />
+            <div style={{ marginTop: 4 }}>
+              <Input value={newKeyName} onChange={(e: any) => setNewKeyName(e.target.value)} />
+            </div>
           </div>
-          <Button onClick={createKey}>Create key</Button>
+          <div>
+            <Button onClick={createKey}>Create key</Button>
+          </div>
           {apiKeyOnce && (
-            <div>
-              <Small>Copy this now (shown once):</Small>
+            <div style={{
+              background: "#0D1825",
+              border: "1px solid rgba(40,199,111,0.25)",
+              borderRadius: 10,
+              padding: 14,
+            }}>
+              <Small>Copy this now — shown once only:</Small>
               <div style={{ marginTop: 6 }}>
                 <code style={{
-                  wordBreak: "break-all", background: "#0b0f17", padding: "10px 12px",
-                  borderRadius: 10, display: "block", border: "1px solid rgba(255,255,255,0.08)"
+                  wordBreak: "break-all", background: "#090E1A", padding: "10px 12px",
+                  borderRadius: 8, display: "block",
+                  border: "1px solid rgba(40,199,111,0.2)", fontSize: 13, color: "#28C76F",
                 }}>
                   {apiKeyOnce}
                 </code>
@@ -183,106 +373,166 @@ export default function Dashboard() {
         </div>
       </Card>
 
-      <Card title="Your API keys">
-        <div style={{ display: "grid", gap: 10 }}>
-          {keys.length === 0 && <Small>No keys yet.</Small>}
+      {/* ── API Keys list ── */}
+      <Card title="Your API Keys">
+        <div style={{ display: "grid", gap: 8 }}>
+          {keys.length === 0 && <Small>No API keys yet. Create one above.</Small>}
           {keys.map(k => (
             <div key={k.id} style={{
-              border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12,
-              padding: 12, background: "#0b0f17"
+              borderRadius: 10,
+              border: "1px solid rgba(255,255,255,0.08)",
+              overflow: "hidden",
             }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+              {/* Key row header */}
+              <div style={{
+                padding: "12px 14px", background: "#0D1825",
+                display: "flex", justifyContent: "space-between",
+                alignItems: "center", gap: 10, flexWrap: "wrap",
+              }}>
                 <div>
-                  <div style={{ fontWeight: 700 }}>{k.name}</div>
-                  <Small>Prefix: <code>{k.prefix}</code> • Status: <b>{k.status}</b></Small>
-                  <Small>Last used: {k.lastUsedAt ? new Date(k.lastUsedAt).toLocaleString() : "never"}</Small>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{k.name}</div>
+                  <div style={{ fontSize: 12, color: "#9FB2D3", marginTop: 3 }}>
+                    <code style={{ color: "#9FB2D3" }}>{k.prefix}…</code>
+                    {" · "}
+                    <span style={{ color: statusColor(k.status) }}>●</span>
+                    {" "}
+                    <b style={{ color: statusColor(k.status) }}>{k.status}</b>
+                    {" · last used: "}
+                    {k.lastUsedAt ? new Date(k.lastUsedAt).toLocaleString() : "never"}
+                  </div>
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => setApiKeyStatus(k.id, "active")} disabled={k.status === "active"}>Activate</button>
-                  <button onClick={() => setApiKeyStatus(k.id, "paused")} disabled={k.status === "paused"}>Pause</button>
-                  <button onClick={() => setApiKeyStatus(k.id, "revoked")} disabled={k.status === "revoked"}>Revoke</button>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => toggleStats(k.id, `/api/keys/${k.id}/usage?days=14`)}
+                    style={{
+                      ...actionBtn(openStatsId === k.id ? "#28C76F" : "#9FB2D3"),
+                      ...(openStatsId === k.id ? { borderColor: "rgba(40,199,111,0.4)" } : {}),
+                    }}
+                  >
+                    {openStatsId === k.id ? "▲ Stats" : "▼ Stats"}
+                  </button>
+                  <button
+                    onClick={() => setApiKeyStatus(k.id, "active")}
+                    disabled={k.status === "active"}
+                    style={actionBtn()}
+                  >Activate</button>
+                  <button
+                    onClick={() => setApiKeyStatus(k.id, "paused")}
+                    disabled={k.status === "paused"}
+                    style={actionBtn()}
+                  >Pause</button>
+                  <button
+                    onClick={() => setApiKeyStatus(k.id, "revoked")}
+                    disabled={k.status === "revoked"}
+                    style={actionBtn("#f87171")}
+                  >Revoke</button>
                 </div>
               </div>
+              {/* Expandable stats panel */}
+              {openStatsId === k.id && (
+                <StatsPanel data={keyStats[k.id]} />
+              )}
             </div>
           ))}
         </div>
       </Card>
 
-      {/* ─── Worker Keys ──────────────────────────────────────── */}
+      {/* ── CloudFlare Worker Keys ── */}
       <Card title="CloudFlare Worker Keys">
-        <div style={{ display: "grid", gap: 10 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "grid", gap: 8 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
             <Small>Integrate Verify &amp; Access into any CloudFlare-protected site.</Small>
             <a
               href="/dashboard/worker-keys"
               style={{
-                display: "inline-block", padding: "6px 14px",
-                background: "#0891b2", color: "#fff", borderRadius: 8,
-                textDecoration: "none", fontWeight: 600, fontSize: 14,
+                display: "inline-block", padding: "7px 14px",
+                background: "#28C76F", color: "#fff", borderRadius: 8,
+                textDecoration: "none", fontWeight: 600, fontSize: 13,
                 whiteSpace: "nowrap",
-              }}>
+              }}
+            >
               + Create Worker Key
             </a>
           </div>
 
           {wkMsg && <Small>{wkMsg}</Small>}
-
           {workerKeys.length === 0 && <Small>No worker keys yet.</Small>}
 
           {workerKeys.map(wk => (
             <div key={wk.id} style={{
-              border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12,
-              padding: 12, background: "#0b0f17"
+              borderRadius: 10,
+              border: "1px solid rgba(255,255,255,0.08)",
+              overflow: "hidden",
             }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+              {/* Worker key row header */}
+              <div style={{
+                padding: "12px 14px", background: "#0D1825",
+                display: "flex", justifyContent: "space-between",
+                alignItems: "center", gap: 10, flexWrap: "wrap",
+              }}>
                 <div>
-                  <div style={{ fontWeight: 700 }}>{wk.siteName}</div>
-                  <Small>
-                    URL: <code>{wk.siteUrl}</code> •
-                    Status: <b style={{ color: statusColor(wk.status) }}>{wk.status}</b>
-                  </Small>
-                  <Small>
-                    Callback: <code>{wk.callbackPath}</code> •
-                    Created: {new Date(wk.createdAt).toLocaleDateString()}
-                  </Small>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{wk.siteName}</div>
+                  <div style={{ fontSize: 12, color: "#9FB2D3", marginTop: 3 }}>
+                    <code style={{ color: "#9FB2D3" }}>{wk.siteUrl}</code>
+                    {" · "}
+                    <span style={{ color: statusColor(wk.status) }}>●</span>
+                    {" "}
+                    <b style={{ color: statusColor(wk.status) }}>{wk.status}</b>
+                    {" · callback: "}
+                    <code style={{ color: "#9FB2D3" }}>{wk.callbackPath}</code>
+                  </div>
                 </div>
-                <div style={{ display: "flex", gap: 6, alignItems: "flex-start", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => toggleStats(wk.id, `/api/worker-keys/${wk.id}/usage?days=14`)}
+                    style={{
+                      ...actionBtn(openStatsId === wk.id ? "#28C76F" : "#9FB2D3"),
+                      ...(openStatsId === wk.id ? { borderColor: "rgba(40,199,111,0.4)" } : {}),
+                    }}
+                  >
+                    {openStatsId === wk.id ? "▲ Stats" : "▼ Stats"}
+                  </button>
                   {wk.status !== "active" && wk.status !== "revoked" && (
-                    <button onClick={() => setWorkerKeyStatus(wk.id, "active")}>Activate</button>
+                    <button onClick={() => setWorkerKeyStatus(wk.id, "active")} style={actionBtn()}>Activate</button>
                   )}
                   {wk.status === "active" && (
-                    <button onClick={() => setWorkerKeyStatus(wk.id, "paused")}>Pause</button>
+                    <button onClick={() => setWorkerKeyStatus(wk.id, "paused")} style={actionBtn()}>Pause</button>
                   )}
                   {wk.status !== "revoked" && (
-                    <button onClick={() => setWorkerKeyStatus(wk.id, "revoked")}>Revoke</button>
+                    <button onClick={() => setWorkerKeyStatus(wk.id, "revoked")} style={actionBtn("#f87171")}>Revoke</button>
                   )}
-                  <button
-                    onClick={() => deleteWorkerKey(wk.id)}
-                    style={{ color: "#f87171" }}>
-                    Delete
-                  </button>
+                  <button onClick={() => deleteWorkerKey(wk.id)} style={actionBtn("#f87171")}>Delete</button>
                 </div>
               </div>
+              {/* Expandable stats panel */}
+              {openStatsId === wk.id && (
+                <StatsPanel data={keyStats[wk.id]} />
+              )}
             </div>
           ))}
         </div>
       </Card>
 
-      {/* ─── Usage ────────────────────────────────────────────── */}
-      <Card title="Usage (last 14 days)">
+      {/* ── Overall Usage ── */}
+      <Card title="Overall Usage — last 14 days">
         {Object.keys(usageSummary).length === 0 ? (
-          <Small>No usage recorded yet.</Small>
+          <Small>No API gateway usage recorded yet.</Small>
         ) : (
-          <div style={{ display: "grid", gap: 6 }}>
+          <div style={{ display: "grid", gap: 5 }}>
             {Object.entries(usageSummary).map(([k, v]) => (
-              <div key={k} style={{ display: "flex", justifyContent: "space-between" }}>
+              <div key={k} style={{
+                display: "flex", justifyContent: "space-between",
+                paddingBottom: 5,
+                borderBottom: "1px solid rgba(255,255,255,0.04)",
+              }}>
                 <Small>{k}</Small>
-                <Small><b>{v}</b></Small>
+                <b style={{ fontSize: 13, color: "#e7edf7" }}>{v}</b>
               </div>
             ))}
           </div>
         )}
       </Card>
+
     </div>
   );
 }

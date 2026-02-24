@@ -77,6 +77,14 @@ async function apiKeyGuard(req, res, next) {
   if (info.status && info.status !== "active") {
     return res.status(403).json({ error: "api_key_not_active", status: info.status });
   }
+  if (info.quotaExceeded) {
+    return res.status(429).json({
+      error: "quota_exceeded",
+      message: `Hourly limit of ${info.quotaLimit} calls reached. Resets on the next hour.`,
+      quotaUsed: info.quotaUsed,
+      quotaLimit: info.quotaLimit,
+    });
+  }
 
   req.apiAuth = info;
   next();
