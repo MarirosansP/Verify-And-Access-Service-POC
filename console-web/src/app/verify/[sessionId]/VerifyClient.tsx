@@ -196,6 +196,25 @@ export default function VerifyClient({
     }
     // ──────────────────────────────────────────────────────────────────
 
+    // Prune SDK instances from any previous sessions that lingered through
+    // Next.js SPA navigation (window persists across soft-route changes).
+    // Two coexisting SignClient instances on the same WC topic compete for
+    // relay messages, causing sendPresentationRequest to time out on the
+    // returning-user flow.
+    //
+    // We only remove the map references (no sdk.disconnect()) so that the
+    // WC session data in IDB/localStorage is preserved for the returning-user
+    // "Start Private Verification" flow.
+    //
+    // Safe for concurrent verifications: different browser tabs each have
+    // their own window object — no cross-tab interference.
+    for (const [id] of [...getSdkMap()]) {
+      if (id !== sessionId) {
+        console.log("[VerifyClient] Pruning stale SDK for previous session:", id);
+        getSdkMap().delete(id);
+      }
+    }
+
     setState("starting");
     setStatusMsg("Initializing wallet connection…");
     setError(null);
@@ -424,6 +443,12 @@ export default function VerifyClient({
               if (sdkRef.current?.showSuccessState) {
                 await sdkRef.current.showSuccessState();
               }
+              // The Concordium ID app closes its WC session after each completed
+              // verification. Clear the browser's stale WC session data so the
+              // NEXT verify page shows a fresh QR code rather than "Start Private
+              // Verification" (which would immediately timeout on a dead session).
+              clearWalletConnectStorage();
+              getSdkMap().delete(sessionId);
               const sep = callbackUrl.includes("?") ? "&" : "?";
               const redirect = `${callbackUrl}${sep}va_session=${sessionId}&va_status=verified`;
               setRedirectUrl(redirect);
