@@ -61,20 +61,34 @@ function getSdkMap(): Map<string, any> {
 /* ------------------------------------------------------------------ */
 
 /**
- * sessionStorage-based dedup guard (belt-and-suspenders on top of the
- * SDK singleton). Survives HMR module re-evaluation within the same tab.
+ * Window-based dedup guard — prevents duplicate sendPresentationRequest calls.
+ *
+ * WHY window (not sessionStorage):
+ *   sessionStorage.setItem can silently fail (storage quota, private mode,
+ *   browser quirks). A silent failure means isVprSent() returns false for
+ *   the second event and the send runs twice.
+ *   window properties are always synchronous, never throw, and survive
+ *   HMR re-evaluation (like getSdkMap).
+ *
+ * WHY we do NOT clear in the catch block:
+ *   If sendPresentationRequest throws (stale session), clearVprSent in the
+ *   catch would unset the flag. Then setState("failed") triggers a useEffect
+ *   re-run (state dep), creating a fresh listener. If the SDK fires
+ *   active_session again internally, the fresh listener would see the flag
+ *   as unset and make a second attempt. Instead we only clear on explicit
+ *   "Try Again" — the user's intentional retry.
  */
-function vprSentKey(sessionId: string) {
-  return `vpr_sent_${sessionId}`;
-}
-function markVprSent(sessionId: string) {
-  try { sessionStorage.setItem(vprSentKey(sessionId), "1"); } catch { /* SSR / private mode */ }
+function markVprSent(sessionId: string): void {
+  const w = window as any;
+  if (!w.__vaVprSent) w.__vaVprSent = {};
+  w.__vaVprSent[sessionId] = true;
 }
 function isVprSent(sessionId: string): boolean {
-  try { return sessionStorage.getItem(vprSentKey(sessionId)) === "1"; } catch { return false; }
+  return !!((window as any).__vaVprSent?.[sessionId]);
 }
-function clearVprSent(sessionId: string) {
-  try { sessionStorage.removeItem(vprSentKey(sessionId)); } catch {}
+function clearVprSent(sessionId: string): void {
+  const w = window as any;
+  if (w.__vaVprSent) delete w.__vaVprSent[sessionId];
 }
 
 /**
@@ -251,10 +265,12 @@ export default function VerifyClient({
         // Treat it identically — same topic shape, same VPR send.
         case "active_session":
         case "session_approved": {
-          // ── Deduplication guard (sessionStorage) ────────────────────────
-          // React Strict Mode mounts the component twice, and Next.js HMR can
-          // re-evaluate the module — both reset module-level variables.
-          // sessionStorage survives all of that within the same browser tab.
+          // ── Deduplication guard (window-based) ──────────────────────────
+          // Prevents duplicate sendPresentationRequest calls from:
+          //   • React Strict Mode double-mount (2 event listeners briefly active)
+          //   • SDK firing active_session twice (internal reconnect after failure)
+          //   • useEffect re-runs due to state changes recreating the listener
+          // Using window (not sessionStorage) — see markVprSent comment above.
           if (isVprSent(sessionId)) {
             console.log(
               "[VerifyClient] Duplicate session event ignored — VPR already sent for:",
@@ -335,8 +351,11 @@ export default function VerifyClient({
           } catch (err: any) {
             const isTimeout = err.message === "__timeout__";
 
-            // Always clear the dedup flag so a retry can re-send the VPR.
-            clearVprSent(sessionId);
+            // NOTE: We do NOT call clearVprSent here.
+            // Clearing the flag in the catch would allow the SDK's internal
+            // active_session retry (fired after a failed sendPresentationRequest)
+            // to bypass the dedup guard and make a second attempt.
+            // The flag is only cleared when the user explicitly clicks "Try Again".
 
             if (isTimeout) {
               // The WalletConnect session is stale (wallet didn't respond).
