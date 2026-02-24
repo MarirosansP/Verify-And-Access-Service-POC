@@ -92,9 +92,22 @@ function clearVprSent(sessionId: string): void {
 }
 
 /**
- * Wipe WalletConnect v2 state from localStorage + IndexedDB.
- * Called after sendPresentationRequest times out so the next
- * renderUIModals() shows a fresh QR code instead of the stale session.
+ * Wipe WalletConnect / Concordium SDK state from localStorage + IndexedDB.
+ * Called after sendPresentationRequest times out OR after a successful
+ * verification, so the next renderUIModals() shows a fresh QR code instead
+ * of the stale "Start Private Verification" modal.
+ *
+ * WHY localStorage.clear():
+ *   The Concordium verification SDK stores its session under plain keys
+ *   ("activeSession", "sdkNetwork", "sdkProjectId", "connectionMode") that
+ *   do NOT start with "wc@" and do NOT contain "walletconnect". A prefix-
+ *   based filter silently misses all of them → the next session sees a live
+ *   "activeSession" entry → the SDK reconnects to a dead WC topic →
+ *   "Start Private Verification" times out every time.
+ *
+ *   The verify page is a public, unauthenticated page. The only non-WC key
+ *   worth preserving is "nextauth.message" (NextAuth cross-tab sync). We
+ *   restore it after the clear so NextAuth cross-tab logout still works.
  *
  * IMPORTANT: We clear the keyvaluestorage OBJECT STORE rather than
  * deleting the database. indexedDB.deleteDatabase() is blocked while the
@@ -102,13 +115,14 @@ function clearVprSent(sessionId: string): void {
  * store directly works even with active connections.
  */
 function clearWalletConnectStorage() {
-  // localStorage
+  // localStorage — clear everything, then restore non-WC keys
   try {
-    for (const key of [...Object.keys(localStorage)]) {
-      if (key.startsWith("wc@") || key.toLowerCase().includes("walletconnect")) {
-        localStorage.removeItem(key);
-      }
+    const nextAuthMsg = localStorage.getItem("nextauth.message");
+    localStorage.clear();
+    if (nextAuthMsg !== null) {
+      localStorage.setItem("nextauth.message", nextAuthMsg);
     }
+    console.log("[VerifyClient] localStorage cleared ✓");
   } catch (e) {
     console.warn("[VerifyClient] Could not clear WC localStorage:", e);
   }
