@@ -38,7 +38,7 @@ export async function GET(
 
   const url = new URL(req.url);
   const days = Math.max(1, Math.min(Number(url.searchParams.get("days") || "14"), 90));
-  const since = new Date(Date.now() - days * 86400000);
+  const since = new Date(Date.now() - (days - 1) * 86400000);
   const oneHourAgo = new Date(Date.now() - 3600000);
 
   // Hourly quota

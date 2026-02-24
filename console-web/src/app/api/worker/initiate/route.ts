@@ -102,8 +102,8 @@ export async function POST(req: NextRequest) {
   /* ---- Record usage event (non-fatal if it fails) ---- */
   prisma.workerUsageEvent.create({
     data: {
-      userId: wk.userId,
-      workerKeyId: wk.id,
+      user:      { connect: { id: wk.accountId } },
+      workerKey: { connect: { id: wk.id       } },
       sessionId: session.sessionId,
     },
   }).catch((err: any) => {
