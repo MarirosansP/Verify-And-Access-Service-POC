@@ -5,9 +5,9 @@
  * Flow:
  *   1. SDK loads → auto-starts verification (no manual button click needed)
  *   2. sdk.renderUIModals() → shows QR code / WalletConnect modal
- *   3. "verification-web-ui-event" type=session_approved → wallet connected
+ *   3. "@concordium/verification-web-ui-event" type=session_approved → wallet connected
  *   4. sdk.sendPresentationRequest(vpData) → sends VP request to wallet
- *   5. "verification-web-ui-event" type=presentation_received → got proof
+ *   5. "@concordium/verification-web-ui-event" type=presentation_received → got proof
  *   6. Submit VP to backend for verification
  *
  * CHANGE: Auto-starts verification on SDK load — no idle/button state.
@@ -15,7 +15,7 @@
  *         If available, step 4 uses it directly — no API call needed.
  *         Falls back to the create-vp-request API if vpRequest is null.
  *
- * CRITICAL: The SDK emits on "verification-web-ui-event" (NOT "@concordium/...")
+ * CRITICAL: SDK v0.2.0+ emits on "@concordium/verification-web-ui-event"
  * CRITICAL: In dev (React Strict Mode + Next.js Script onReady), startVerification
  *           is called 4+ times creating duplicate SDK instances, each firing their
  *           own active_session event. Fix: window-level SDK singleton (getSdkMap)
@@ -508,10 +508,10 @@ export default function VerifyClient({
       }
     };
 
-    // CORRECT event name — the SDK dispatches "verification-web-ui-event"
-    window.addEventListener("verification-web-ui-event", handler);
+    // SDK v0.2.0+ dispatches "@concordium/verification-web-ui-event"
+    window.addEventListener("@concordium/verification-web-ui-event", handler);
     return () => {
-      window.removeEventListener("verification-web-ui-event", handler);
+      window.removeEventListener("@concordium/verification-web-ui-event", handler);
     };
   }, [sessionId, callbackUrl, state]);
 
