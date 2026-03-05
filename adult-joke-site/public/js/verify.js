@@ -222,7 +222,7 @@ async function initAndConnect() {
   setStatus('Initialising WalletConnect…');
 
   if (!listenerAttached) {
-    window.addEventListener('@concordium/verification-web-ui-event', handleConcordiumEvent);
+    window.addEventListener('verification-web-ui-event', handleConcordiumEvent);
     listenerAttached = true;
   }
 

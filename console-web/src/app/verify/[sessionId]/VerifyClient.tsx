@@ -15,7 +15,7 @@
  *         If available, step 4 uses it directly — no API call needed.
  *         Falls back to the create-vp-request API if vpRequest is null.
  *
- * CRITICAL: SDK v0.2.0+ emits on "@concordium/verification-web-ui-event"
+ * CRITICAL: SDK v0.2.0 emits on "verification-web-ui-event" (no @concordium/ prefix)
  * CRITICAL: In dev (React Strict Mode + Next.js Script onReady), startVerification
  *           is called 4+ times creating duplicate SDK instances, each firing their
  *           own active_session event. Fix: window-level SDK singleton (getSdkMap)
@@ -508,10 +508,10 @@ export default function VerifyClient({
       }
     };
 
-    // SDK v0.2.0+ dispatches "@concordium/verification-web-ui-event"
-    window.addEventListener("@concordium/verification-web-ui-event", handler);
+    // SDK v0.2.0 dispatches "verification-web-ui-event" (no @concordium/ prefix)
+    window.addEventListener("verification-web-ui-event", handler);
     return () => {
-      window.removeEventListener("@concordium/verification-web-ui-event", handler);
+      window.removeEventListener("verification-web-ui-event", handler);
     };
   }, [sessionId, callbackUrl, state]);
 

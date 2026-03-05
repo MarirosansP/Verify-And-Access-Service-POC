@@ -25888,7 +25888,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     currentVPR = null;
     setStatus("Initialising WalletConnect\u2026");
     if (!listenerAttached) {
-      window.addEventListener("@concordium/verification-web-ui-event", handleConcordiumEvent);
+      window.addEventListener("verification-web-ui-event", handleConcordiumEvent);
       listenerAttached = true;
     }
     if (!webUi) {
