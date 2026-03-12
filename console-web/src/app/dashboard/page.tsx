@@ -333,7 +333,7 @@ export default function Dashboard() {
             background: "#0D1825", padding: "7px 10px", borderRadius: 8,
             display: "inline-block", border: "1px solid rgba(255,255,255,0.08)", fontSize: 13,
           }}>
-            http://localhost:3002/v1
+            {process.env.NEXT_PUBLIC_GATEWAY_URL ?? "http://localhost:3002"}/v1
           </code>
         </div>
       </Card>

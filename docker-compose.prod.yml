@@ -1,0 +1,77 @@
+services:
+
+  console-web:
+    build:
+      context: ./console-web
+      dockerfile: Dockerfile.prod
+    volumes:
+      - console_data:/app/data
+    environment:
+      - PORT=3001
+      - DATABASE_URL=file:/app/data/console.db
+      - NEXTAUTH_URL=https://verify.concordium.com
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - USAGE_SHARED_SECRET=${USAGE_SHARED_SECRET}
+      - SYSTEM_API_KEY=${SYSTEM_API_KEY}
+      - GATEWAY_INTERNAL_URL=http://verify-gateway:3002
+      - NEXT_PUBLIC_WC_PROJECT_ID=${WALLETCONNECT_PROJECT_ID}
+      - NEXT_PUBLIC_GATEWAY_URL=https://verify.concordium.com
+    ports:
+      - "127.0.0.1:3001:3001"
+    restart: unless-stopped
+    depends_on:
+      - credential-verifier
+      - verify-gateway
+
+  credential-verifier:
+    image: concordium/credential-verification-service:0.1.0
+    environment:
+      - CREDENTIAL_VERIFICATION_SERVICE_NODE_GRPC_ENDPOINT=${CONCORDIUM_NODE_URL}
+      - CREDENTIAL_VERIFICATION_SERVICE_API_ADDRESS=0.0.0.0:8000
+      - CREDENTIAL_VERIFICATION_SERVICE_MONITORING_ADDRESS=0.0.0.0:8001
+      - LOG_LEVEL=info
+      - CREDENTIAL_VERIFICATION_SERVICE_ACCOUNT=/keys/verifier_account.export
+    volumes:
+      - ./keys/verifier_account.export:/keys/verifier_account.export:ro
+    ports:
+      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8001:8001"
+    restart: unless-stopped
+
+  verify-gateway:
+    build: ./verify-gateway
+    environment:
+      - PORT=3002
+      - CONSOLE_BASE_URL=http://console-web:3001
+      - VERIFIER_BASE_URL=http://credential-verifier:8000
+      - REQUEST_TIMEOUT_MS=20000
+      - USAGE_SHARED_SECRET=${USAGE_SHARED_SECRET}
+    ports:
+      - "127.0.0.1:3002:3002"
+    restart: unless-stopped
+    depends_on:
+      - credential-verifier
+
+  adult-joke-site:
+    build:
+      context: ./adult-joke-site
+    environment:
+      - PORT=3003
+      - VERIFY_GATEWAY_BASE_URL=http://verify-gateway:3002
+      - VERIFY_API_KEY=${VERIFY_API_KEY}
+      - RESOURCE_ID=adultjokex.com
+      - CONTEXT_STRING=over18
+      - PUBLIC_INFO_KEY=sessionIdRef
+      - PUBLIC_INFO_CBOR_HEX=7673616d706c652d73657373696f6e2d69642d31323334
+      - WALLETCONNECT_PROJECT_ID=${WALLETCONNECT_PROJECT_ID}
+      - CCD_NETWORK=mainnet
+      - SESSION_SECRET=${SESSION_SECRET}
+      - CF_ACCESS_SECRET=${CF_ACCESS_SECRET}
+    ports:
+      - "127.0.0.1:3003:3003"
+    restart: unless-stopped
+    depends_on:
+      - verify-gateway
+
+volumes:
+  console_data:
