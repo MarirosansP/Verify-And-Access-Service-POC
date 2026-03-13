@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Button, Input, Small } from "../../ui";
 
 export default function Login() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<string | null>(null);
@@ -13,8 +15,18 @@ export default function Login() {
   async function onSubmit(e: any) {
     e.preventDefault();
     setStatus("Logging in…");
-    const res = await signIn("credentials", { email, password, redirect: true, callbackUrl: "/dashboard" });
-    if (res?.error) setStatus(`Login failed: ${res.error}`);
+    const res = await signIn("credentials", { email, password, redirect: false });
+    if (res?.error) {
+      setStatus("Login failed: invalid credentials");
+      return;
+    }
+    // Read the session to check if admin
+    const session = await getSession();
+    if ((session?.user as any)?.isAdmin) {
+      router.push("/admin/dashboard");
+    } else {
+      router.push("/dashboard");
+    }
   }
 
   return (

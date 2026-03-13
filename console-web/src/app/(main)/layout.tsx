@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
@@ -9,11 +11,23 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         height: 60,
         display: "flex",
         alignItems: "center",
+        justifyContent: "space-between",
         position: "sticky",
         top: 0,
         zIndex: 100,
       }}>
-        <img src="/brand/concordium-logo-blue.svg" alt="Concordium" height="26" style={{ display: "block" }} />
+        <Link href="/dashboard" style={{ display: "block", lineHeight: 0 }}>
+          <img src="/brand/concordium-logo-blue.svg" alt="Concordium" height="26" style={{ display: "block" }} />
+        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <NavLink href="/dashboard">Dashboard</NavLink>
+          <NavLink href="/dashboard/worker-keys">Worker Keys</NavLink>
+          <NavLink href="/dashboard/verification-history">Verification History</NavLink>
+          <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.1)", margin: "0 8px" }} />
+          <Link href="/api/auth/signout" style={{ fontSize: 13, color: "#9FB2D3", textDecoration: "none", padding: "6px 10px", borderRadius: 6 }}>
+            Sign out
+          </Link>
+        </div>
       </nav>
 
       {/* ── Main content ── */}
@@ -34,5 +48,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <img src="/brand/id-wordmark-dark.svg" alt="Concordium ID" height="20" style={{ display: "block" }} />
       </footer>
     </>
+  );
+}
+
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} style={{ fontSize: 13, color: "#9FB2D3", textDecoration: "none", padding: "6px 12px", borderRadius: 6, fontWeight: 500 }}>
+      {children}
+    </Link>
   );
 }

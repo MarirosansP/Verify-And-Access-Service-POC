@@ -9,6 +9,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, markVerified, markFailed } from "@/lib/worker-sessions";
+import { prisma } from "@/lib/db";
 import { randomUUID } from "crypto";
 
 export async function POST(
@@ -51,6 +52,8 @@ export async function POST(
     );
   }
 
+  const auditRecordId = randomUUID();
+
   try {
     // The credential-verifier expects `presentation` as a raw JSON object,
     // NOT a JSON-encoded string. If we receive a string (e.g. the SDK returned
@@ -66,7 +69,7 @@ export async function POST(
 
     // Build verify payload matching the credential-verifier format
     const verifyPayload = {
-      auditRecordId: randomUUID(),
+      auditRecordId,
       publicInfo: {},
       presentation: presentationValue,          // object, not a string
       verificationRequest: body?.verificationRequest || null,
@@ -93,6 +96,23 @@ export async function POST(
       const errText = await resp.text();
       console.error("VP verification failed:", resp.status, errText);
       markFailed(params.sessionId, `Verification rejected: ${errText}`);
+
+      // Record failed verification (non-fatal)
+      prisma.verificationRecord.create({
+        data: {
+          userId: session.accountId,
+          workerKeyId: session.workerKeyId,
+          sessionId: params.sessionId,
+          challenge: session.challenge,
+          siteName: session.siteName,
+          siteUrl: session.siteUrl,
+          status: "failed",
+          auditRecordId,
+          presentationJson: JSON.stringify(presentationValue),
+          failureReason: `Verification rejected: ${errText}`,
+        },
+      }).catch((e: Error) => console.error("[submit-vp] Failed to save record:", e.message));
+
       return NextResponse.json({
         verified: false,
         reason: "Verification rejected by credential verifier",
@@ -114,6 +134,23 @@ export async function POST(
 
     if (isValid) {
       markVerified(params.sessionId);
+
+      // Record successful verification (non-fatal)
+      prisma.verificationRecord.create({
+        data: {
+          userId: session.accountId,
+          workerKeyId: session.workerKeyId,
+          sessionId: params.sessionId,
+          challenge: session.challenge,
+          siteName: session.siteName,
+          siteUrl: session.siteUrl,
+          status: "verified",
+          auditRecordId,
+          presentationJson: JSON.stringify(presentationValue),
+          failureReason: null,
+        },
+      }).catch((e: Error) => console.error("[submit-vp] Failed to save record:", e.message));
+
       return NextResponse.json({
         verified: true,
         callbackUrl: session.callbackUrl,
@@ -121,6 +158,22 @@ export async function POST(
       });
     } else {
       markFailed(params.sessionId, "ZKP proof did not satisfy the challenge");
+
+      prisma.verificationRecord.create({
+        data: {
+          userId: session.accountId,
+          workerKeyId: session.workerKeyId,
+          sessionId: params.sessionId,
+          challenge: session.challenge,
+          siteName: session.siteName,
+          siteUrl: session.siteUrl,
+          status: "failed",
+          auditRecordId,
+          presentationJson: JSON.stringify(presentationValue),
+          failureReason: "ZKP proof did not satisfy the challenge",
+        },
+      }).catch((e: Error) => console.error("[submit-vp] Failed to save record:", e.message));
+
       return NextResponse.json({
         verified: false,
         reason: "ZKP proof did not satisfy the challenge",
@@ -129,6 +182,22 @@ export async function POST(
   } catch (err: any) {
     console.error("submit-vp error:", err);
     markFailed(params.sessionId, err.message || "Internal error");
+
+    prisma.verificationRecord.create({
+      data: {
+        userId: session.accountId,
+        workerKeyId: session.workerKeyId,
+        sessionId: params.sessionId,
+        challenge: session.challenge,
+        siteName: session.siteName,
+        siteUrl: session.siteUrl,
+        status: "failed",
+        auditRecordId,
+        presentationJson: null,
+        failureReason: err.message || "Internal error",
+      },
+    }).catch((e: Error) => console.error("[submit-vp] Failed to save record:", e.message));
+
     return NextResponse.json(
       { verified: false, reason: err.message || "Internal error" },
       { status: 500 }
