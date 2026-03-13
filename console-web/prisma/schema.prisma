@@ -20,6 +20,7 @@ model User {
   workerKeys           WorkerKey[]
   workerUsageEvents    WorkerUsageEvent[]
   verificationRecords  VerificationRecord[]
+  passwordResetTokens  PasswordResetToken[]
 }
 
 model ApiKey {
@@ -78,6 +79,17 @@ model VerificationRecord {
   failureReason    String?
   createdAt        DateTime  @default(now())
   user             User      @relation(fields: [userId], references: [id])
+}
+
+/// One-time password reset token. Expires after 1 hour, single-use.
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique  // SHA256 of the raw token
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 /// Tracks each call to /api/worker/initiate (one per verification session started).

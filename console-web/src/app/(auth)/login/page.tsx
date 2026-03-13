@@ -82,7 +82,12 @@ export default function Login() {
               autoComplete="current-password"
             />
           </div>
-          <Button type="submit" style={{ marginTop: 4, padding: "11px 16px", fontSize: 14 }}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Link href="/forgot-password" style={{ fontSize: 12, color: "#9FB2D3", textDecoration: "none" }}>
+              Forgot password?
+            </Link>
+          </div>
+          <Button type="submit" style={{ padding: "11px 16px", fontSize: 14 }}>
             Log in
           </Button>
           {status && (

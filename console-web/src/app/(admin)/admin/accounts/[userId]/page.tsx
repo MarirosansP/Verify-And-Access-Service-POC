@@ -17,6 +17,8 @@ export default function AccountDetailPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [freezeLoading, setFreezeLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -37,6 +39,14 @@ export default function AccountDetailPage() {
     });
     await load();
     setFreezeLoading(false);
+  }
+
+  async function sendResetEmail() {
+    setResetLoading(true);
+    await fetch(`/api/admin/accounts/${userId}/send-reset`, { method: "POST" });
+    setResetLoading(false);
+    setResetSent(true);
+    setTimeout(() => setResetSent(false), 4000);
   }
 
   async function toggleKey(keyId: string, type: "api" | "worker", currentStatus: string) {
@@ -81,19 +91,33 @@ export default function AccountDetailPage() {
             {" · "}{verificationCount30d} verification{verificationCount30d !== 1 ? "s" : ""} in last 30 days
           </div>
         </div>
-        <button
-          disabled={freezeLoading}
-          onClick={toggleFreeze}
-          style={{
-            padding: "9px 18px", borderRadius: 8, border: "none", cursor: "pointer",
-            fontSize: 13, fontWeight: 600, fontFamily: "inherit",
-            background: user.isFrozen ? "rgba(74,222,128,0.15)" : "rgba(248,113,113,0.15)",
-            color: user.isFrozen ? "#4ade80" : "#f87171",
-            opacity: freezeLoading ? 0.5 : 1,
-          }}
-        >
-          {freezeLoading ? "…" : user.isFrozen ? "Unfreeze Account" : "Freeze Account"}
-        </button>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button
+            disabled={resetLoading || resetSent}
+            onClick={sendResetEmail}
+            style={{
+              padding: "9px 18px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.12)",
+              cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "inherit",
+              background: "transparent", color: resetSent ? "#4ade80" : "#9FB2D3",
+              opacity: resetLoading ? 0.5 : 1,
+            }}
+          >
+            {resetLoading ? "Sending…" : resetSent ? "✓ Reset email sent" : "Send Password Reset"}
+          </button>
+          <button
+            disabled={freezeLoading}
+            onClick={toggleFreeze}
+            style={{
+              padding: "9px 18px", borderRadius: 8, border: "none", cursor: "pointer",
+              fontSize: 13, fontWeight: 600, fontFamily: "inherit",
+              background: user.isFrozen ? "rgba(74,222,128,0.15)" : "rgba(248,113,113,0.15)",
+              color: user.isFrozen ? "#4ade80" : "#f87171",
+              opacity: freezeLoading ? 0.5 : 1,
+            }}
+          >
+            {freezeLoading ? "…" : user.isFrozen ? "Unfreeze Account" : "Freeze Account"}
+          </button>
+        </div>
       </div>
 
       {/* 14-day chart */}
