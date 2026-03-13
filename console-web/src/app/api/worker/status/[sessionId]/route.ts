@@ -22,6 +22,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { validateWorkerKey }         from "@/lib/worker-keys";
 import { getSessionStatus }          from "@/lib/worker-sessions";
+nexport const dynamic = "force-dynamic";
 
 export async function GET(
   req: NextRequest,

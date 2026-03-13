@@ -13,6 +13,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, setVerificationRequestUrl } from "@/lib/worker-sessions";
 import { createVpRequest } from "@/lib/create-vpr";
+nexport const dynamic = "force-dynamic";
 
 export async function POST(
   _req: NextRequest,

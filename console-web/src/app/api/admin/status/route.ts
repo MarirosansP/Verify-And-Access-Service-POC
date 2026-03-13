@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 async function checkService(url: string, timeoutMs = 4000): Promise<{ status: "ok" | "error"; latencyMs: number; detail?: string }> {
   const start = Date.now();
   try {

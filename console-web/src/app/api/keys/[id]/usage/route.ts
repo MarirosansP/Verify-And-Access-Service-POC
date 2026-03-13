@@ -18,6 +18,7 @@
 import { prisma } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+nexport const dynamic = "force-dynamic";
 
 const QUOTA_LIMIT = 50;
 

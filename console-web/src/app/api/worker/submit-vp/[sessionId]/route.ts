@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession, markVerified, markFailed } from "@/lib/worker-sessions";
 import { prisma } from "@/lib/db";
 import { randomUUID } from "crypto";
+nexport const dynamic = "force-dynamic";
 
 export async function POST(
   req: NextRequest,

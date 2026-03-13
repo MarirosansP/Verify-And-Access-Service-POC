@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { createResetToken } from "@/lib/reset-token";
 import { sendPasswordResetEmail } from "@/lib/email";
+nexport const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const { email } = await req.json().catch(() => ({}));

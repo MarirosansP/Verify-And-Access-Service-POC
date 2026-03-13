@@ -30,6 +30,7 @@ import {
 } from "@/lib/worker-sessions";
 import { createVpRequest } from "@/lib/create-vpr";
 import { prisma } from "@/lib/db";
+nexport const dynamic = "force-dynamic";
 
 const SUPPORTED_CHALLENGES = ["age_over_18"];
 const QUOTA_LIMIT = 50; // sessions per rolling hour per worker key

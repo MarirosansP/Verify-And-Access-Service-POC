@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+nexport const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   const schema = z.object({

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/db";
+nexport const dynamic = "force-dynamic";
 
 export async function PATCH(
   req: NextRequest,

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { verifyKey } from "@/lib/keys";
 import { z } from "zod";
+nexport const dynamic = "force-dynamic";
 
 const QUOTA_LIMIT = 50; // calls per rolling hour per API key
 
