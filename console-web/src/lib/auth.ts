@@ -20,22 +20,33 @@ export const authOptions: NextAuthOptions = {
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) return null;
 
+        if (user.isFrozen) return null;
+
         const ok = await bcrypt.compare(password, user.passwordHash);
         if (!ok) return null;
 
-        return { id: user.id, email: user.email, name: user.name || undefined } as any;
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name || undefined,
+          isAdmin: user.isAdmin,
+        } as any;
       }
     })
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // Persist user id into the token on first login
-      if (user && (user as any).id) (token as any).uid = (user as any).id;
+      if (user && (user as any).id) {
+        (token as any).uid = (user as any).id;
+        (token as any).isAdmin = (user as any).isAdmin ?? false;
+      }
       return token;
     },
     async session({ session, token }) {
-      // Expose uid on session.user.id
-      if (session.user) (session.user as any).id = (token as any).uid;
+      if (session.user) {
+        (session.user as any).id = (token as any).uid;
+        (session.user as any).isAdmin = (token as any).isAdmin ?? false;
+      }
       return session;
     }
   },
