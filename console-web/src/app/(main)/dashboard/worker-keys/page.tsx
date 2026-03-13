@@ -41,7 +41,7 @@ function StatsPanel({ data }: { data: WorkerKeyStats | "loading" | undefined }) 
   const quotaPct = data.quotaLimit > 0
     ? Math.min(100, Math.round((data.quotaUsed / data.quotaLimit) * 100))
     : 0;
-  const barColor = quotaPct >= 100 ? "#ef4444" : quotaPct >= 80 ? "#f59e0b" : "#28C76F";
+  const barColor = quotaPct >= 100 ? "#ef4444" : quotaPct >= 80 ? "#f59e0b" : "#2667FF";
   const maxDay = Math.max(...data.dailyRows.map(r => r.count), 1);
 
   return (
@@ -94,7 +94,7 @@ function StatsPanel({ data }: { data: WorkerKeyStats | "loading" | undefined }) 
                 style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}
               >
                 <div style={{
-                  height: h, background: "#28C76F", opacity: 0.7,
+                  height: h, background: "#2667FF", opacity: 0.7,
                   borderRadius: "2px 2px 0 0",
                 }} />
               </div>
@@ -214,7 +214,7 @@ export default function WorkerKeysPage() {
   };
 
   const statusColor = (s: string) =>
-    s === "active" ? "#28C76F" : s === "paused" ? "#f59e0b" : "#f87171";
+    s === "active" ? "#2667FF" : s === "paused" ? "#f59e0b" : "#f87171";
 
   const actionBtn = (color = "#9FB2D3"): React.CSSProperties => ({
     background: "transparent",
@@ -303,7 +303,7 @@ export default function WorkerKeysPage() {
               </div>
               <div>
                 <button type="submit" style={{
-                  padding: "8px 18px", background: "#28C76F", color: "#fff",
+                  padding: "8px 18px", background: "#2667FF", color: "#fff",
                   border: "none", borderRadius: 8, fontWeight: 600,
                   cursor: "pointer", fontFamily: "inherit", fontSize: 13,
                 }}>
@@ -325,15 +325,15 @@ export default function WorkerKeysPage() {
             </div>
             <code style={{
               wordBreak: "break-all", display: "block", padding: "10px 12px",
-              background: "#090E1A", border: "1px solid rgba(40,199,111,0.25)",
-              borderRadius: 8, fontSize: 13, color: "#28C76F", marginBottom: 10,
+              background: "#090E1A", border: "1px solid rgba(38,103,255,0.25)",
+              borderRadius: 8, fontSize: 13, color: "#2667FF", marginBottom: 10,
             }}>
               {createdKey}
             </code>
             <button
               onClick={() => { navigator.clipboard.writeText(createdKey); alert("Copied!"); }}
               style={{
-                padding: "6px 14px", background: "#28C76F", color: "#fff",
+                padding: "6px 14px", background: "#2667FF", color: "#fff",
                 border: "none", borderRadius: 6, cursor: "pointer",
                 fontWeight: 600, fontFamily: "inherit", fontSize: 13,
               }}
@@ -390,8 +390,8 @@ export default function WorkerKeysPage() {
                     <button
                       onClick={() => toggleStats(k.id)}
                       style={{
-                        ...actionBtn(openStatsId === k.id ? "#28C76F" : "#9FB2D3"),
-                        ...(openStatsId === k.id ? { borderColor: "rgba(40,199,111,0.4)" } : {}),
+                        ...actionBtn(openStatsId === k.id ? "#2667FF" : "#9FB2D3"),
+                        ...(openStatsId === k.id ? { borderColor: "rgba(38,103,255,0.4)" } : {}),
                       }}
                     >
                       {openStatsId === k.id ? "▲ Stats" : "▼ Stats"}

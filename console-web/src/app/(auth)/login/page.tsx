@@ -85,7 +85,7 @@ export default function Login() {
 
       <div style={{ marginTop: 18, fontSize: 13, color: "#9FB2D3" }}>
         Don&apos;t have an account?{" "}
-        <Link href="/signup" style={{ color: "#28C76F", fontWeight: 600 }}>
+        <Link href="/signup" style={{ color: "#2667FF", fontWeight: 600 }}>
           Sign up
         </Link>
       </div>

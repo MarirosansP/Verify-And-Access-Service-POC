@@ -12,12 +12,6 @@ export default function Home() {
         padding: "72px 24px 64px",
         gap: 24,
       }}>
-        {/* Logo mark */}
-        <svg width="64" height="64" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="15" cy="15" r="15" fill="#28C76F" />
-          <path d="M21 10A8 8 0 1 0 21 20" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-        </svg>
-
         <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 600 }}>
           <h1 style={{
             margin: 0,
@@ -28,7 +22,7 @@ export default function Home() {
             color: "#e7edf7",
           }}>
             Age Verification<br />
-            <span style={{ color: "#28C76F" }}>for Your Platform</span>
+            <span style={{ color: "#2667FF" }}>for Your Platform</span>
           </h1>
           <p style={{
             margin: 0,
@@ -45,7 +39,7 @@ export default function Home() {
 
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
           <Link href="/signup" style={{
-            background: "#28C76F",
+            background: "#2667FF",
             color: "#fff",
             padding: "12px 28px",
             borderRadius: 10,
