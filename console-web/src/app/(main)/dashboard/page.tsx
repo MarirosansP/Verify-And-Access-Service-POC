@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Button, Card, Input, Small } from "../../ui";
 
 /* ── Types ── */
@@ -307,22 +307,11 @@ export default function Dashboard() {
     <div style={{ display: "grid", gap: 16 }}>
 
       {/* ── Header ── */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div>
-          <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, letterSpacing: "-0.4px" }}>
-            Dashboard
-          </h1>
-          <Small>Manage your API keys and CloudFlare Worker keys</Small>
-        </div>
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          style={{
-            background: "transparent", color: "#9FB2D3", border: "none",
-            cursor: "pointer", fontSize: 13, fontFamily: "inherit",
-          }}
-        >
-          Sign out
-        </button>
+      <div>
+        <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, letterSpacing: "-0.4px" }}>
+          Dashboard
+        </h1>
+        <Small>Manage your API keys and CloudFlare Worker keys</Small>
       </div>
 
       {/* ── Gateway URL ── */}

@@ -1,16 +1,30 @@
-/**
- * Next.js Middleware — CORS for /api/worker/* routes
- *
- * This file should be MERGED with any existing middleware.ts.
- * If there's no existing middleware, use this as-is.
- */
-
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export function middleware(request: NextRequest) {
-  // Only apply CORS to worker API routes
-  if (request.nextUrl.pathname.startsWith("/api/worker")) {
-    // Handle preflight
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // ── Auth guard: redirect unauthenticated users to /login ──────────────────
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Admin-only: non-admins visiting /admin/* are bounced to /dashboard
+    if (pathname.startsWith("/admin") && !token.isAdmin) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+  }
+
+  // ── CORS for /api/worker/* routes ─────────────────────────────────────────
+  if (pathname.startsWith("/api/worker")) {
     if (request.method === "OPTIONS") {
       return new NextResponse(null, {
         status: 204,
@@ -22,8 +36,6 @@ export function middleware(request: NextRequest) {
         },
       });
     }
-
-    // For actual requests, add CORS headers to the response
     const response = NextResponse.next();
     response.headers.set("Access-Control-Allow-Origin", "*");
     response.headers.set("Access-Control-Allow-Headers", "Content-Type, X-Worker-Key");
@@ -34,5 +46,9 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/worker/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/api/worker/:path*",
+  ],
 };

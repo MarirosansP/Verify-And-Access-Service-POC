@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
+import SignOutButton from "../components/SignOutButton";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -32,9 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <NavLink href="/admin/dashboard">Dashboard</NavLink>
           <NavLink href="/admin/accounts">Accounts</NavLink>
           <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.1)", margin: "0 8px" }} />
-          <Link href="/api/auth/signout" style={{ fontSize: 13, color: "#9FB2D3", textDecoration: "none", padding: "6px 10px", borderRadius: 6 }}>
-            Sign out
-          </Link>
+          <SignOutButton />
         </div>
       </nav>
 
