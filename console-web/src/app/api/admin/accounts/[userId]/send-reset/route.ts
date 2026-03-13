@@ -3,7 +3,8 @@ import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/db";
 import { createResetToken } from "@/lib/reset-token";
 import { sendPasswordResetEmail } from "@/lib/email";
-nexport const dynamic = "force-dynamic";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(
   _req: NextRequest,

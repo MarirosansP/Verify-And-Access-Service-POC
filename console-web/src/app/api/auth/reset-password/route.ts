@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { validateResetToken, consumeResetToken } from "@/lib/reset-token";
-nexport const dynamic = "force-dynamic";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const { token, password } = await req.json().catch(() => ({}));

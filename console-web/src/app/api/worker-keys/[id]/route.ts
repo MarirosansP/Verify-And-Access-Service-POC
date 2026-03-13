@@ -7,7 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession }          from "next-auth";
 import { authOptions }               from "@/lib/auth";
 import {
-nexport const dynamic = "force-dynamic";
+
+export const dynamic = "force-dynamic";
   updateWorkerKeyStatus,
   deleteWorkerKey,
 } from "@/lib/worker-keys";

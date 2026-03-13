@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-nexport const dynamic = "force-dynamic";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   const body = await req.json();
