@@ -5,7 +5,7 @@ services:
       context: ./console-web
       dockerfile: Dockerfile.prod
     volumes:
-      - console_data:/app/data
+      - ./data:/app/data
     environment:
       - PORT=3001
       - DATABASE_URL=file:/app/data/console.db
@@ -73,5 +73,3 @@ services:
     depends_on:
       - verify-gateway
 
-volumes:
-  console_data:
