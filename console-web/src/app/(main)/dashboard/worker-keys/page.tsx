@@ -4,10 +4,11 @@
  * /dashboard/worker-keys  — Manage CloudFlare Worker Keys
  *
  * Concordium-branded dark theme. Lets users create, pause, revoke, and delete
- * worker keys, and view per-key usage stats inline.
+ * worker keys, view per-key usage stats inline, and download a pre-configured
+ * CF Worker script + wrangler.toml for each key.
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 
 interface WorkerKeyRow {
   id: string;
@@ -24,6 +25,65 @@ type WorkerKeyStats = {
   dailyRows: { date: string; count: number }[];
   totalCalls: number;
 };
+
+type PanelType = "stats" | "setup" | null;
+
+/* ── Shared styles ──────────────────────────────────────────────────────── */
+
+const codeBlock: React.CSSProperties = {
+  background: "#090E1A",
+  border: "1px solid rgba(255,255,255,0.08)",
+  borderRadius: 8,
+  padding: "12px 14px",
+  fontSize: 12,
+  lineHeight: 1.7,
+  overflowX: "auto",
+  margin: 0,
+  color: "#a5f3fc",
+  fontFamily: "ui-monospace, 'Cascadia Code', 'Fira Code', monospace",
+  whiteSpace: "pre",
+};
+
+const sectionLabel: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 600,
+  color: "#9FB2D3",
+  textTransform: "uppercase",
+  letterSpacing: "0.6px",
+  marginBottom: 6,
+};
+
+/* ── Copy button ─────────────────────────────────────────────────────────── */
+function CopyButton({ text, style }: { text: string; style?: React.CSSProperties }) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <button onClick={handleCopy} style={{
+      background: copied ? "rgba(38,103,255,0.15)" : "rgba(255,255,255,0.06)",
+      border: `1px solid ${copied ? "rgba(38,103,255,0.4)" : "rgba(255,255,255,0.12)"}`,
+      color: copied ? "#2667FF" : "#9FB2D3",
+      padding: "4px 10px",
+      borderRadius: 6,
+      cursor: "pointer",
+      fontSize: 12,
+      fontFamily: "inherit",
+      fontWeight: 500,
+      transition: "all 0.15s",
+      ...style,
+    }}>
+      {copied ? "✓ Copied" : "Copy"}
+    </button>
+  );
+}
 
 /* ── Per-key stats panel ── */
 function StatsPanel({ data }: { data: WorkerKeyStats | "loading" | undefined }) {
@@ -52,13 +112,10 @@ function StatsPanel({ data }: { data: WorkerKeyStats | "loading" | undefined }) 
       display: "grid",
       gap: 16,
     }}>
-
       {/* Quota bar */}
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#9FB2D3", textTransform: "uppercase", letterSpacing: "0.6px" }}>
-            Hourly Quota
-          </span>
+          <span style={sectionLabel}>Hourly Quota</span>
           <span style={{ fontSize: 13, fontWeight: 700, color: barColor }}>
             {data.quotaUsed} / {data.quotaLimit}
           </span>
@@ -78,12 +135,7 @@ function StatsPanel({ data }: { data: WorkerKeyStats | "loading" | undefined }) 
 
       {/* Daily bar chart */}
       <div>
-        <div style={{
-          fontSize: 11, fontWeight: 600, color: "#9FB2D3",
-          textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8,
-        }}>
-          Calls — last 14 days
-        </div>
+        <div style={{ ...sectionLabel, marginBottom: 8 }}>Calls — last 14 days</div>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 3, height: 52 }}>
           {data.dailyRows.map(r => {
             const h = r.count > 0 ? Math.max((r.count / maxDay) * 46, 3) : 0;
@@ -93,10 +145,7 @@ function StatsPanel({ data }: { data: WorkerKeyStats | "loading" | undefined }) 
                 title={`${r.date}: ${r.count} call${r.count !== 1 ? "s" : ""}`}
                 style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}
               >
-                <div style={{
-                  height: h, background: "#2667FF", opacity: 0.7,
-                  borderRadius: "2px 2px 0 0",
-                }} />
+                <div style={{ height: h, background: "#2667FF", opacity: 0.7, borderRadius: "2px 2px 0 0" }} />
               </div>
             );
           })}
@@ -109,15 +158,302 @@ function StatsPanel({ data }: { data: WorkerKeyStats | "loading" | undefined }) 
 
       {/* Total */}
       <div>
-        <div style={{ fontSize: 11, fontWeight: 600, color: "#9FB2D3", textTransform: "uppercase", letterSpacing: "0.6px" }}>
-          Total (14d)
-        </div>
+        <div style={sectionLabel}>Total (14d)</div>
         <div style={{ fontSize: 24, fontWeight: 700, color: "#e7edf7", marginTop: 2 }}>
           {data.totalCalls}
         </div>
       </div>
     </div>
   );
+}
+
+/* ── Per-key setup panel ── */
+function SetupPanel({ keyRow }: { keyRow: WorkerKeyRow }) {
+  const consoleUrl = typeof window !== "undefined" ? window.location.origin : "https://console.concordium.com";
+
+  const workerScript = buildWorkerScript(keyRow.siteUrl, keyRow.callbackPath, consoleUrl);
+  const wranglerToml = buildWranglerToml(keyRow.siteName, keyRow.siteUrl, consoleUrl);
+  const pageSnippet  = buildPageSnippet();
+  const secretCmd    = `wrangler secret put VA_WORKER_KEY`;
+  const deployCmd    = `wrangler deploy`;
+
+  return (
+    <div style={{
+      background: "#0D1825",
+      borderTop: "1px solid rgba(255,255,255,0.06)",
+      padding: "20px 20px",
+      display: "grid",
+      gap: 24,
+    }}>
+
+      {/* Intro */}
+      <div style={{ fontSize: 13, color: "#9FB2D3", lineHeight: 1.6 }}>
+        Deploy a CloudFlare Worker that intercepts requests to <strong style={{ color: "#e7edf7" }}>{keyRow.siteUrl}</strong> and
+        gates access behind Concordium age verification.
+      </div>
+
+      {/* Step 1 */}
+      <SetupStep number={1} title="Install Wrangler CLI">
+        <div style={{ fontSize: 13, color: "#9FB2D3", marginBottom: 8 }}>
+          Install the Cloudflare Wrangler CLI if you haven't already:
+        </div>
+        <div style={{ position: "relative" }}>
+          <pre style={codeBlock}>{`npm install -g wrangler\nwrangler login`}</pre>
+          <CopyButton text={`npm install -g wrangler\nwrangler login`} style={{ position: "absolute", top: 8, right: 8 }} />
+        </div>
+      </SetupStep>
+
+      {/* Step 2 */}
+      <SetupStep number={2} title="Download your Worker script">
+        <div style={{ fontSize: 13, color: "#9FB2D3", marginBottom: 10 }}>
+          Download the pre-configured files for <strong style={{ color: "#e7edf7" }}>{keyRow.siteName}</strong>.
+          The Worker script handles verification callbacks, cookie checks, and initiating new verification flows.
+        </div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+          <a
+            href={`/api/worker-keys/${keyRow.id}/download?type=worker`}
+            download="worker.js"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "6px 14px", background: "#2667FF", color: "#fff",
+              borderRadius: 7, fontSize: 13, fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            ↓ Download worker.js
+          </a>
+          <a
+            href={`/api/worker-keys/${keyRow.id}/download?type=wrangler`}
+            download="wrangler.toml"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "6px 14px", background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              color: "#e7edf7", borderRadius: 7, fontSize: 13, fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            ↓ Download wrangler.toml
+          </a>
+        </div>
+        <details style={{ cursor: "pointer" }}>
+          <summary style={{ fontSize: 12, color: "#9FB2D3", userSelect: "none", marginBottom: 8 }}>
+            Preview worker.js
+          </summary>
+          <div style={{ position: "relative", marginTop: 8 }}>
+            <pre style={{ ...codeBlock, maxHeight: 300, overflowY: "auto" }}>{workerScript}</pre>
+            <CopyButton text={workerScript} style={{ position: "absolute", top: 8, right: 8 }} />
+          </div>
+        </details>
+        <details style={{ cursor: "pointer", marginTop: 8 }}>
+          <summary style={{ fontSize: 12, color: "#9FB2D3", userSelect: "none", marginBottom: 8 }}>
+            Preview wrangler.toml
+          </summary>
+          <div style={{ position: "relative", marginTop: 8 }}>
+            <pre style={{ ...codeBlock }}>{wranglerToml}</pre>
+            <CopyButton text={wranglerToml} style={{ position: "absolute", top: 8, right: 8 }} />
+          </div>
+        </details>
+      </SetupStep>
+
+      {/* Step 3 */}
+      <SetupStep number={3} title="Set your Worker Key as a secret">
+        <div style={{ fontSize: 13, color: "#9FB2D3", marginBottom: 8 }}>
+          Your Worker Key must be set as a Cloudflare secret — <strong style={{ color: "#ef4444" }}>never hardcode it</strong>.
+          Run this from the same directory as your <code style={{ color: "#a5f3fc" }}>wrangler.toml</code>:
+        </div>
+        <div style={{ position: "relative" }}>
+          <pre style={codeBlock}>{secretCmd}</pre>
+          <CopyButton text={secretCmd} style={{ position: "absolute", top: 8, right: 8 }} />
+        </div>
+        <div style={{ fontSize: 12, color: "#9FB2D3", marginTop: 8, lineHeight: 1.6 }}>
+          When prompted, paste your Worker Key. You can also set{" "}
+          <code style={{ color: "#a5f3fc" }}>VA_CONSOLE_URL</code> in the{" "}
+          <code style={{ color: "#a5f3fc" }}>wrangler.toml</code>{" "}
+          <code style={{ color: "#a5f3fc" }}>[vars]</code> section (it's not secret).
+        </div>
+      </SetupStep>
+
+      {/* Step 4 */}
+      <SetupStep number={4} title="Deploy your Worker">
+        <div style={{ fontSize: 13, color: "#9FB2D3", marginBottom: 8 }}>
+          Deploy from your project directory:
+        </div>
+        <div style={{ position: "relative" }}>
+          <pre style={codeBlock}>{deployCmd}</pre>
+          <CopyButton text={deployCmd} style={{ position: "absolute", top: 8, right: 8 }} />
+        </div>
+        <div style={{ fontSize: 12, color: "#9FB2D3", marginTop: 8, lineHeight: 1.6 }}>
+          Wrangler will route <code style={{ color: "#a5f3fc" }}>{keyRow.siteUrl.replace(/^https?:\/\//, "")}/*</code> through your Worker.
+          Make sure your domain is on Cloudflare (proxied ☁) for the Worker to intercept requests.
+        </div>
+      </SetupStep>
+
+      {/* Step 5 — optional page snippet */}
+      <SetupStep number={5} title="Optional: show content only to verified users">
+        <div style={{ fontSize: 13, color: "#9FB2D3", marginBottom: 8, lineHeight: 1.6 }}>
+          Add this snippet to pages where you want to show or hide content based on verification status.
+          Tag elements with <code style={{ color: "#a5f3fc" }}>data-va-protected</code> — they'll be hidden until verified.
+          Place the script just before <code style={{ color: "#a5f3fc" }}>&lt;/body&gt;</code>:
+        </div>
+        <div style={{ position: "relative" }}>
+          <pre style={codeBlock}>{pageSnippet}</pre>
+          <CopyButton text={pageSnippet} style={{ position: "absolute", top: 8, right: 8 }} />
+        </div>
+        <div style={{ fontSize: 12, color: "#9FB2D3", marginTop: 10, lineHeight: 1.6 }}>
+          Example usage:
+        </div>
+        <div style={{ position: "relative", marginTop: 6 }}>
+          <pre style={codeBlock}>{`<!-- This content is hidden until the user is age-verified -->\n<div data-va-protected>\n  <h2>Members Only Content</h2>\n  <p>You're verified! Welcome.</p>\n</div>`}</pre>
+          <CopyButton text={`<!-- This content is hidden until the user is age-verified -->\n<div data-va-protected>\n  <h2>Members Only Content</h2>\n  <p>You're verified! Welcome.</p>\n</div>`} style={{ position: "absolute", top: 8, right: 8 }} />
+        </div>
+      </SetupStep>
+
+    </div>
+  );
+}
+
+/* ── Setup step wrapper ── */
+function SetupStep({ number, title, children }: { number: number; title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+        <div style={{
+          width: 22, height: 22, borderRadius: "50%",
+          background: "#2667FF", color: "#fff",
+          fontSize: 11, fontWeight: 700,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          flexShrink: 0,
+        }}>
+          {number}
+        </div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: "#e7edf7" }}>{title}</div>
+      </div>
+      <div style={{ paddingLeft: 32 }}>{children}</div>
+    </div>
+  );
+}
+
+/* ── Script builders (client-side, using window.location.origin) ── */
+
+function buildWorkerScript(siteUrl: string, callbackPath: string, consoleUrl: string): string {
+  const normalCallback = callbackPath.startsWith("/") ? callbackPath : `/${callbackPath}`;
+  void normalCallback; // used for context only
+
+  return `// Concordium Verify & Access — CloudFlare Worker
+// Site: ${siteUrl}
+//
+// Required environment variables (set via wrangler secret / CF dashboard):
+//   VA_CONSOLE_URL  = "${consoleUrl}"
+//   VA_WORKER_KEY   = <your worker key>
+
+const PROTECTED_PATHS = ["/"];
+const COOKIE_MAX_AGE  = 86400; // 24 hours
+
+function parseCookies(cookieHeader) {
+  const cookies = {};
+  if (!cookieHeader) return cookies;
+  for (const part of cookieHeader.split(";")) {
+    const [k, ...v] = part.trim().split("=");
+    if (k) cookies[k.trim()] = v.join("=").trim();
+  }
+  return cookies;
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    // ── Callback: returning from verification ────────────────────────────
+    const vaSession = url.searchParams.get("va_session");
+    const vaStatus  = url.searchParams.get("va_status");
+
+    if (vaSession && vaStatus === "verified") {
+      try {
+        const statusResp = await fetch(
+          \`\${env.VA_CONSOLE_URL}/api/worker/status/\${vaSession}\`,
+          { headers: { "X-Worker-Key": env.VA_WORKER_KEY } }
+        );
+        const { status, result } = await statusResp.json();
+        if (status === "verified" && result === true) {
+          url.searchParams.delete("va_session");
+          url.searchParams.delete("va_status");
+          const cleanResp = await fetch(new Request(url.toString(), request));
+          const newResp = new Response(cleanResp.body, cleanResp);
+          newResp.headers.set("Set-Cookie",
+            \`va_verified=\${vaSession}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=\${COOKIE_MAX_AGE}\`);
+          return newResp;
+        }
+      } catch (err) {
+        console.error("VA status check failed:", err);
+      }
+    }
+
+    // ── Already verified ─────────────────────────────────────────────────
+    const cookies = parseCookies(request.headers.get("Cookie"));
+    if (cookies.va_verified) return fetch(request);
+
+    // ── Path not protected ───────────────────────────────────────────────
+    if (!PROTECTED_PATHS.some(p => url.pathname.startsWith(p))) {
+      return fetch(request);
+    }
+
+    // ── Initiate verification ────────────────────────────────────────────
+    try {
+      const initResp = await fetch(\`\${env.VA_CONSOLE_URL}/api/worker/initiate\`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Worker-Key": env.VA_WORKER_KEY },
+        body: JSON.stringify({ challenge: "age_over_18", callbackUrl: request.url }),
+      });
+      const { verifyUrl } = await initResp.json();
+      if (verifyUrl) return Response.redirect(verifyUrl, 302);
+    } catch (err) {
+      console.error("VA initiate failed:", err);
+    }
+
+    return fetch(request); // fallback: pass through
+  },
+};`;
+}
+
+function buildWranglerToml(siteName: string, siteUrl: string, consoleUrl: string): string {
+  const host = siteUrl.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+  const workerName = siteName
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 63) || "verify-and-access";
+
+  return `# wrangler.toml — Concordium Verify & Access
+# Worker: ${siteName}
+# Site:   ${siteUrl}
+
+name = "${workerName}"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[[routes]]
+pattern = "${host}/*"
+zone_name = "${host}"
+
+[vars]
+VA_CONSOLE_URL = "${consoleUrl}"
+
+# Set your worker key as a secret (never commit it):
+#   wrangler secret put VA_WORKER_KEY`;
+}
+
+function buildPageSnippet(): string {
+  return `<script>
+(function () {
+  function getCookie(name) {
+    var m = document.cookie.match("(^|;)\\\\s*" + name + "\\\\s*=\\\\s*([^;]+)");
+    return m ? m.pop() : null;
+  }
+  if (!getCookie("va_verified")) {
+    document.querySelectorAll("[data-va-protected]").forEach(function (el) {
+      el.style.display = "none";
+    });
+  }
+})();
+</script>`;
 }
 
 /* ── Worker Keys Page ── */
@@ -127,9 +463,9 @@ export default function WorkerKeysPage() {
   const [newKeyVisible, setNewKey]  = useState(false);
   const [createdKey, setCreatedKey] = useState<string | null>(null);
 
-  // Per-key stats
-  const [openStatsId, setOpenStatsId] = useState<string | null>(null);
-  const [keyStats, setKeyStats] = useState<Record<string, WorkerKeyStats | "loading">>({});
+  // Per-key panel state: "stats" | "setup" | null
+  const [openPanel, setOpenPanel]   = useState<{ id: string; type: PanelType } | null>(null);
+  const [keyStats, setKeyStats]     = useState<Record<string, WorkerKeyStats | "loading">>({});
 
   // Form state
   const [siteName, setSiteName]         = useState("");
@@ -150,13 +486,16 @@ export default function WorkerKeysPage() {
 
   useEffect(() => { fetchKeys(); }, [fetchKeys]);
 
-  async function toggleStats(id: string) {
-    if (openStatsId === id) {
-      setOpenStatsId(null);
+  async function togglePanel(id: string, type: PanelType) {
+    // Close if same panel is open
+    if (openPanel?.id === id && openPanel?.type === type) {
+      setOpenPanel(null);
       return;
     }
-    setOpenStatsId(id);
-    if (!keyStats[id]) {
+    setOpenPanel({ id, type });
+
+    // Load stats on first open
+    if (type === "stats" && !keyStats[id]) {
       setKeyStats(prev => ({ ...prev, [id]: "loading" }));
       try {
         const data = await fetch(`/api/worker-keys/${id}/usage?days=14`).then(r => r.json());
@@ -216,10 +555,10 @@ export default function WorkerKeysPage() {
   const statusColor = (s: string) =>
     s === "active" ? "#2667FF" : s === "paused" ? "#f59e0b" : "#f87171";
 
-  const actionBtn = (color = "#9FB2D3"): React.CSSProperties => ({
-    background: "transparent",
-    border: "1px solid rgba(255,255,255,0.12)",
-    color,
+  const actionBtn = (active = false, color = "#9FB2D3"): React.CSSProperties => ({
+    background: active ? "rgba(38,103,255,0.12)" : "transparent",
+    border: `1px solid ${active ? "rgba(38,103,255,0.4)" : "rgba(255,255,255,0.12)"}`,
+    color: active ? "#2667FF" : color,
     padding: "4px 10px",
     borderRadius: 6,
     cursor: "pointer",
@@ -331,7 +670,7 @@ export default function WorkerKeysPage() {
               {createdKey}
             </code>
             <button
-              onClick={() => { navigator.clipboard.writeText(createdKey); alert("Copied!"); }}
+              onClick={() => { navigator.clipboard.writeText(createdKey); }}
               style={{
                 padding: "6px 14px", background: "#2667FF", color: "#fff",
                 border: "none", borderRadius: 6, cursor: "pointer",
@@ -359,135 +698,72 @@ export default function WorkerKeysPage() {
           <div style={{ fontSize: 13, color: "#9FB2D3" }}>No worker keys yet. Create one above.</div>
         ) : (
           <div style={{ display: "grid", gap: 8 }}>
-            {keys.map(k => (
-              <div key={k.id} style={{
-                borderRadius: 10,
-                border: "1px solid rgba(255,255,255,0.08)",
-                overflow: "hidden",
-              }}>
-                {/* Key card header */}
-                <div style={{
-                  padding: "12px 14px", background: "#0D1825",
-                  display: "flex", justifyContent: "space-between",
-                  alignItems: "center", gap: 10, flexWrap: "wrap",
+            {keys.map(k => {
+              const statsOpen = openPanel?.id === k.id && openPanel?.type === "stats";
+              const setupOpen = openPanel?.id === k.id && openPanel?.type === "setup";
+              return (
+                <div key={k.id} style={{
+                  borderRadius: 10,
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  overflow: "hidden",
                 }}>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: 14 }}>{k.siteName}</div>
-                    <div style={{ fontSize: 12, color: "#9FB2D3", marginTop: 3 }}>
-                      <code style={{ color: "#9FB2D3" }}>{k.siteUrl}</code>
-                      {" · "}
-                      <span style={{ color: statusColor(k.status) }}>●</span>
-                      {" "}
-                      <b style={{ color: statusColor(k.status) }}>{k.status}</b>
-                      {" · callback: "}
-                      <code style={{ color: "#9FB2D3" }}>{k.callbackPath}</code>
+                  {/* Key card header */}
+                  <div style={{
+                    padding: "12px 14px", background: "#0D1825",
+                    display: "flex", justifyContent: "space-between",
+                    alignItems: "center", gap: 10, flexWrap: "wrap",
+                  }}>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>{k.siteName}</div>
+                      <div style={{ fontSize: 12, color: "#9FB2D3", marginTop: 3 }}>
+                        <code style={{ color: "#9FB2D3" }}>{k.siteUrl}</code>
+                        {" · "}
+                        <span style={{ color: statusColor(k.status) }}>●</span>
+                        {" "}
+                        <b style={{ color: statusColor(k.status) }}>{k.status}</b>
+                        {" · callback: "}
+                        <code style={{ color: "#9FB2D3" }}>{k.callbackPath}</code>
+                      </div>
+                      <div style={{ fontSize: 11, color: "#9FB2D3", marginTop: 2 }}>
+                        Created {new Date(k.createdAt).toLocaleDateString()}
+                      </div>
                     </div>
-                    <div style={{ fontSize: 11, color: "#9FB2D3", marginTop: 2 }}>
-                      Created {new Date(k.createdAt).toLocaleDateString()}
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      <button
+                        onClick={() => togglePanel(k.id, "stats")}
+                        style={actionBtn(statsOpen)}
+                      >
+                        {statsOpen ? "▲ Stats" : "▼ Stats"}
+                      </button>
+                      <button
+                        onClick={() => togglePanel(k.id, "setup")}
+                        style={actionBtn(setupOpen, "#a5f3fc")}
+                      >
+                        {setupOpen ? "▲ Setup" : "▼ Setup"}
+                      </button>
+                      {k.status === "active" && (
+                        <button onClick={() => updateStatus(k.id, "paused")} style={actionBtn()}>Pause</button>
+                      )}
+                      {k.status === "paused" && (
+                        <button onClick={() => updateStatus(k.id, "active")} style={actionBtn()}>Activate</button>
+                      )}
+                      {k.status !== "revoked" && (
+                        <button onClick={() => updateStatus(k.id, "revoked")} style={actionBtn(false, "#f87171")}>Revoke</button>
+                      )}
+                      <button onClick={() => handleDelete(k.id)} style={actionBtn(false, "#f87171")}>Delete</button>
                     </div>
                   </div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    <button
-                      onClick={() => toggleStats(k.id)}
-                      style={{
-                        ...actionBtn(openStatsId === k.id ? "#2667FF" : "#9FB2D3"),
-                        ...(openStatsId === k.id ? { borderColor: "rgba(38,103,255,0.4)" } : {}),
-                      }}
-                    >
-                      {openStatsId === k.id ? "▲ Stats" : "▼ Stats"}
-                    </button>
-                    {k.status === "active" && (
-                      <button onClick={() => updateStatus(k.id, "paused")} style={actionBtn()}>Pause</button>
-                    )}
-                    {k.status === "paused" && (
-                      <button onClick={() => updateStatus(k.id, "active")} style={actionBtn()}>Activate</button>
-                    )}
-                    {k.status !== "revoked" && (
-                      <button onClick={() => updateStatus(k.id, "revoked")} style={actionBtn("#f87171")}>Revoke</button>
-                    )}
-                    <button onClick={() => handleDelete(k.id)} style={actionBtn("#f87171")}>Delete</button>
-                  </div>
+
+                  {/* Expandable panels */}
+                  {statsOpen && <StatsPanel data={keyStats[k.id]} />}
+                  {setupOpen && <SetupPanel keyRow={k} />}
                 </div>
-                {/* Expandable stats panel */}
-                {openStatsId === k.id && (
-                  <StatsPanel data={keyStats[k.id]} />
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
-      </div>
-
-      {/* ── Integration guide ── */}
-      <div style={{
-        background: "#1B2735",
-        border: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: 14,
-        padding: 20,
-      }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>Integration Guide</div>
-        <div style={{ fontSize: 13, color: "#9FB2D3", marginBottom: 12 }}>
-          Use this snippet in your CloudFlare Worker to integrate Verify &amp; Access:
-        </div>
-        <pre style={{
-          background: "#0D1825", color: "#a5f3fc", padding: "16px", borderRadius: 10,
-          overflowX: "auto", fontSize: 12, lineHeight: 1.7, margin: 0,
-          border: "1px solid rgba(255,255,255,0.06)",
-        }}>
-          {integrationSnippet}
-        </pre>
       </div>
 
     </div>
   );
 }
-
-/* ── Integration snippet ── */
-const integrationSnippet = `// CloudFlare Worker — Verify & Access Integration
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-
-    // Check for returning verified user
-    const vaSession = url.searchParams.get("va_session");
-    const vaStatus  = url.searchParams.get("va_status");
-
-    if (vaSession && vaStatus === "verified") {
-      const check = await fetch(
-        env.VA_STATUS_URL + "/" + vaSession,
-        { headers: { "X-Worker-Key": env.VA_WORKER_KEY } }
-      );
-      const result = await check.json();
-
-      if (result.status === "verified" && result.result === true) {
-        const resp = await fetch(request);
-        const newResp = new Response(resp.body, resp);
-        newResp.headers.set("Set-Cookie",
-          \`va_verified=\${vaSession}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400\`);
-        return newResp;
-      }
-    }
-
-    // Check for existing verification cookie
-    const cookie = request.headers.get("Cookie") || "";
-    if (cookie.includes("va_verified=")) {
-      return fetch(request); // already verified
-    }
-
-    // Initiate verification
-    const initResp = await fetch(env.VA_INITIATE_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Worker-Key": env.VA_WORKER_KEY,
-      },
-      body: JSON.stringify({
-        challenge: "age_over_18",
-        callbackUrl: request.url,
-      }),
-    });
-
-    const { verifyUrl } = await initResp.json();
-    return Response.redirect(verifyUrl, 302);
-  }
-};`;
