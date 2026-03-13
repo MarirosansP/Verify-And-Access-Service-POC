@@ -9,11 +9,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession }          from "next-auth";
 import { authOptions }               from "@/lib/auth";
 import {
-
-export const dynamic = "force-dynamic";
   listWorkerKeys,
   createWorkerKey,
 } from "@/lib/worker-keys";
+
+export const dynamic = "force-dynamic";
 
 /* ---------- GET: list ------------------------------------------------ */
 export async function GET() {

@@ -7,11 +7,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession }          from "next-auth";
 import { authOptions }               from "@/lib/auth";
 import {
-
-export const dynamic = "force-dynamic";
   updateWorkerKeyStatus,
   deleteWorkerKey,
 } from "@/lib/worker-keys";
+
+export const dynamic = "force-dynamic";
 
 /* ---------- PATCH: update status ------------------------------------- */
 export async function PATCH(
