@@ -451,7 +451,7 @@
     }
   });
 
-  // node_modules/@walletconnect/time/node_modules/tslib/tslib.es6.js
+  // node_modules/tslib/tslib.es6.js
   var tslib_es6_exports = {};
   __export(tslib_es6_exports, {
     __assign: () => __assign,
@@ -756,7 +756,7 @@
   }
   var extendStatics, __assign;
   var init_tslib_es6 = __esm({
-    "node_modules/@walletconnect/time/node_modules/tslib/tslib.es6.js"() {
+    "node_modules/tslib/tslib.es6.js"() {
       extendStatics = function(d4, b5) {
         extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d5, b6) {
           d5.__proto__ = b6;
@@ -766,7 +766,7 @@
         return extendStatics(d4, b5);
       };
       __assign = function() {
-        __assign = Object.assign || function __assign3(t) {
+        __assign = Object.assign || function __assign2(t) {
           for (var s2, i3 = 1, n4 = arguments.length; i3 < n4; i3++) {
             s2 = arguments[i3];
             for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3)) t[p3] = s2[p3];
@@ -1097,7 +1097,7 @@
     }
   });
 
-  // node_modules/@walletconnect/core/node_modules/unstorage/dist/shared/unstorage.zVDD2mZo.mjs
+  // node_modules/unstorage/dist/shared/unstorage.zVDD2mZo.mjs
   function wrapToPromise(value) {
     if (!value || typeof value.then !== "function") {
       return Promise.resolve(value);
@@ -1194,12 +1194,12 @@
   }
   var BASE64_PREFIX;
   var init_unstorage_zVDD2mZo = __esm({
-    "node_modules/@walletconnect/core/node_modules/unstorage/dist/shared/unstorage.zVDD2mZo.mjs"() {
+    "node_modules/unstorage/dist/shared/unstorage.zVDD2mZo.mjs"() {
       BASE64_PREFIX = "base64:";
     }
   });
 
-  // node_modules/@walletconnect/core/node_modules/unstorage/dist/index.mjs
+  // node_modules/unstorage/dist/index.mjs
   function defineDriver(factory) {
     return factory;
   }
@@ -1605,7 +1605,7 @@
   }
   var DRIVER_NAME, memory;
   var init_dist2 = __esm({
-    "node_modules/@walletconnect/core/node_modules/unstorage/dist/index.mjs"() {
+    "node_modules/unstorage/dist/index.mjs"() {
       init_dist();
       init_unstorage_zVDD2mZo();
       DRIVER_NAME = "memory";
@@ -1751,14 +1751,14 @@
     }
   });
 
-  // node_modules/@walletconnect/core/node_modules/@walletconnect/keyvaluestorage/dist/index.es.js
+  // node_modules/@walletconnect/keyvaluestorage/dist/index.es.js
   function k(i3) {
     var t;
     return [i3[0], safeJsonParse((t = i3[1]) != null ? t : "")];
   }
   var x, z, D, E, _, l2, c, K, N, y, O, j, h;
   var init_index_es2 = __esm({
-    "node_modules/@walletconnect/core/node_modules/@walletconnect/keyvaluestorage/dist/index.es.js"() {
+    "node_modules/@walletconnect/keyvaluestorage/dist/index.es.js"() {
       init_dist2();
       init_dist3();
       init_esm2();
@@ -13144,11 +13144,19 @@ if (cid) {
   function Se3(t, e2) {
     return t.includes(":") ? [t] : e2.chains || [];
   }
+  function bt2(t, e2) {
+    const { message: n4, code: r3 } = ur2[t];
+    return { message: e2 ? `${n4} ${e2}` : n4, code: r3 };
+  }
+  function Vt2(t, e2) {
+    const { message: n4, code: r3 } = ar2[t];
+    return { message: e2 ? `${n4} ${e2}` : n4, code: r3 };
+  }
   function rn2() {
     return typeof process < "u" && typeof process.versions < "u" && typeof process.versions.node < "u";
   }
   function It2() {
-    return !(0, import_window_getters.getDocument)() && !!(0, import_window_getters.getNavigator)() && navigator.product === dr2;
+    return !(0, import_window_getters.getDocument)() && !!(0, import_window_getters.getNavigator)() && navigator.product === pr2;
   }
   function li() {
     return It2() && typeof global < "u" && typeof (global == null ? void 0 : global.Platform) < "u" && (global == null ? void 0 : global.Platform.OS) === "android";
@@ -13156,11 +13164,11 @@ if (cid) {
   function di() {
     return It2() && typeof global < "u" && typeof (global == null ? void 0 : global.Platform) < "u" && (global == null ? void 0 : global.Platform.OS) === "ios";
   }
-  function Wt2() {
+  function Xt2() {
     return !rn2() && !!(0, import_window_getters.getNavigator)() && !!(0, import_window_getters.getDocument)();
   }
-  function Vt2() {
-    return It2() ? et.reactNative : rn2() ? et.node : Wt2() ? et.browser : et.unknown;
+  function Mt2() {
+    return It2() ? et.reactNative : rn2() ? et.node : Xt2() ? et.browser : et.unknown;
   }
   function hi() {
     var t;
@@ -13170,7 +13178,7 @@ if (cid) {
       return;
     }
   }
-  function gr2(t, e2) {
+  function yr2(t, e2) {
     const n4 = new URLSearchParams(t);
     return Object.entries(e2).sort(([r3], [o4]) => r3.localeCompare(o4)).forEach(([r3, o4]) => {
       o4 != null && n4.set(r3, String(o4));
@@ -13178,18 +13186,18 @@ if (cid) {
   }
   function pi(t) {
     var e2, n4;
-    const r3 = br2();
+    const r3 = mr2();
     try {
-      return t != null && t.url && r3.url && new URL(t.url).host !== new URL(r3.url).host && (console.warn(`The configured WalletConnect 'metadata.url':${t.url} differs from the actual page url:${r3.url}. This is probably unintended and can lead to issues.`), t.url = r3.url), (e2 = t?.icons) != null && e2.length && t.icons.length > 0 && (t.icons = t.icons.filter((o4) => o4 !== "")), fi(ur2(ur2({}, r3), t), { url: t?.url || r3.url, name: t?.name || r3.name, description: t?.description || r3.description, icons: (n4 = t?.icons) != null && n4.length && t.icons.length > 0 ? t.icons : r3.icons });
+      return t != null && t.url && r3.url && new URL(t.url).host !== new URL(r3.url).host && (console.warn(`The configured WalletConnect 'metadata.url':${t.url} differs from the actual page url:${r3.url}. This is probably unintended and can lead to issues.`), t.url = r3.url), (e2 = t?.icons) != null && e2.length && t.icons.length > 0 && (t.icons = t.icons.filter((o4) => o4 !== "")), fi(dr2(dr2({}, r3), t), { url: t?.url || r3.url, name: t?.name || r3.name, description: t?.description || r3.description, icons: (n4 = t?.icons) != null && n4.length && t.icons.length > 0 ? t.icons : r3.icons });
     } catch (o4) {
       return console.warn("Error populating app metadata", o4), t || r3;
     }
   }
-  function br2() {
+  function mr2() {
     return (0, import_window_metadata.getWindowMetadata)() || { name: "", description: "", url: "", icons: [""] };
   }
-  function yr2() {
-    if (Vt2() === et.reactNative && typeof global < "u" && typeof (global == null ? void 0 : global.Platform) < "u") {
+  function wr2() {
+    if (Mt2() === et.reactNative && typeof global < "u" && typeof (global == null ? void 0 : global.Platform) < "u") {
       const { OS: n4, Version: r3 } = global.Platform;
       return [n4, r3].join("-");
     }
@@ -13198,17 +13206,17 @@ if (cid) {
     const e2 = t.os ? t.os.replace(" ", "").toLowerCase() : "unknown";
     return t.type === "browser" ? [e2, t.name, t.version].join("-") : [e2, t.version].join("-");
   }
-  function mr2() {
+  function vr2() {
     var t;
-    const e2 = Vt2();
+    const e2 = Mt2();
     return e2 === et.browser ? [e2, ((t = (0, import_window_getters.getLocation)()) == null ? void 0 : t.host) || "unknown"].join(":") : e2;
   }
-  function wr2(t, e2, n4) {
-    const r3 = yr2(), o4 = mr2();
-    return [[t, e2].join("-"), [pr2, n4].join("-"), r3, o4].join("/");
+  function xr2(t, e2, n4) {
+    const r3 = wr2(), o4 = vr2();
+    return [[t, e2].join("-"), [br2, n4].join("-"), r3, o4].join("/");
   }
   function bi({ protocol: t, version: e2, relayUrl: n4, sdkVersion: r3, auth: o4, projectId: s2, useOnCloseEvent: i3, bundleId: c5, packageName: f4 }) {
-    const u2 = n4.split("?"), a3 = wr2(t, e2, r3), l5 = { auth: o4, ua: a3, projectId: s2, useOnCloseEvent: i3 || void 0, packageName: f4 || void 0, bundleId: c5 || void 0 }, d4 = gr2(u2[1] || "", l5);
+    const u2 = n4.split("?"), a3 = xr2(t, e2, r3), l5 = { auth: o4, ua: a3, projectId: s2, useOnCloseEvent: i3 || void 0, packageName: f4 || void 0, bundleId: c5 || void 0 }, d4 = yr2(u2[1] || "", l5);
     return u2[0] + "?" + d4;
   }
   function At(t, e2) {
@@ -13230,8 +13238,8 @@ if (cid) {
     }, done: () => new Promise((c5, f4) => {
       if (i3) return c5(i3);
       s2 = setTimeout(() => {
-        const u2 = new Error(e2);
-        i3 = Promise.reject(u2), f4(u2);
+        const u2 = bt2("EXPIRED"), a3 = new Error(e2 || u2.message);
+        a3.code = u2.code, f4(a3);
       }, n4), r3 = c5, o4 = f4;
     }) };
   }
@@ -13289,36 +13297,36 @@ if (cid) {
       if (!n4) return;
       const o4 = typeof n4 == "string" ? JSON.parse(n4) : n4, s2 = o4?.href;
       if (typeof s2 != "string") return;
-      const i3 = Br2(s2, t, e2), c5 = Vt2();
+      const i3 = Ar2(s2, t, e2), c5 = Mt2();
       if (c5 === et.browser) {
         if (!((r3 = (0, import_window_getters.getDocument)()) != null && r3.hasFocus())) {
           console.warn("Document does not have focus, skipping deeplink.");
           return;
         }
-        Ir2(i3);
+        Sr2(i3);
       } else c5 === et.reactNative && typeof (global == null ? void 0 : global.Linking) < "u" && await global.Linking.openURL(i3);
     } catch (o4) {
       console.error(o4);
     }
   }
-  function Br2(t, e2, n4) {
+  function Ar2(t, e2, n4) {
     const r3 = `requestId=${e2}&sessionTopic=${n4}`;
     t.endsWith("/") && (t = t.slice(0, -1));
     let o4 = `${t}`;
     if (t.startsWith("https://t.me")) {
       const s2 = t.includes("?") ? "&startapp=" : "?startapp=";
-      o4 = `${o4}${s2}${Or2(r3, true)}`;
+      o4 = `${o4}${s2}${Ur2(r3, true)}`;
     } else o4 = `${o4}/wc?${r3}`;
     return o4;
   }
-  function Ir2(t) {
+  function Sr2(t) {
     let e2 = "_self";
-    Sr2() ? e2 = "_top" : (Ar2() || t.startsWith("https://") || t.startsWith("http://")) && (e2 = "_blank"), window.open(t, e2, "noreferrer noopener");
+    Nr2() ? e2 = "_top" : (Or2() || t.startsWith("https://") || t.startsWith("http://")) && (e2 = "_blank"), window.open(t, e2, "noreferrer noopener");
   }
   async function Ci(t, e2) {
     let n4 = "";
     try {
-      if (Wt2() && (n4 = localStorage.getItem(e2), n4)) return n4;
+      if (Xt2() && (n4 = localStorage.getItem(e2), n4)) return n4;
       n4 = await t.getItem(e2);
     } catch (r3) {
       console.error(r3);
@@ -13339,17 +13347,17 @@ if (cid) {
   function ki() {
     return typeof process < "u" && process.env.IS_VITEST === "true";
   }
-  function Ar2() {
+  function Or2() {
     return typeof window < "u" && (!!window.TelegramWebviewProxy || !!window.Telegram || !!window.TelegramWebviewProxyProto);
   }
-  function Sr2() {
+  function Nr2() {
     try {
       return window.self !== window.top;
     } catch {
       return false;
     }
   }
-  function Or2(t, e2 = false) {
+  function Ur2(t, e2 = false) {
     const n4 = Buffer.from(t).toString("base64");
     return e2 ? n4.replace(/[=]/g, "") : n4;
   }
@@ -13359,14 +13367,14 @@ if (cid) {
   function Pi(t) {
     return new Promise((e2) => setTimeout(e2, t));
   }
-  function Ur2(t, e2 = false) {
-    return e2 ? { h: Number(t & Ne3), l: Number(t >> Nr2 & Ne3) } : { h: Number(t >> Nr2 & Ne3) | 0, l: Number(t & Ne3) | 0 };
+  function Rr2(t, e2 = false) {
+    return e2 ? { h: Number(t & Ne3), l: Number(t >> _r2 & Ne3) } : { h: Number(t >> _r2 & Ne3) | 0, l: Number(t & Ne3) | 0 };
   }
-  function _r2(t, e2 = false) {
+  function $r2(t, e2 = false) {
     const n4 = t.length;
     let r3 = new Uint32Array(n4), o4 = new Uint32Array(n4);
     for (let s2 = 0; s2 < n4; s2++) {
-      const { h: i3, l: c5 } = Ur2(t[s2], e2);
+      const { h: i3, l: c5 } = Rr2(t[s2], e2);
       [r3[s2], o4[s2]] = [i3, c5];
     }
     return [r3, o4];
@@ -13378,7 +13386,7 @@ if (cid) {
   function Ue3(t) {
     return t instanceof Uint8Array || ArrayBuffer.isView(t) && t.constructor.name === "Uint8Array";
   }
-  function mt(t) {
+  function wt2(t) {
     if (!Number.isSafeInteger(t) || t < 0) throw new Error("positive integer expected, got " + t);
   }
   function ht2(t, ...e2) {
@@ -13387,7 +13395,7 @@ if (cid) {
   }
   function _e3(t) {
     if (typeof t != "function" || typeof t.create != "function") throw new Error("Hash should be wrapped by utils.createHasher");
-    mt(t.outputLen), mt(t.blockLen);
+    wt2(t.outputLen), wt2(t.blockLen);
   }
   function Nt2(t, e2 = true) {
     if (t.destroyed) throw new Error("Hash instance has been destroyed");
@@ -13407,35 +13415,35 @@ if (cid) {
   function ln(t) {
     return new DataView(t.buffer, t.byteOffset, t.byteLength);
   }
-  function bt2(t, e2) {
+  function yt2(t, e2) {
     return t << 32 - e2 | t >>> e2;
   }
-  function Cr2(t) {
+  function Lr2(t) {
     return t << 24 & 4278190080 | t << 8 & 16711680 | t >>> 8 & 65280 | t >>> 24 & 255;
   }
-  function Wi(t) {
-    for (let e2 = 0; e2 < t.length; e2++) t[e2] = Cr2(t[e2]);
+  function Xi(t) {
+    for (let e2 = 0; e2 < t.length; e2++) t[e2] = Lr2(t[e2]);
     return t;
   }
   function Jt2(t) {
-    if (ht2(t), jr2) return t.toHex();
+    if (ht2(t), kr2) return t.toHex();
     let e2 = "";
-    for (let n4 = 0; n4 < t.length; n4++) e2 += Xi[t[n4]];
+    for (let n4 = 0; n4 < t.length; n4++) e2 += Wi[t[n4]];
     return e2;
   }
-  function Lr2(t) {
-    if (t >= vt2._0 && t <= vt2._9) return t - vt2._0;
-    if (t >= vt2.A && t <= vt2.F) return t - (vt2.A - 10);
-    if (t >= vt2.a && t <= vt2.f) return t - (vt2.a - 10);
+  function Pr2(t) {
+    if (t >= xt2._0 && t <= xt2._9) return t - xt2._0;
+    if (t >= xt2.A && t <= xt2.F) return t - (xt2.A - 10);
+    if (t >= xt2.a && t <= xt2.f) return t - (xt2.a - 10);
   }
   function Re3(t) {
     if (typeof t != "string") throw new Error("hex string expected, got " + typeof t);
-    if (jr2) return Uint8Array.fromHex(t);
+    if (kr2) return Uint8Array.fromHex(t);
     const e2 = t.length, n4 = e2 / 2;
     if (e2 % 2) throw new Error("hex string expected, got unpadded hex of length " + e2);
     const r3 = new Uint8Array(n4);
     for (let o4 = 0, s2 = 0; o4 < n4; o4++, s2 += 2) {
-      const i3 = Lr2(t.charCodeAt(s2)), c5 = Lr2(t.charCodeAt(s2 + 1));
+      const i3 = Pr2(t.charCodeAt(s2)), c5 = Pr2(t.charCodeAt(s2 + 1));
       if (i3 === void 0 || c5 === void 0) {
         const f4 = t[s2] + t[s2 + 1];
         throw new Error('hex string expected, got non-hex character "' + f4 + '" at index ' + s2);
@@ -13444,12 +13452,12 @@ if (cid) {
     }
     return r3;
   }
-  function kr2(t) {
+  function Hr2(t) {
     if (typeof t != "string") throw new Error("string expected");
     return new Uint8Array(new TextEncoder().encode(t));
   }
   function pt(t) {
-    return typeof t == "string" && (t = kr2(t)), ht2(t), t;
+    return typeof t == "string" && (t = Hr2(t)), ht2(t), t;
   }
   function _t2(...t) {
     let e2 = 0;
@@ -13472,9 +13480,9 @@ if (cid) {
     const e2 = (r3, o4) => t(o4).update(pt(r3)).digest(), n4 = t({});
     return e2.outputLen = n4.outputLen, e2.blockLen = n4.blockLen, e2.create = (r3) => t(r3), e2;
   }
-  function Mt2(t = 32) {
-    if (Xt2 && typeof Xt2.getRandomValues == "function") return Xt2.getRandomValues(new Uint8Array(t));
-    if (Xt2 && typeof Xt2.randomBytes == "function") return Uint8Array.from(Xt2.randomBytes(t));
+  function Kt2(t = 32) {
+    if (Wt2 && typeof Wt2.getRandomValues == "function") return Wt2.getRandomValues(new Uint8Array(t));
+    if (Wt2 && typeof Wt2.randomBytes == "function") return Uint8Array.from(Wt2.randomBytes(t));
     throw new Error("crypto.getRandomValues must be defined");
   }
   function ic(t, e2 = 24) {
@@ -13482,12 +13490,12 @@ if (cid) {
     for (let r3 = 24 - e2; r3 < 24; r3++) {
       for (let i3 = 0; i3 < 10; i3++) n4[i3] = t[i3] ^ t[i3 + 10] ^ t[i3 + 20] ^ t[i3 + 30] ^ t[i3 + 40];
       for (let i3 = 0; i3 < 10; i3 += 2) {
-        const c5 = (i3 + 8) % 10, f4 = (i3 + 2) % 10, u2 = n4[f4], a3 = n4[f4 + 1], l5 = Mr2(u2, a3, 1) ^ n4[c5], d4 = Kr2(u2, a3, 1) ^ n4[c5 + 1];
+        const c5 = (i3 + 8) % 10, f4 = (i3 + 2) % 10, u2 = n4[f4], a3 = n4[f4 + 1], l5 = qr2(u2, a3, 1) ^ n4[c5], d4 = Fr2(u2, a3, 1) ^ n4[c5 + 1];
         for (let h4 = 0; h4 < 50; h4 += 10) t[i3 + h4] ^= l5, t[i3 + h4 + 1] ^= d4;
       }
       let o4 = t[2], s2 = t[3];
       for (let i3 = 0; i3 < 24; i3++) {
-        const c5 = Hr2[i3], f4 = Mr2(o4, s2, c5), u2 = Kr2(o4, s2, c5), a3 = Pr2[i3];
+        const c5 = Vr2[i3], f4 = qr2(o4, s2, c5), u2 = Fr2(o4, s2, c5), a3 = Dr2[i3];
         o4 = t[a3], s2 = t[a3 + 1], t[a3] = f4, t[a3 + 1] = u2;
       }
       for (let i3 = 0; i3 < 50; i3 += 10) {
@@ -13520,7 +13528,7 @@ if (cid) {
     u2 = an(w3, u2, l5, c5), f4 = w3 | 0, { Dh: m3, Dl: y4 } = { Dh: m3 ^ u2, Dl: y4 ^ f4 }, { Dh: m3, Dl: y4 } = { Dh: St2(m3, y4, 16), Dl: Ot2(m3, y4, 16) }, { h: h4, l: d4 } = dt2(h4, d4, m3, y4), { Bh: l5, Bl: a3 } = { Bh: l5 ^ h4, Bl: a3 ^ d4 }, { Bh: l5, Bl: a3 } = { Bh: de3(l5, a3, 63), Bl: he3(l5, a3, 63) }, S2[2 * t] = f4, S2[2 * t + 1] = u2, S2[2 * e2] = a3, S2[2 * e2 + 1] = l5, S2[2 * n4] = d4, S2[2 * n4 + 1] = h4, S2[2 * r3] = y4, S2[2 * r3 + 1] = m3;
   }
   function Ec(t, e2 = {}, n4, r3, o4) {
-    if (mt(n4), t < 0 || t > n4) throw new Error("outputLen bigger than keyLen");
+    if (wt2(n4), t < 0 || t > n4) throw new Error("outputLen bigger than keyLen");
     const { key: s2, salt: i3, personalization: c5 } = e2;
     if (s2 !== void 0 && (s2.length < 1 || s2.length > n4)) throw new Error("key length must be undefined or 1.." + n4);
     if (i3 !== void 0 && i3.length !== r3) throw new Error("salt must be undefined or " + r3);
@@ -13531,21 +13539,21 @@ if (cid) {
 ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return "0x" + Buffer.from(fc(n4)).toString("hex");
   }
-  async function Zr2(t, e2, n4, r3, o4, s2) {
+  async function zr2(t, e2, n4, r3, o4, s2) {
     switch (n4.t) {
       case "eip191":
-        return await Gr2(t, e2, n4.s);
+        return await Yr2(t, e2, n4.s);
       case "eip1271":
-        return await zr2(t, e2, n4.s, r3, o4, s2);
+        return await Xr2(t, e2, n4.s, r3, o4, s2);
       default:
         throw new Error(`verifySignature failed: Attempted to verify CacaoSignature with unknown type: ${n4.t}`);
     }
   }
-  function Gr2(t, e2, n4) {
+  function Yr2(t, e2, n4) {
     const r3 = Signature_exports.fromHex(n4);
     return Secp256k1_exports.recoverAddress({ payload: hn(e2), signature: r3 }).toLowerCase() === t.toLowerCase();
   }
-  async function zr2(t, e2, n4, r3, o4, s2) {
+  async function Xr2(t, e2, n4, r3, o4, s2) {
     const i3 = Je2(r3);
     if (!i3.namespace || !i3.reference) throw new Error(`isValidEip1271Signature failed: chainId must be in CAIP-2 format, received: ${r3}`);
     try {
@@ -13576,10 +13584,10 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return base58.encode(o4);
   }
   function _c(t) {
-    const e2 = new Uint8Array(Te3(Yr2(t)));
+    const e2 = new Uint8Array(Te3(Wr2(t)));
     return base58.encode(e2);
   }
-  function Yr2(t) {
+  function Wr2(t) {
     if (t instanceof Uint8Array) return t;
     if (Array.isArray(t)) return new Uint8Array(t);
     if (typeof t == "object" && t != null && t.data) return new Uint8Array(Object.values(t.data));
@@ -13619,16 +13627,16 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return r3;
   }
   async function Vc(t) {
-    const { cacao: e2, projectId: n4 } = t, { s: r3, p: o4 } = e2, s2 = ro2(o4, o4.iss), i3 = bn2(o4.iss);
-    return await Zr2(i3, s2, r3, no2(o4.iss), n4);
+    const { cacao: e2, projectId: n4 } = t, { s: r3, p: o4 } = e2, s2 = so2(o4, o4.iss), i3 = bn2(o4.iss);
+    return await zr2(i3, s2, r3, oo2(o4.iss), n4);
   }
-  function co2(t) {
+  function ao2(t) {
     return Buffer.from(JSON.stringify(t)).toString("base64");
   }
-  function fo2(t) {
+  function uo2(t) {
     return JSON.parse(Buffer.from(t, "base64").toString("utf-8"));
   }
-  function yt2(t) {
+  function mt(t) {
     if (!t) throw new Error("No recap provided, value is undefined");
     if (!t.att) throw new Error("No `att` property found");
     const e2 = Object.keys(t.att);
@@ -13648,7 +13656,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       });
     });
   }
-  function ao2(t, e2, n4, r3 = {}) {
+  function lo2(t, e2, n4, r3 = {}) {
     return n4?.sort((o4, s2) => o4.localeCompare(s2)), { att: { [t]: yn2(e2, n4, r3) } };
   }
   function yn2(t, e2, n4 = {}) {
@@ -13657,36 +13665,36 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return Object.assign({}, ...r3);
   }
   function Ce3(t) {
-    return yt2(t), `urn:recap:${co2(t).replace(/=/g, "")}`;
+    return mt(t), `urn:recap:${ao2(t).replace(/=/g, "")}`;
   }
   function kt2(t) {
-    const e2 = fo2(t.replace("urn:recap:", ""));
-    return yt2(e2), e2;
+    const e2 = uo2(t.replace("urn:recap:", ""));
+    return mt(e2), e2;
   }
   function Zc(t, e2, n4) {
-    const r3 = ao2(t, e2, n4);
+    const r3 = lo2(t, e2, n4);
     return Ce3(r3);
   }
   function mn2(t) {
     return t && t.includes("urn:recap:");
   }
   function Gc(t, e2) {
-    const n4 = kt2(t), r3 = kt2(e2), o4 = lo2(n4, r3);
+    const n4 = kt2(t), r3 = kt2(e2), o4 = po2(n4, r3);
     return Ce3(o4);
   }
-  function lo2(t, e2) {
-    yt2(t), yt2(e2);
+  function po2(t, e2) {
+    mt(t), mt(e2);
     const n4 = Object.keys(t.att).concat(Object.keys(e2.att)).sort((o4, s2) => o4.localeCompare(s2)), r3 = { att: {} };
     return n4.forEach((o4) => {
       var s2, i3;
       Object.keys(((s2 = t.att) == null ? void 0 : s2[o4]) || {}).concat(Object.keys(((i3 = e2.att) == null ? void 0 : i3[o4]) || {})).sort((c5, f4) => c5.localeCompare(f4)).forEach((c5) => {
         var f4, u2;
-        r3.att[o4] = Jr2(gn2({}, r3.att[o4]), { [c5]: ((f4 = t.att[o4]) == null ? void 0 : f4[c5]) || ((u2 = e2.att[o4]) == null ? void 0 : u2[c5]) });
+        r3.att[o4] = to2(gn2({}, r3.att[o4]), { [c5]: ((f4 = t.att[o4]) == null ? void 0 : f4[c5]) || ((u2 = e2.att[o4]) == null ? void 0 : u2[c5]) });
       });
     }), r3;
   }
   function wn(t = "", e2) {
-    yt2(e2);
+    mt(e2);
     const n4 = "I further authorize the stated URI to perform the following actions on my behalf: ";
     if (t.includes(n4)) return t;
     const r3 = [];
@@ -13707,13 +13715,13 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function zc(t) {
     var e2;
     const n4 = kt2(t);
-    yt2(n4);
+    mt(n4);
     const r3 = (e2 = n4.att) == null ? void 0 : e2.eip155;
     return r3 ? Object.keys(r3).map((o4) => o4.split("/")[1]) : [];
   }
   function Yc(t) {
     const e2 = kt2(t);
-    yt2(e2);
+    mt(e2);
     const n4 = [];
     return Object.values(e2.att).forEach((r3) => {
       Object.values(r3).forEach((o4) => {
@@ -13727,7 +13735,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     const e2 = t?.[t.length - 1];
     return mn2(e2) ? e2 : void 0;
   }
-  function po2(t) {
+  function bo2(t) {
     return t instanceof Uint8Array || ArrayBuffer.isView(t) && t.constructor.name === "Uint8Array";
   }
   function vn2(t) {
@@ -13737,14 +13745,14 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     if (!Number.isSafeInteger(t) || t < 0) throw new Error("positive integer expected, got " + t);
   }
   function ot(t, ...e2) {
-    if (!po2(t)) throw new Error("Uint8Array expected");
+    if (!bo2(t)) throw new Error("Uint8Array expected");
     if (e2.length > 0 && !e2.includes(t.length)) throw new Error("Uint8Array expected of length " + e2 + ", got length=" + t.length);
   }
-  function go2(t, e2 = true) {
+  function yo2(t, e2 = true) {
     if (t.destroyed) throw new Error("Hash instance has been destroyed");
     if (e2 && t.finished) throw new Error("Hash#digest() has already been called");
   }
-  function Wc(t, e2) {
+  function Xc(t, e2) {
     ot(t);
     const n4 = e2.outputLen;
     if (t.length < n4) throw new Error("digestInto() expects output buffer of length at least " + n4);
@@ -13755,7 +13763,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function Qt2(...t) {
     for (let e2 = 0; e2 < t.length; e2++) t[e2].fill(0);
   }
-  function Xc(t) {
+  function Wc(t) {
     return new DataView(t.buffer, t.byteOffset, t.byteLength);
   }
   function Qc(t) {
@@ -13764,7 +13772,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   }
   function En2(t) {
     if (typeof t == "string") t = Qc(t);
-    else if (po2(t)) t = Bn2(t);
+    else if (bo2(t)) t = Bn2(t);
     else throw new Error("Uint8Array expected, got " + typeof t);
     return t;
   }
@@ -13778,21 +13786,21 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     for (let r3 = 0; r3 < t.length; r3++) n4 |= t[r3] ^ e2[r3];
     return n4 === 0;
   }
-  function bo2(t, e2, n4 = true) {
+  function mo2(t, e2, n4 = true) {
     if (e2 === void 0) return new Uint8Array(t);
     if (e2.length !== t) throw new Error("invalid output length, expected " + t + ", got: " + e2.length);
     if (n4 && !of(e2)) throw new Error("invalid output, must be aligned");
     return e2;
   }
-  function yo2(t, e2, n4, r3) {
+  function wo2(t, e2, n4, r3) {
     if (typeof t.setBigUint64 == "function") return t.setBigUint64(e2, n4, r3);
     const o4 = BigInt(32), s2 = BigInt(4294967295), i3 = Number(n4 >> o4 & s2), c5 = Number(n4 & s2), f4 = r3 ? 4 : 0, u2 = r3 ? 0 : 4;
     t.setUint32(e2 + f4, i3, r3), t.setUint32(e2 + u2, c5, r3);
   }
   function rf(t, e2, n4) {
     vn2(n4);
-    const r3 = new Uint8Array(16), o4 = Xc(r3);
-    return yo2(o4, 0, BigInt(e2), n4), yo2(o4, 8, BigInt(t), n4), r3;
+    const r3 = new Uint8Array(16), o4 = Wc(r3);
+    return wo2(o4, 0, BigInt(e2), n4), wo2(o4, 8, BigInt(t), n4), r3;
   }
   function of(t) {
     return t.byteOffset % 4 === 0;
@@ -13807,9 +13815,9 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return t.byteOffset % 4 === 0;
   }
   function lf(t, e2, n4, r3, o4, s2, i3, c5) {
-    const f4 = o4.length, u2 = new Uint8Array(Le3), a3 = Pt2(u2), l5 = In2(o4) && In2(s2), d4 = l5 ? Pt2(o4) : vo2, h4 = l5 ? Pt2(s2) : vo2;
+    const f4 = o4.length, u2 = new Uint8Array(Le3), a3 = Pt2(u2), l5 = In2(o4) && In2(s2), d4 = l5 ? Pt2(o4) : Eo2, h4 = l5 ? Pt2(s2) : Eo2;
     for (let y4 = 0; y4 < f4; i3++) {
-      if (t(e2, n4, r3, a3, i3, c5), i3 >= wo2) throw new Error("arx: counter overflow");
+      if (t(e2, n4, r3, a3, i3, c5), i3 >= xo2) throw new Error("arx: counter overflow");
       const m3 = Math.min(Le3, f4 - y4);
       if (l5 && m3 === Le3) {
         const w3 = y4 / 4;
@@ -13828,7 +13836,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return xn2(o4), xn2(i3), vn2(s2), vn2(n4), (c5, f4, u2, a3, l5 = 0) => {
       ot(c5), ot(f4), ot(u2);
       const d4 = u2.length;
-      if (a3 === void 0 && (a3 = new Uint8Array(d4)), ot(a3), xn2(l5), l5 < 0 || l5 >= wo2) throw new Error("arx: counter overflow");
+      if (a3 === void 0 && (a3 = new Uint8Array(d4)), ot(a3), xn2(l5), l5 < 0 || l5 >= xo2) throw new Error("arx: counter overflow");
       if (a3.length < d4) throw new Error(`arx: output (${a3.length}) is shorter than data (${d4})`);
       const h4 = [];
       let y4 = c5.length, m3, w3;
@@ -13861,9 +13869,9 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     let N12 = 0;
     r3[N12++] = i3 + j5 | 0, r3[N12++] = c5 + L | 0, r3[N12++] = f4 + k5 | 0, r3[N12++] = u2 + O6 | 0, r3[N12++] = a3 + T3 | 0, r3[N12++] = l5 + C3 | 0, r3[N12++] = d4 + _3 | 0, r3[N12++] = h4 + p3 | 0, r3[N12++] = y4 + b5 | 0, r3[N12++] = m3 + g3 | 0, r3[N12++] = w3 + x5 | 0, r3[N12++] = U3 + E4 | 0, r3[N12++] = F2 + I2 | 0, r3[N12++] = R3 + v5 | 0, r3[N12++] = Z2 + B3 | 0, r3[N12++] = H3 + A3 | 0;
   }
-  function Eo2(t, e2, n4, r3, o4) {
+  function Io2(t, e2, n4, r3, o4) {
     const s2 = t(e2, n4, wf), i3 = gf.create(s2);
-    o4 && xo2(i3, o4), xo2(i3, r3);
+    o4 && Bo2(i3, o4), Bo2(i3, r3);
     const c5 = rf(r3.length, o4 ? o4.length : 0, true);
     i3.update(c5);
     const f4 = i3.digest();
@@ -13873,13 +13881,13 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return _e3(t), n4 === void 0 && (n4 = new Uint8Array(t.outputLen)), ke3(t, pt(n4), pt(e2));
   }
   function Ef(t, e2, n4, r3 = 32) {
-    _e3(t), mt(r3);
+    _e3(t), wt2(r3);
     const o4 = t.outputLen;
     if (r3 > 255 * o4) throw new Error("Length should be <= 255*HashLen");
     const s2 = Math.ceil(r3 / o4);
-    n4 === void 0 && (n4 = Ao2);
+    n4 === void 0 && (n4 = Oo2);
     const i3 = new Uint8Array(s2 * o4), c5 = ke3.create(t, e2), f4 = c5._cloneInto(), u2 = new Uint8Array(c5.outputLen);
-    for (let a3 = 0; a3 < s2; a3++) An2[0] = a3 + 1, f4.update(a3 === 0 ? Ao2 : u2).update(n4).update(An2).digestInto(u2), i3.set(u2, o4 * a3), c5._cloneInto(f4);
+    for (let a3 = 0; a3 < s2; a3++) An2[0] = a3 + 1, f4.update(a3 === 0 ? Oo2 : u2).update(n4).update(An2).digestInto(u2), i3.set(u2, o4 * a3), c5._cloneInto(f4);
     return c5.destroy(), f4.destroy(), lt2(u2, An2), i3.slice(0, r3);
   }
   function He2(t, e2 = "") {
@@ -13889,7 +13897,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }
     return t;
   }
-  function Kt2(t, e2, n4 = "") {
+  function qt2(t, e2, n4 = "") {
     const r3 = Ue3(t), o4 = t?.length, s2 = e2 !== void 0;
     if (!r3 || s2 && o4 !== e2) {
       const i3 = n4 && `"${n4}" `, c5 = s2 ? ` of length ${e2}` : "", f4 = r3 ? `length=${o4}` : `type=${typeof t}`;
@@ -13901,15 +13909,15 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     const e2 = t.toString(16);
     return e2.length & 1 ? "0" + e2 : e2;
   }
-  function So2(t) {
+  function No2(t) {
     if (typeof t != "string") throw new Error("hex string expected, got " + typeof t);
     return t === "" ? Sn2 : BigInt("0x" + t);
   }
   function Ve3(t) {
-    return So2(Jt2(t));
+    return No2(Jt2(t));
   }
   function Me3(t) {
-    return ht2(t), So2(Jt2(Uint8Array.from(t).reverse()));
+    return ht2(t), No2(Jt2(Uint8Array.from(t).reverse()));
   }
   function Nn2(t, e2) {
     return Re3(t.toString(16).padStart(e2 * 2, "0"));
@@ -13936,7 +13944,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function Rn2(t, e2, n4, r3) {
     if (!If(e2, n4, r3)) throw new Error("expected valid " + t + ": " + n4 + " <= n < " + r3 + ", got " + e2);
   }
-  function Oo2(t) {
+  function Uo2(t) {
     let e2;
     for (e2 = 0; t > Sn2; t >>= On2, e2 += 1) ;
     return e2;
@@ -13979,7 +13987,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }
     Object.entries(e2).forEach(([o4, s2]) => r3(o4, s2, false)), Object.entries(n4).forEach(([o4, s2]) => r3(o4, s2, true));
   }
-  function No2(t) {
+  function _o2(t) {
     const e2 = /* @__PURE__ */ new WeakMap();
     return (n4, ...r3) => {
       const o4 = e2.get(n4);
@@ -13997,7 +14005,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     for (; e2-- > st; ) r3 *= r3, r3 %= n4;
     return r3;
   }
-  function Co2(t, e2) {
+  function Lo2(t, e2) {
     if (t === st) throw new Error("invert: expected non-zero number");
     if (e2 <= st) throw new Error("invert: expected positive modulus, got " + e2);
     let n4 = ct2(t, e2), r3 = e2, o4 = st, s2 = nt2;
@@ -14011,16 +14019,16 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function $n2(t, e2, n4) {
     if (!t.eql(t.sqr(e2), n4)) throw new Error("Cannot find square root");
   }
-  function jo2(t, e2) {
-    const n4 = (t.ORDER + nt2) / _o2, r3 = t.pow(e2, n4);
+  function ko2(t, e2) {
+    const n4 = (t.ORDER + nt2) / $o2, r3 = t.pow(e2, n4);
     return $n2(t, r3, e2), r3;
   }
   function Nf(t, e2) {
-    const n4 = (t.ORDER - Ro2) / $o2, r3 = t.mul(e2, qt2), o4 = t.pow(r3, n4), s2 = t.mul(e2, o4), i3 = t.mul(t.mul(s2, qt2), o4), c5 = t.mul(s2, t.sub(i3, t.ONE));
+    const n4 = (t.ORDER - To2) / Co2, r3 = t.mul(e2, Ft2), o4 = t.pow(r3, n4), s2 = t.mul(e2, o4), i3 = t.mul(t.mul(s2, Ft2), o4), c5 = t.mul(s2, t.sub(i3, t.ONE));
     return $n2(t, c5, e2), c5;
   }
   function Uf(t) {
-    const e2 = Ht2(t), n4 = Lo2(t), r3 = n4(e2, e2.neg(e2.ONE)), o4 = n4(e2, r3), s2 = n4(e2, e2.neg(r3)), i3 = (t + Sf) / To2;
+    const e2 = Ht2(t), n4 = Po2(t), r3 = n4(e2, e2.neg(e2.ONE)), o4 = n4(e2, r3), s2 = n4(e2, e2.neg(r3)), i3 = (t + Sf) / jo2;
     return (c5, f4) => {
       let u2 = c5.pow(f4, i3), a3 = c5.mul(u2, r3);
       const l5 = c5.mul(u2, o4), d4 = c5.mul(u2, s2), h4 = c5.eql(c5.sqr(a3), f4), y4 = c5.eql(c5.sqr(l5), f4);
@@ -14029,19 +14037,19 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       return $n2(c5, w3, f4), w3;
     };
   }
-  function Lo2(t) {
-    if (t < Uo2) throw new Error("sqrt is not defined for small field");
+  function Po2(t) {
+    if (t < Ro2) throw new Error("sqrt is not defined for small field");
     let e2 = t - nt2, n4 = 0;
-    for (; e2 % qt2 === st; ) e2 /= qt2, n4++;
-    let r3 = qt2;
+    for (; e2 % Ft2 === st; ) e2 /= Ft2, n4++;
+    let r3 = Ft2;
     const o4 = Ht2(t);
-    for (; Po2(o4, r3) === 1; ) if (r3++ > 1e3) throw new Error("Cannot find square root: probably non-prime P");
-    if (n4 === 1) return jo2;
+    for (; Do2(o4, r3) === 1; ) if (r3++ > 1e3) throw new Error("Cannot find square root: probably non-prime P");
+    if (n4 === 1) return ko2;
     let s2 = o4.pow(r3, e2);
-    const i3 = (e2 + nt2) / qt2;
+    const i3 = (e2 + nt2) / Ft2;
     return function(f4, u2) {
       if (f4.is0(u2)) return u2;
-      if (Po2(f4, u2) !== 1) throw new Error("Cannot find square root");
+      if (Do2(f4, u2) !== 1) throw new Error("Cannot find square root");
       let a3 = n4, l5 = f4.mul(f4.ONE, s2), d4 = f4.pow(u2, e2), h4 = f4.pow(u2, i3);
       for (; !f4.eql(d4, f4.ONE); ) {
         if (f4.is0(d4)) return f4.ZERO;
@@ -14054,7 +14062,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     };
   }
   function _f(t) {
-    return t % _o2 === Uo2 ? jo2 : t % $o2 === Ro2 ? Nf : t % To2 === Of ? Uf(t) : Lo2(t);
+    return t % $o2 === Ro2 ? ko2 : t % Co2 === To2 ? Nf : t % jo2 === Of ? Uf(t) : Po2(t);
   }
   function $f(t) {
     const e2 = { ORDER: "bigint", MASK: "bigint", BYTES: "number", BITS: "number" }, n4 = Rf.reduce((r3, o4) => (r3[o4] = "function", r3), e2);
@@ -14068,17 +14076,17 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     for (; n4 > st; ) n4 & nt2 && (r3 = t.mul(r3, o4)), o4 = t.sqr(o4), n4 >>= nt2;
     return r3;
   }
-  function ko2(t, e2, n4 = false) {
+  function Ho2(t, e2, n4 = false) {
     const r3 = new Array(e2.length).fill(n4 ? t.ZERO : void 0), o4 = e2.reduce((i3, c5, f4) => t.is0(c5) ? i3 : (r3[f4] = i3, t.mul(i3, c5)), t.ONE), s2 = t.inv(o4);
     return e2.reduceRight((i3, c5, f4) => t.is0(c5) ? i3 : (r3[f4] = t.mul(i3, r3[f4]), t.mul(i3, c5)), s2), r3;
   }
-  function Po2(t, e2) {
-    const n4 = (t.ORDER - nt2) / qt2, r3 = t.pow(e2, n4), o4 = t.eql(r3, t.ONE), s2 = t.eql(r3, t.ZERO), i3 = t.eql(r3, t.neg(t.ONE));
+  function Do2(t, e2) {
+    const n4 = (t.ORDER - nt2) / Ft2, r3 = t.pow(e2, n4), o4 = t.eql(r3, t.ONE), s2 = t.eql(r3, t.ZERO), i3 = t.eql(r3, t.neg(t.ONE));
     if (!o4 && !s2 && !i3) throw new Error("invalid Legendre symbol result");
     return o4 ? 1 : s2 ? 0 : -1;
   }
-  function Ho2(t, e2) {
-    e2 !== void 0 && mt(e2);
+  function Vo2(t, e2) {
+    e2 !== void 0 && wt2(e2);
     const n4 = e2 !== void 0 ? e2 : t.toString(2).length, r3 = Math.ceil(n4 / 8);
     return { nBitLength: n4, nByteLength: r3 };
   }
@@ -14090,13 +14098,13 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       const d4 = e2;
       d4.BITS && (o4 = d4.BITS), d4.sqrt && (s2 = d4.sqrt), typeof d4.isLE == "boolean" && (n4 = d4.isLE), typeof d4.modFromBytes == "boolean" && (i3 = d4.modFromBytes), c5 = d4.allowedLengths;
     } else typeof e2 == "number" && (o4 = e2), r3.sqrt && (s2 = r3.sqrt);
-    const { nBitLength: f4, nByteLength: u2 } = Ho2(t, o4);
+    const { nBitLength: f4, nByteLength: u2 } = Vo2(t, o4);
     if (u2 > 2048) throw new Error("invalid field: expected ORDER of <= 2048 bytes");
     let a3;
     const l5 = Object.freeze({ ORDER: t, isLE: n4, BITS: f4, BYTES: u2, MASK: me3(f4), ZERO: st, ONE: nt2, allowedLengths: c5, create: (d4) => ct2(d4, t), isValid: (d4) => {
       if (typeof d4 != "bigint") throw new Error("invalid field element: expected bigint, got " + typeof d4);
       return st <= d4 && d4 < t;
-    }, is0: (d4) => d4 === st, isValidNot0: (d4) => !l5.is0(d4) && l5.isValid(d4), isOdd: (d4) => (d4 & nt2) === nt2, neg: (d4) => ct2(-d4, t), eql: (d4, h4) => d4 === h4, sqr: (d4) => ct2(d4 * d4, t), add: (d4, h4) => ct2(d4 + h4, t), sub: (d4, h4) => ct2(d4 - h4, t), mul: (d4, h4) => ct2(d4 * h4, t), pow: (d4, h4) => Tf(l5, d4, h4), div: (d4, h4) => ct2(d4 * Co2(h4, t), t), sqrN: (d4) => d4 * d4, addN: (d4, h4) => d4 + h4, subN: (d4, h4) => d4 - h4, mulN: (d4, h4) => d4 * h4, inv: (d4) => Co2(d4, t), sqrt: s2 || ((d4) => (a3 || (a3 = _f(t)), a3(l5, d4))), toBytes: (d4) => n4 ? Un2(d4, u2) : Nn2(d4, u2), fromBytes: (d4, h4 = true) => {
+    }, is0: (d4) => d4 === st, isValidNot0: (d4) => !l5.is0(d4) && l5.isValid(d4), isOdd: (d4) => (d4 & nt2) === nt2, neg: (d4) => ct2(-d4, t), eql: (d4, h4) => d4 === h4, sqr: (d4) => ct2(d4 * d4, t), add: (d4, h4) => ct2(d4 + h4, t), sub: (d4, h4) => ct2(d4 - h4, t), mul: (d4, h4) => ct2(d4 * h4, t), pow: (d4, h4) => Tf(l5, d4, h4), div: (d4, h4) => ct2(d4 * Lo2(h4, t), t), sqrN: (d4) => d4 * d4, addN: (d4, h4) => d4 + h4, subN: (d4, h4) => d4 - h4, mulN: (d4, h4) => d4 * h4, inv: (d4) => Lo2(d4, t), sqrt: s2 || ((d4) => (a3 || (a3 = _f(t)), a3(l5, d4))), toBytes: (d4) => n4 ? Un2(d4, u2) : Nn2(d4, u2), fromBytes: (d4, h4 = true) => {
       if (c5) {
         if (!c5.includes(d4.length) || d4.length > u2) throw new Error("Field.fromBytes: expected " + c5 + " bytes, got " + d4.length);
         const m3 = new Uint8Array(u2);
@@ -14106,20 +14114,20 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       let y4 = n4 ? Me3(d4) : Ve3(d4);
       if (i3 && (y4 = ct2(y4, t)), !h4 && !l5.isValid(y4)) throw new Error("invalid field element: outside of range 0..ORDER");
       return y4;
-    }, invertBatch: (d4) => ko2(l5, d4), cmov: (d4, h4, y4) => y4 ? h4 : d4 });
+    }, invertBatch: (d4) => Ho2(l5, d4), cmov: (d4, h4, y4) => y4 ? h4 : d4 });
     return Object.freeze(l5);
   }
-  function Do2(t) {
+  function Mo2(t) {
     if (typeof t != "bigint") throw new Error("field order must be bigint");
     const e2 = t.toString(2).length;
     return Math.ceil(e2 / 8);
   }
-  function Vo2(t) {
-    const e2 = Do2(t);
+  function Ko2(t) {
+    const e2 = Mo2(t);
     return e2 + Math.ceil(e2 / 2);
   }
   function Cf(t, e2, n4 = false) {
-    const r3 = t.length, o4 = Do2(e2), s2 = Vo2(e2);
+    const r3 = t.length, o4 = Mo2(e2), s2 = Ko2(e2);
     if (r3 < 16 || r3 < s2 || r3 > 1024) throw new Error("expected " + s2 + "-1024 bytes of input, got " + r3);
     const i3 = n4 ? Me3(t) : Ve3(t), c5 = ct2(i3, e2 - nt2) + nt2;
     return n4 ? Un2(c5, o4) : Nn2(c5, o4);
@@ -14129,21 +14137,21 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return t ? n4 : e2;
   }
   function Tn2(t, e2) {
-    const n4 = ko2(t.Fp, e2.map((r3) => r3.Z));
+    const n4 = Ho2(t.Fp, e2.map((r3) => r3.Z));
     return e2.map((r3, o4) => t.fromAffine(r3.toAffine(n4[o4])));
   }
-  function Mo2(t, e2) {
+  function qo2(t, e2) {
     if (!Number.isSafeInteger(t) || t <= 0 || t > e2) throw new Error("invalid window size, expected [1.." + e2 + "], got W=" + t);
   }
   function Cn2(t, e2) {
-    Mo2(t, e2);
+    qo2(t, e2);
     const n4 = Math.ceil(e2 / t) + 1, r3 = 2 ** (t - 1), o4 = 2 ** t, s2 = me3(t), i3 = BigInt(t);
     return { windows: n4, windowSize: r3, mask: s2, maxNumber: o4, shiftBy: i3 };
   }
-  function Ko2(t, e2, n4) {
+  function Fo2(t, e2, n4) {
     const { windowSize: r3, mask: o4, maxNumber: s2, shiftBy: i3 } = n4;
     let c5 = Number(t & o4), f4 = t >> i3;
-    c5 > r3 && (c5 -= s2, f4 += Ft2);
+    c5 > r3 && (c5 -= s2, f4 += Zt2);
     const u2 = e2 * r3, a3 = u2 + Math.abs(c5) - 1, l5 = c5 === 0, d4 = c5 < 0, h4 = e2 % 2 !== 0;
     return { nextN: f4, offset: a3, isZero: l5, isNeg: d4, isNegF: h4, offsetF: u2 };
   }
@@ -14160,21 +14168,21 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     });
   }
   function Ln2(t) {
-    return qo2.get(t) || 1;
+    return Zo2.get(t) || 1;
   }
-  function Fo2(t) {
+  function Go2(t) {
     if (t !== te3) throw new Error("invalid wNAF");
   }
   function Pf(t, e2, n4, r3) {
     let o4 = e2, s2 = t.ZERO, i3 = t.ZERO;
-    for (; n4 > te3 || r3 > te3; ) n4 & Ft2 && (s2 = s2.add(o4)), r3 & Ft2 && (i3 = i3.add(o4)), o4 = o4.double(), n4 >>= Ft2, r3 >>= Ft2;
+    for (; n4 > te3 || r3 > te3; ) n4 & Zt2 && (s2 = s2.add(o4)), r3 & Zt2 && (i3 = i3.add(o4)), o4 = o4.double(), n4 >>= Zt2, r3 >>= Zt2;
     return { p1: s2, p2: i3 };
   }
   function Hf(t, e2, n4, r3) {
     jf(n4, t), Lf(r3, e2);
     const o4 = n4.length, s2 = r3.length;
     if (o4 !== s2) throw new Error("arrays of points and scalars must have equal length");
-    const i3 = t.ZERO, c5 = Oo2(BigInt(o4));
+    const i3 = t.ZERO, c5 = Uo2(BigInt(o4));
     let f4 = 1;
     c5 > 12 ? f4 = c5 - 3 : c5 > 4 ? f4 = c5 - 2 : c5 > 0 && (f4 = 2);
     const u2 = me3(f4), a3 = new Array(Number(u2) + 1).fill(i3), l5 = Math.floor((e2.BITS - 1) / f4) * f4;
@@ -14191,7 +14199,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }
     return d4;
   }
-  function Zo2(t, e2, n4) {
+  function zo2(t, e2, n4) {
     if (e2) {
       if (e2.ORDER !== t) throw new Error("Field.ORDER must match order: Fp == p, Fn == n");
       return $f(e2), e2;
@@ -14203,7 +14211,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       const u2 = e2[f4];
       if (!(typeof u2 == "bigint" && u2 > te3)) throw new Error(`CURVE.${f4} must be positive bigint`);
     }
-    const o4 = Zo2(e2.p, n4.Fp, r3), s2 = Zo2(e2.n, n4.Fn, r3), c5 = ["Gx", "Gy", "a", t === "weierstrass" ? "b" : "d"];
+    const o4 = zo2(e2.p, n4.Fp, r3), s2 = zo2(e2.n, n4.Fn, r3), c5 = ["Gx", "Gy", "a", t === "weierstrass" ? "b" : "d"];
     for (const f4 of c5) if (!o4.isValid(e2[f4])) throw new Error(`CURVE.${f4} must be valid field element of CURVE.Fp`);
     return e2 = Object.freeze(Object.assign({}, e2)), { CURVE: e2, Fp: o4, Fn: s2 };
   }
@@ -14213,7 +14221,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function Mf(t) {
     const e2 = Vf(t), { P: n4, type: r3, adjustScalarBytes: o4, powPminus2: s2, randomBytes: i3 } = e2, c5 = r3 === "x25519";
     if (!c5 && r3 !== "x448") throw new Error("invalid type");
-    const f4 = i3 || Mt2, u2 = c5 ? 255 : 448, a3 = c5 ? 32 : 56, l5 = BigInt(c5 ? 9 : 5), d4 = BigInt(c5 ? 121665 : 39081), h4 = c5 ? Fe2 ** BigInt(254) : Fe2 ** BigInt(447), y4 = c5 ? BigInt(8) * Fe2 ** BigInt(251) - ee2 : BigInt(4) * Fe2 ** BigInt(445) - ee2, m3 = h4 + y4 + ee2, w3 = (p3) => ct2(p3, n4), U3 = F2(l5);
+    const f4 = i3 || Kt2, u2 = c5 ? 255 : 448, a3 = c5 ? 32 : 56, l5 = BigInt(c5 ? 9 : 5), d4 = BigInt(c5 ? 121665 : 39081), h4 = c5 ? Fe2 ** BigInt(254) : Fe2 ** BigInt(447), y4 = c5 ? BigInt(8) * Fe2 ** BigInt(251) - ee2 : BigInt(4) * Fe2 ** BigInt(445) - ee2, m3 = h4 + y4 + ee2, w3 = (p3) => ct2(p3, n4), U3 = F2(l5);
     function F2(p3) {
       return Un2(w3(p3), a3);
     }
@@ -14258,19 +14266,19 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return { keygen: C3, getSharedSecret: (p3, b5) => H3(p3, b5), getPublicKey: (p3) => j5(p3), scalarMult: H3, scalarMultBase: j5, utils: { randomSecretKey: T3, randomPrivateKey: T3 }, GuBytes: U3.slice(), lengths: O6 };
   }
   function zf(t) {
-    const e2 = BigInt(10), n4 = BigInt(20), r3 = BigInt(40), o4 = BigInt(80), s2 = zo2, c5 = t * t % s2 * t % s2, f4 = gt2(c5, Go2, s2) * c5 % s2, u2 = gt2(f4, Kf, s2) * t % s2, a3 = gt2(u2, Ff, s2) * u2 % s2, l5 = gt2(a3, e2, s2) * a3 % s2, d4 = gt2(l5, n4, s2) * l5 % s2, h4 = gt2(d4, r3, s2) * d4 % s2, y4 = gt2(h4, o4, s2) * h4 % s2, m3 = gt2(y4, o4, s2) * h4 % s2, w3 = gt2(m3, e2, s2) * a3 % s2;
-    return { pow_p_5_8: gt2(w3, Go2, s2) * t % s2, b2: c5 };
+    const e2 = BigInt(10), n4 = BigInt(20), r3 = BigInt(40), o4 = BigInt(80), s2 = Xo, c5 = t * t % s2 * t % s2, f4 = gt2(c5, Yo2, s2) * c5 % s2, u2 = gt2(f4, Kf, s2) * t % s2, a3 = gt2(u2, Ff, s2) * u2 % s2, l5 = gt2(a3, e2, s2) * a3 % s2, d4 = gt2(l5, n4, s2) * l5 % s2, h4 = gt2(d4, r3, s2) * d4 % s2, y4 = gt2(h4, o4, s2) * h4 % s2, m3 = gt2(y4, o4, s2) * h4 % s2, w3 = gt2(m3, e2, s2) * a3 % s2;
+    return { pow_p_5_8: gt2(w3, Yo2, s2) * t % s2, b2: c5 };
   }
   function Yf(t) {
     return t[0] &= 248, t[31] &= 127, t[31] |= 64, t;
   }
-  function Xf(t, e2, n4) {
-    const [[r3, o4], [s2, i3]] = e2, c5 = Yo2(i3 * t, n4), f4 = Yo2(-o4 * t, n4);
+  function Wf(t, e2, n4) {
+    const [[r3, o4], [s2, i3]] = e2, c5 = Wo2(i3 * t, n4), f4 = Wo2(-o4 * t, n4);
     let u2 = t - c5 * r3 - f4 * s2, a3 = -c5 * o4 - f4 * i3;
-    const l5 = u2 < Et2, d4 = a3 < Et2;
+    const l5 = u2 < Bt2, d4 = a3 < Bt2;
     l5 && (u2 = -u2), d4 && (a3 = -a3);
-    const h4 = me3(Math.ceil(Oo2(n4) / 2)) + ne2;
-    if (u2 < Et2 || u2 >= h4 || a3 < Et2 || a3 >= h4) throw new Error("splitScalar (endomorphism): failed, k=" + t);
+    const h4 = me3(Math.ceil(Uo2(n4) / 2)) + ne2;
+    if (u2 < Bt2 || u2 >= h4 || a3 < Bt2 || a3 >= h4) throw new Error("splitScalar (endomorphism): failed, k=" + t);
     return { k1neg: l5, k1: u2, k2neg: d4, k2: a3 };
   }
   function Pn2(t) {
@@ -14304,7 +14312,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     Ke2(e2, {}, { allowInfinityPoint: "boolean", clearCofactor: "function", isTorsionFree: "function", fromBytes: "function", toBytes: "function", endo: "object", wrapPrivateKey: "boolean" });
     const { endo: f4 } = e2;
     if (f4 && (!r3.is0(s2.a) || typeof f4.beta != "bigint" || !Array.isArray(f4.basises))) throw new Error('invalid endo: expected "beta": bigint and "basises": array');
-    const u2 = Jo2(r3, o4);
+    const u2 = ts(r3, o4);
     function a3() {
       if (!r3.isOdd) throw new Error("compression is not supported: Field does not have .isOdd()");
     }
@@ -14313,11 +14321,11 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       if (He2(b5, "isCompressed"), b5) {
         a3();
         const I2 = !r3.isOdd(x5);
-        return _t2(Xo(I2), E4);
+        return _t2(Qo2(I2), E4);
       } else return _t2(Uint8Array.of(4), E4, r3.toBytes(x5));
     }
     function d4(_3) {
-      Kt2(_3, void 0, "Point");
+      qt2(_3, void 0, "Point");
       const { publicKey: p3, publicKeyUncompressed: b5 } = u2, g3 = _3.length, x5 = _3[0], E4 = _3.subarray(1);
       if (g3 === p3 && (x5 === 2 || x5 === 3)) {
         const I2 = r3.fromBytes(E4);
@@ -14360,9 +14368,9 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }
     function H3(_3) {
       if (!f4 || !f4.basises) throw new Error("no endo");
-      return Xf(_3, f4.basises, o4.ORDER);
+      return Wf(_3, f4.basises, o4.ORDER);
     }
-    const j5 = No2((_3, p3) => {
+    const j5 = _o2((_3, p3) => {
       const { X: b5, Y: g3, Z: x5 } = _3;
       if (r3.eql(x5, r3.ONE)) return { x: b5, y: g3 };
       const E4 = _3.is0();
@@ -14371,7 +14379,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       if (E4) return { x: r3.ZERO, y: r3.ZERO };
       if (!r3.eql(B3, r3.ONE)) throw new Error("invZ was invalid");
       return { x: I2, y: v5 };
-    }), L = No2((_3) => {
+    }), L = _o2((_3) => {
       if (_3.is0()) {
         if (e2.allowInfinityPoint && !r3.is0(_3.Y)) return;
         throw new Error("bad point: ZERO");
@@ -14399,7 +14407,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         return r3.is0(b5) && r3.is0(g3) ? O6.ZERO : new O6(b5, g3, r3.ONE);
       }
       static fromBytes(p3) {
-        const b5 = O6.fromAffine(y4(Kt2(p3, void 0, "point")));
+        const b5 = O6.fromAffine(y4(qt2(p3, void 0, "point")));
         return b5.assertValidity(), b5;
       }
       static fromHex(p3) {
@@ -14468,7 +14476,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       multiplyUnsafe(p3) {
         const { endo: b5 } = e2, g3 = this;
         if (!o4.isValid(p3)) throw new Error("invalid scalar: out of range");
-        if (p3 === Et2 || g3.is0()) return O6.ZERO;
+        if (p3 === Bt2 || g3.is0()) return O6.ZERO;
         if (p3 === ne2) return g3;
         if (C3.hasCache(this)) return this.multiply(p3);
         if (b5) {
@@ -14532,14 +14540,14 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     const T3 = o4.BITS, C3 = new kf(O6, e2.endo ? Math.ceil(T3 / 2) : T3);
     return O6.BASE.precompute(8), O6;
   }
-  function Xo(t) {
+  function Qo2(t) {
     return Uint8Array.of(t ? 2 : 3);
   }
-  function Jo2(t, e2) {
+  function ts(t, e2) {
     return { secretKey: e2.BYTES, publicKey: 1 + t.BYTES, publicKeyUncompressed: 1 + 2 * t.BYTES, publicKeyHasPrefix: true, signature: 2 * e2.BYTES };
   }
   function ea(t, e2 = {}) {
-    const { Fn: n4 } = t, r3 = e2.randomBytes || Mt2, o4 = Object.assign(Jo2(t.Fp, n4), { seed: Vo2(n4.ORDER) });
+    const { Fn: n4 } = t, r3 = e2.randomBytes || Kt2, o4 = Object.assign(ts(t.Fp, n4), { seed: Ko2(n4.ORDER) });
     function s2(h4) {
       try {
         return !!re2(n4, h4);
@@ -14557,7 +14565,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       }
     }
     function c5(h4 = r3(o4.seed)) {
-      return Cf(Kt2(h4, o4.seed, "seed"), n4.ORDER);
+      return Cf(qt2(h4, o4.seed, "seed"), n4.ORDER);
     }
     function f4(h4, y4 = true) {
       return t.BASE.multiply(re2(n4, h4)).toBytes(y4);
@@ -14586,7 +14594,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   }
   function na(t, e2, n4 = {}) {
     _e3(e2), Ke2(n4, {}, { hmac: "function", lowS: "boolean", randomBytes: "function", bits2int: "function", bits2int_modN: "function" });
-    const r3 = n4.randomBytes || Mt2, o4 = n4.hmac || ((b5, ...g3) => ke3(e2, b5, _t2(...g3))), { Fp: s2, Fn: i3 } = t, { ORDER: c5, BITS: f4 } = i3, { keygen: u2, getPublicKey: a3, getSharedSecret: l5, utils: d4, lengths: h4 } = ea(t, n4), y4 = { prehash: false, lowS: typeof n4.lowS == "boolean" ? n4.lowS : false, format: void 0, extraEntropy: false }, m3 = "compact";
+    const r3 = n4.randomBytes || Kt2, o4 = n4.hmac || ((b5, ...g3) => ke3(e2, b5, _t2(...g3))), { Fp: s2, Fn: i3 } = t, { ORDER: c5, BITS: f4 } = i3, { keygen: u2, getPublicKey: a3, getSharedSecret: l5, utils: d4, lengths: h4 } = ea(t, n4), y4 = { prehash: false, lowS: typeof n4.lowS == "boolean" ? n4.lowS : false, format: void 0, extraEntropy: false }, m3 = "compact";
     function w3(b5) {
       const g3 = c5 >> ne2;
       return b5 > g3;
@@ -14598,7 +14606,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     function F2(b5, g3) {
       Pn2(g3);
       const x5 = h4.signature, E4 = g3 === "compact" ? x5 : g3 === "recovered" ? x5 + 1 : void 0;
-      return Kt2(b5, E4, `${g3} signature`);
+      return qt2(b5, E4, `${g3} signature`);
     }
     class R3 {
       constructor(g3, x5, E4) {
@@ -14608,7 +14616,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         F2(g3, x5);
         let E4;
         if (x5 === "der") {
-          const { r: A3, s: N12 } = xt2.toSig(Kt2(g3));
+          const { r: A3, s: N12 } = Et2.toSig(qt2(g3));
           return new R3(A3, N12);
         }
         x5 === "recovered" && (E4 = g3[0], x5 = "compact", g3 = g3.subarray(1));
@@ -14624,10 +14632,10 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       recoverPublicKey(g3) {
         const x5 = s2.ORDER, { r: E4, s: I2, recovery: v5 } = this;
         if (v5 == null || ![0, 1, 2, 3].includes(v5)) throw new Error("recovery id invalid");
-        if (c5 * Wo2 < x5 && v5 > 1) throw new Error("recovery id is ambiguous for h>1 curve");
+        if (c5 * Jo2 < x5 && v5 > 1) throw new Error("recovery id is ambiguous for h>1 curve");
         const A3 = v5 === 2 || v5 === 3 ? E4 + c5 : E4;
         if (!s2.isValid(A3)) throw new Error("recovery id 2 or 3 invalid");
-        const N12 = s2.toBytes(A3), D2 = t.fromBytes(_t2(Xo((v5 & 1) === 0), N12)), P5 = i3.inv(A3), $3 = H3(tt("msgHash", g3)), V4 = i3.create(-$3 * P5), q3 = i3.create(I2 * P5), G4 = t.BASE.multiplyUnsafe(V4).add(D2.multiplyUnsafe(q3));
+        const N12 = s2.toBytes(A3), D2 = t.fromBytes(_t2(Qo2((v5 & 1) === 0), N12)), P5 = i3.inv(A3), $3 = H3(tt("msgHash", g3)), V4 = i3.create(-$3 * P5), q3 = i3.create(I2 * P5), G4 = t.BASE.multiplyUnsafe(V4).add(D2.multiplyUnsafe(q3));
         if (G4.is0()) throw new Error("point at infinify");
         return G4.assertValidity(), G4;
       }
@@ -14635,7 +14643,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         return w3(this.s);
       }
       toBytes(g3 = m3) {
-        if (Pn2(g3), g3 === "der") return Re3(xt2.hexFromSig(this));
+        if (Pn2(g3), g3 === "der") return Re3(Et2.hexFromSig(this));
         const x5 = i3.toBytes(this.r), E4 = i3.toBytes(this.s);
         if (g3 === "recovered") {
           if (this.recovery == null) throw new Error("recovery bit must be present");
@@ -14678,10 +14686,10 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       return i3.create(Z2(g3));
     }, j5 = me3(f4);
     function L(b5) {
-      return Rn2("num < 2^" + f4, b5, Et2, j5), i3.toBytes(b5);
+      return Rn2("num < 2^" + f4, b5, Bt2, j5), i3.toBytes(b5);
     }
     function k5(b5, g3) {
-      return Kt2(b5, void 0, "message"), g3 ? Kt2(e2(b5), void 0, "prehashed message") : b5;
+      return qt2(b5, void 0, "message"), g3 ? qt2(e2(b5), void 0, "prehashed message") : b5;
     }
     function O6(b5, g3, x5) {
       if (["recovered", "canonical"].some((V4) => V4 in x5)) throw new Error("sign() legacy options not supported");
@@ -14697,9 +14705,9 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         const q3 = Z2(V4);
         if (!i3.isValidNot0(q3)) return;
         const G4 = i3.inv(q3), M3 = t.BASE.multiply(q3).toAffine(), Y3 = i3.create(M3.x);
-        if (Y3 === Et2) return;
+        if (Y3 === Bt2) return;
         const Yt3 = i3.create(G4 * i3.create(P5 + Y3 * A3));
-        if (Yt3 === Et2) return;
+        if (Yt3 === Bt2) return;
         let ce3 = (M3.x === Y3 ? 0 : 2) | Number(M3.y & ne2), fe4 = Yt3;
         return E4 && w3(Yt3) && (fe4 = i3.neg(Yt3), ce3 ^= 1), new R3(Y3, fe4, ce3);
       }
@@ -14719,7 +14727,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         try {
           g3 = R3.fromBytes(tt("sig", b5), "der");
         } catch (I2) {
-          if (!(I2 instanceof xt2.Err)) throw I2;
+          if (!(I2 instanceof Et2.Err)) throw I2;
         }
         if (!g3) try {
           g3 = R3.fromBytes(tt("sig", b5), "compact");
@@ -14761,7 +14769,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   }
   function sa(t, e2) {
     const n4 = e2.Point;
-    return Object.assign({}, e2, { ProjectivePoint: n4, CURVE: Object.assign({}, t, Ho2(n4.Fn.ORDER, n4.Fn.BITS)) });
+    return Object.assign({}, e2, { ProjectivePoint: n4, CURVE: Object.assign({}, t, Vo2(n4.Fn.ORDER, n4.Fn.BITS)) });
   }
   function ia(t) {
     const { CURVE: e2, curveOpts: n4, hash: r3, ecdsaOpts: o4 } = oa(t), s2 = ta(e2, n4), i3 = na(s2, r3, o4);
@@ -14776,7 +14784,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return { privateKey: toString2(t, rt2), publicKey: toString2(e2, rt2) };
   }
   function pa() {
-    const t = Mt2(Kn2);
+    const t = Kt2(Kn2);
     return toString2(t, rt2);
   }
   function ga(t, e2) {
@@ -14794,51 +14802,51 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function qn2(t) {
     return fromString4(`${t}`, Vn2);
   }
-  function Zt2(t) {
+  function Gt2(t) {
     return Number(toString2(t, Vn2));
   }
-  function rs(t) {
+  function ss(t) {
     return t.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
   }
-  function os(t) {
+  function is(t) {
     const e2 = t.replace(/-/g, "+").replace(/_/g, "/"), n4 = (4 - e2.length % 4) % 4;
     return e2 + "=".repeat(n4);
   }
   function ma(t) {
     const e2 = qn2(typeof t.type < "u" ? t.type : Mn2);
-    if (Zt2(e2) === ie2 && typeof t.senderPublicKey > "u") throw new Error("Missing sender public key for type 1 envelope");
-    const n4 = typeof t.senderPublicKey < "u" ? fromString4(t.senderPublicKey, rt2) : void 0, r3 = typeof t.iv < "u" ? fromString4(t.iv, rt2) : Mt2(xe3), o4 = fromString4(t.symKey, rt2), s2 = Bo2(o4, r3).encrypt(fromString4(t.message, se2)), i3 = Fn2({ type: e2, sealed: s2, iv: r3, senderPublicKey: n4 });
-    return t.encoding === Ge3 ? rs(i3) : i3;
+    if (Gt2(e2) === ie2 && typeof t.senderPublicKey > "u") throw new Error("Missing sender public key for type 1 envelope");
+    const n4 = typeof t.senderPublicKey < "u" ? fromString4(t.senderPublicKey, rt2) : void 0, r3 = typeof t.iv < "u" ? fromString4(t.iv, rt2) : Kt2(xe3), o4 = fromString4(t.symKey, rt2), s2 = Ao2(o4, r3).encrypt(fromString4(t.message, se2)), i3 = Fn2({ type: e2, sealed: s2, iv: r3, senderPublicKey: n4 });
+    return t.encoding === Ge3 ? ss(i3) : i3;
   }
   function wa(t) {
-    const e2 = fromString4(t.symKey, rt2), { sealed: n4, iv: r3 } = ze3({ encoded: t.encoded, encoding: t.encoding }), o4 = Bo2(e2, r3).decrypt(n4);
+    const e2 = fromString4(t.symKey, rt2), { sealed: n4, iv: r3 } = ze3({ encoded: t.encoded, encoding: t.encoding }), o4 = Ao2(e2, r3).decrypt(n4);
     if (o4 === null) throw new Error("Failed to decrypt");
     return toString2(o4, se2);
   }
   function va(t, e2) {
-    const n4 = qn2(ve3), r3 = Mt2(xe3), o4 = fromString4(t, se2), s2 = Fn2({ type: n4, sealed: o4, iv: r3 });
-    return e2 === Ge3 ? rs(s2) : s2;
+    const n4 = qn2(ve3), r3 = Kt2(xe3), o4 = fromString4(t, se2), s2 = Fn2({ type: n4, sealed: o4, iv: r3 });
+    return e2 === Ge3 ? ss(s2) : s2;
   }
   function xa(t, e2) {
     const { sealed: n4 } = ze3({ encoded: t, encoding: e2 });
     return toString2(n4, se2);
   }
   function Fn2(t) {
-    if (Zt2(t.type) === ve3) return toString2(concat2([t.type, t.sealed]), oe2);
-    if (Zt2(t.type) === ie2) {
+    if (Gt2(t.type) === ve3) return toString2(concat2([t.type, t.sealed]), oe2);
+    if (Gt2(t.type) === ie2) {
       if (typeof t.senderPublicKey > "u") throw new Error("Missing sender public key for type 1 envelope");
       return toString2(concat2([t.type, t.senderPublicKey, t.iv, t.sealed]), oe2);
     }
     return toString2(concat2([t.type, t.iv, t.sealed]), oe2);
   }
   function ze3(t) {
-    const e2 = (t.encoding || oe2) === Ge3 ? os(t.encoded) : t.encoded, n4 = fromString4(e2, oe2), r3 = n4.slice(da, ns), o4 = ns;
-    if (Zt2(r3) === ie2) {
+    const e2 = (t.encoding || oe2) === Ge3 ? is(t.encoded) : t.encoded, n4 = fromString4(e2, oe2), r3 = n4.slice(da, os), o4 = os;
+    if (Gt2(r3) === ie2) {
       const f4 = o4 + Kn2, u2 = f4 + xe3, a3 = n4.slice(o4, f4), l5 = n4.slice(f4, u2), d4 = n4.slice(u2);
       return { type: r3, sealed: d4, iv: l5, senderPublicKey: a3 };
     }
-    if (Zt2(r3) === ve3) {
-      const f4 = n4.slice(o4), u2 = Mt2(xe3);
+    if (Gt2(r3) === ve3) {
+      const f4 = n4.slice(o4), u2 = Kt2(xe3);
       return { type: r3, sealed: f4, iv: u2 };
     }
     const s2 = o4 + xe3, i3 = n4.slice(o4, s2), c5 = n4.slice(s2);
@@ -14846,9 +14854,9 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   }
   function Ea(t, e2) {
     const n4 = ze3({ encoded: t, encoding: e2?.encoding });
-    return ss({ type: Zt2(n4.type), senderPublicKey: typeof n4.senderPublicKey < "u" ? toString2(n4.senderPublicKey, rt2) : void 0, receiverPublicKey: e2?.receiverPublicKey });
+    return cs({ type: Gt2(n4.type), senderPublicKey: typeof n4.senderPublicKey < "u" ? toString2(n4.senderPublicKey, rt2) : void 0, receiverPublicKey: e2?.receiverPublicKey });
   }
-  function ss(t) {
+  function cs(t) {
     const e2 = t?.type || Mn2;
     if (e2 === ie2) {
       if (typeof t?.senderPublicKey > "u") throw new Error("missing sender public key");
@@ -14862,26 +14870,26 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function Ia(t) {
     return t.type === ve3;
   }
-  function is(t) {
+  function fs(t) {
     const e2 = Buffer.from(t.x, "base64"), n4 = Buffer.from(t.y, "base64");
     return concat2([new Uint8Array([4]), e2, n4]);
   }
   function Aa(t, e2) {
-    const [n4, r3, o4] = t.split("."), s2 = Buffer.from(os(o4), "base64");
+    const [n4, r3, o4] = t.split("."), s2 = Buffer.from(is(o4), "base64");
     if (s2.length !== 64) throw new Error("Invalid signature length");
-    const i3 = s2.slice(0, 32), c5 = s2.slice(32, 64), f4 = `${n4}.${r3}`, u2 = Pe3(f4), a3 = is(e2);
+    const i3 = s2.slice(0, 32), c5 = s2.slice(32, 64), f4 = `${n4}.${r3}`, u2 = Pe3(f4), a3 = fs(e2);
     if (!la.verify(concat2([i3, c5]), u2, a3)) throw new Error("Invalid signature");
     return sn(t).payload;
   }
   function Sa(t) {
-    return t?.relay || { protocol: cs };
+    return t?.relay || { protocol: as };
   }
   function Oa(t) {
     const e2 = C[t];
     if (typeof e2 > "u") throw new Error(`Relay Protocol not supported: ${t}`);
     return e2;
   }
-  function us(t, e2 = "-") {
+  function ds(t, e2 = "-") {
     const n4 = {}, r3 = "relay" + e2;
     return Object.keys(t).forEach((o4) => {
       if (o4.startsWith(r3)) {
@@ -14897,12 +14905,12 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }
     t = t.includes("wc://") ? t.replace("wc://", "") : t, t = t.includes("wc:") ? t.replace("wc:", "") : t;
     const e2 = t.indexOf(":"), n4 = t.indexOf("?") !== -1 ? t.indexOf("?") : void 0, r3 = t.substring(0, e2), o4 = t.substring(e2 + 1, n4).split("@"), s2 = typeof n4 < "u" ? t.substring(n4) : "", i3 = new URLSearchParams(s2), c5 = Object.fromEntries(i3.entries()), f4 = typeof c5.methods == "string" ? c5.methods.split(",") : void 0;
-    return { protocol: r3, topic: ls(o4[0]), version: parseInt(o4[1], 10), symKey: c5.symKey, relay: us(c5), methods: f4, expiryTimestamp: c5.expiryTimestamp ? parseInt(c5.expiryTimestamp, 10) : void 0 };
+    return { protocol: r3, topic: hs(o4[0]), version: parseInt(o4[1], 10), symKey: c5.symKey, relay: ds(c5), methods: f4, expiryTimestamp: c5.expiryTimestamp ? parseInt(c5.expiryTimestamp, 10) : void 0 };
   }
-  function ls(t) {
+  function hs(t) {
     return t.startsWith("//") ? t.substring(2) : t;
   }
-  function ds(t, e2 = "-") {
+  function ps(t, e2 = "-") {
     const n4 = "relay", r3 = {};
     return Object.keys(t).forEach((o4) => {
       const s2 = o4, i3 = n4 + e2 + s2;
@@ -14910,7 +14918,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }), r3;
   }
   function ja(t) {
-    const e2 = new URLSearchParams(), n4 = Zn2(Zn2(Ta(Zn2({}, ds(t.relay)), { symKey: t.symKey }), t.expiryTimestamp && { expiryTimestamp: t.expiryTimestamp.toString() }), t.methods && { methods: t.methods.join(",") });
+    const e2 = new URLSearchParams(), n4 = Zn2(Zn2(Ta(Zn2({}, ps(t.relay)), { symKey: t.symKey }), t.expiryTimestamp && { expiryTimestamp: t.expiryTimestamp.toString() }), t.methods && { methods: t.methods.join(",") });
     return Object.entries(n4).sort(([r3], [o4]) => r3.localeCompare(o4)).forEach(([r3, o4]) => {
       o4 !== void 0 && e2.append(r3, String(o4));
     }), `${t.protocol}:${t.topic}@${t.version}?${e2}`;
@@ -14918,17 +14926,17 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function La(t, e2, n4) {
     return `${t}?wc_ev=${n4}&topic=${e2}`;
   }
-  function Gt2(t) {
+  function zt2(t) {
     const e2 = [];
     return t.forEach((n4) => {
       const [r3, o4] = n4.split(":");
       e2.push(`${r3}:${o4}`);
     }), e2;
   }
-  function gs(t) {
+  function ys(t) {
     const e2 = [];
     return Object.values(t).forEach((n4) => {
-      e2.push(...Gt2(n4.accounts));
+      e2.push(...zt2(n4.accounts));
     }), [...new Set(e2)];
   }
   function qa(t) {
@@ -14943,22 +14951,22 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       e2.push(...n4.events);
     }), [...new Set(e2)];
   }
-  function bs(t, e2) {
+  function ms(t, e2) {
     const n4 = [];
     return Object.values(t).forEach((r3) => {
-      Gt2(r3.accounts).includes(e2) && n4.push(...r3.methods);
+      zt2(r3.accounts).includes(e2) && n4.push(...r3.methods);
     }), n4;
   }
-  function ys(t, e2) {
+  function ws(t, e2) {
     const n4 = [];
     return Object.values(t).forEach((r3) => {
-      Gt2(r3.accounts).includes(e2) && n4.push(...r3.events);
+      zt2(r3.accounts).includes(e2) && n4.push(...r3.events);
     }), n4;
   }
   function Gn2(t) {
     return t.includes(":");
   }
-  function ms(t) {
+  function vs(t) {
     return Gn2(t) ? t.split(":")[0] : t;
   }
   function Ee3(t) {
@@ -14966,12 +14974,12 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     const o4 = {};
     if (!Ye2(t)) return o4;
     for (const [s2, i3] of Object.entries(t)) {
-      const c5 = Gn2(s2) ? [s2] : i3.chains, f4 = i3.methods || [], u2 = i3.events || [], a3 = ms(s2);
+      const c5 = Gn2(s2) ? [s2] : i3.chains, f4 = i3.methods || [], u2 = i3.events || [], a3 = vs(s2);
       o4[a3] = Ka(Ma({}, o4[a3]), { chains: ut2(c5, (e2 = o4[a3]) == null ? void 0 : e2.chains), methods: ut2(f4, (n4 = o4[a3]) == null ? void 0 : n4.methods), events: ut2(u2, (r3 = o4[a3]) == null ? void 0 : r3.events) });
     }
     return o4;
   }
-  function ws(t) {
+  function xs(t) {
     const e2 = {};
     return t?.forEach((n4) => {
       var r3;
@@ -14981,7 +14989,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   }
   function za(t, e2) {
     e2 = e2.map((r3) => r3.replace("did:pkh:", ""));
-    const n4 = ws(e2);
+    const n4 = xs(e2);
     for (const [r3, o4] of Object.entries(n4)) o4.methods ? o4.methods = ut2(o4.methods, t) : o4.methods = t, o4.events = ["chainChanged", "accountsChanged"];
     return n4;
   }
@@ -14990,14 +14998,6 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     const f4 = Ee3(t), u2 = Ee3(e2), a3 = {}, l5 = Object.keys(f4).concat(Object.keys(u2));
     for (const d4 of l5) a3[d4] = { chains: ut2((n4 = f4[d4]) == null ? void 0 : n4.chains, (r3 = u2[d4]) == null ? void 0 : r3.chains), methods: ut2((o4 = f4[d4]) == null ? void 0 : o4.methods, (s2 = u2[d4]) == null ? void 0 : s2.methods), events: ut2((i3 = f4[d4]) == null ? void 0 : i3.events, (c5 = u2[d4]) == null ? void 0 : c5.events) };
     return a3;
-  }
-  function Bt2(t, e2) {
-    const { message: n4, code: r3 } = xs[t];
-    return { message: e2 ? `${n4} ${e2}` : n4, code: r3 };
-  }
-  function zt2(t, e2) {
-    const { message: n4, code: r3 } = vs[t];
-    return { message: e2 ? `${n4} ${e2}` : n4, code: r3 };
   }
   function Be3(t, e2) {
     return Array.isArray(t) ? typeof e2 < "u" && t.length ? t.every(e2) : true : false;
@@ -15011,14 +15011,14 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function ft2(t, e2) {
     return e2 && Dt2(t) ? true : typeof t == "string" && !!t.trim().length;
   }
-  function We2(t, e2) {
+  function Xe2(t, e2) {
     return e2 && Dt2(t) ? true : typeof t == "number" && !isNaN(t);
   }
-  function Wa(t, e2) {
+  function Xa(t, e2) {
     const { requiredNamespaces: n4 } = e2, r3 = Object.keys(t.namespaces), o4 = Object.keys(n4);
     let s2 = true;
     return At(o4, r3) ? (r3.forEach((i3) => {
-      const { accounts: c5, methods: f4, events: u2 } = t.namespaces[i3], a3 = Gt2(c5), l5 = n4[i3];
+      const { accounts: c5, methods: f4, events: u2 } = t.namespaces[i3], a3 = zt2(c5), l5 = n4[i3];
       (!At(Se3(i3, l5), a3) || !At(l5.methods, f4) || !At(l5.events, u2)) && (s2 = false);
     }), s2) : false;
   }
@@ -15035,7 +15035,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }
     return false;
   }
-  function Xa(t) {
+  function Wa(t) {
     function e2(n4) {
       try {
         return typeof new URL(n4) < "u";
@@ -15062,7 +15062,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   }
   function tu(t, e2) {
     let n4 = null;
-    return ft2(t?.publicKey, false) || (n4 = Bt2("MISSING_OR_INVALID", `${e2} controller public key should be a string`)), n4;
+    return ft2(t?.publicKey, false) || (n4 = bt2("MISSING_OR_INVALID", `${e2} controller public key should be a string`)), n4;
   }
   function zn2(t) {
     let e2 = true;
@@ -15071,8 +15071,8 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function Bs(t, e2, n4) {
     let r3 = null;
     return Be3(e2) && e2.length ? e2.forEach((o4) => {
-      r3 || Ie3(o4) || (r3 = zt2("UNSUPPORTED_CHAINS", `${n4}, chain ${o4} should be a string and conform to "namespace:chainId" format`));
-    }) : Ie3(t) || (r3 = zt2("UNSUPPORTED_CHAINS", `${n4}, chains must be defined as "namespace:chainId" e.g. "eip155:1": {...} in the namespace key OR as an array of CAIP-2 chainIds e.g. eip155: { chains: ["eip155:1", "eip155:5"] }`)), r3;
+      r3 || Ie3(o4) || (r3 = Vt2("UNSUPPORTED_CHAINS", `${n4}, chain ${o4} should be a string and conform to "namespace:chainId" format`));
+    }) : Ie3(t) || (r3 = Vt2("UNSUPPORTED_CHAINS", `${n4}, chains must be defined as "namespace:chainId" e.g. "eip155:1": {...} in the namespace key OR as an array of CAIP-2 chainIds e.g. eip155: { chains: ["eip155:1", "eip155:5"] }`)), r3;
   }
   function Is(t, e2, n4) {
     let r3 = null;
@@ -15085,8 +15085,8 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function As(t, e2) {
     let n4 = null;
     return Be3(t) ? t.forEach((r3) => {
-      n4 || Es(r3) || (n4 = zt2("UNSUPPORTED_ACCOUNTS", `${e2}, account ${r3} should be a string and conform to "namespace:chainId:address" format`));
-    }) : n4 = zt2("UNSUPPORTED_ACCOUNTS", `${e2}, accounts should be an array of strings conforming to "namespace:chainId:address" format`), n4;
+      n4 || Es(r3) || (n4 = Vt2("UNSUPPORTED_ACCOUNTS", `${e2}, account ${r3} should be a string and conform to "namespace:chainId:address" format`));
+    }) : n4 = Vt2("UNSUPPORTED_ACCOUNTS", `${e2}, accounts should be an array of strings conforming to "namespace:chainId:address" format`), n4;
   }
   function Ss(t, e2) {
     let n4 = null;
@@ -15098,7 +15098,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   }
   function Os(t, e2) {
     let n4 = null;
-    return zn2(t?.methods) ? zn2(t?.events) || (n4 = zt2("UNSUPPORTED_EVENTS", `${e2}, events should be an array of strings or empty array for no events`)) : n4 = zt2("UNSUPPORTED_METHODS", `${e2}, methods should be an array of strings or empty array for no methods`), n4;
+    return zn2(t?.methods) ? zn2(t?.events) || (n4 = Vt2("UNSUPPORTED_EVENTS", `${e2}, events should be an array of strings or empty array for no events`)) : n4 = Vt2("UNSUPPORTED_METHODS", `${e2}, methods should be an array of strings or empty array for no methods`), n4;
   }
   function Yn2(t, e2) {
     let n4 = null;
@@ -15115,7 +15115,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       o4 && (r3 = o4);
       const s2 = Is(t, e2, n4);
       s2 && (r3 = s2);
-    } else r3 = Bt2("MISSING_OR_INVALID", `${e2}, ${n4} should be an object with data`);
+    } else r3 = bt2("MISSING_OR_INVALID", `${e2}, ${n4} should be an object with data`);
     return r3;
   }
   function Ns(t, e2) {
@@ -15125,7 +15125,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       r3 && (n4 = r3);
       const o4 = Ss(t, e2);
       o4 && (n4 = o4);
-    } else n4 = Bt2("MISSING_OR_INVALID", `${e2}, namespaces should be an object with data`);
+    } else n4 = bt2("MISSING_OR_INVALID", `${e2}, namespaces should be an object with data`);
     return n4;
   }
   function Us(t) {
@@ -15144,41 +15144,41 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return typeof t < "u" && typeof t !== null;
   }
   function su(t) {
-    return !(!t || typeof t != "object" || !t.code || !We2(t.code, false) || !t.message || !ft2(t.message, false));
+    return !(!t || typeof t != "object" || !t.code || !Xe2(t.code, false) || !t.message || !ft2(t.message, false));
   }
   function iu(t) {
     return !(Dt2(t) || !ft2(t.method, false));
   }
   function cu(t) {
-    return !(Dt2(t) || Dt2(t.result) && Dt2(t.error) || !We2(t.id, false) || !ft2(t.jsonrpc, false));
+    return !(Dt2(t) || Dt2(t.result) && Dt2(t.error) || !Xe2(t.id, false) || !ft2(t.jsonrpc, false));
   }
   function fu(t) {
     return !(Dt2(t) || !ft2(t.name, false));
   }
   function au(t, e2) {
-    return !(!Ie3(e2) || !gs(t).includes(e2));
+    return !(!Ie3(e2) || !ys(t).includes(e2));
   }
   function uu(t, e2, n4) {
-    return ft2(n4, false) ? bs(t, e2).includes(n4) : false;
+    return ft2(n4, false) ? ms(t, e2).includes(n4) : false;
   }
   function lu(t, e2, n4) {
-    return ft2(n4, false) ? ys(t, e2).includes(n4) : false;
+    return ft2(n4, false) ? ws(t, e2).includes(n4) : false;
   }
   function _s(t, e2, n4) {
     let r3 = null;
     const o4 = du(t), s2 = hu(e2), i3 = Object.keys(o4), c5 = Object.keys(s2), f4 = Rs(Object.keys(t)), u2 = Rs(Object.keys(e2)), a3 = f4.filter((l5) => !u2.includes(l5));
-    return a3.length && (r3 = Bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces keys don't satisfy requiredNamespaces.
+    return a3.length && (r3 = bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces keys don't satisfy requiredNamespaces.
       Required: ${a3.toString()}
-      Received: ${Object.keys(e2).toString()}`)), At(i3, c5) || (r3 = Bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces chains don't satisfy required namespaces.
+      Received: ${Object.keys(e2).toString()}`)), At(i3, c5) || (r3 = bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces chains don't satisfy required namespaces.
       Required: ${i3.toString()}
       Approved: ${c5.toString()}`)), Object.keys(e2).forEach((l5) => {
       if (!l5.includes(":") || r3) return;
-      const d4 = Gt2(e2[l5].accounts);
-      d4.includes(l5) || (r3 = Bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces accounts don't satisfy namespace accounts for ${l5}
+      const d4 = zt2(e2[l5].accounts);
+      d4.includes(l5) || (r3 = bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces accounts don't satisfy namespace accounts for ${l5}
         Required: ${l5}
         Approved: ${d4.toString()}`));
     }), i3.forEach((l5) => {
-      r3 || (At(o4[l5].methods, s2[l5].methods) ? At(o4[l5].events, s2[l5].events) || (r3 = Bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces events don't satisfy namespace events for ${l5}`)) : r3 = Bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces methods don't satisfy namespace methods for ${l5}`));
+      r3 || (At(o4[l5].methods, s2[l5].methods) ? At(o4[l5].events, s2[l5].events) || (r3 = bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces events don't satisfy namespace events for ${l5}`)) : r3 = bt2("NON_CONFORMING_NAMESPACES", `${n4} namespaces methods don't satisfy namespace methods for ${l5}`));
     }), r3;
   }
   function du(t) {
@@ -15198,7 +15198,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return Object.keys(t).forEach((n4) => {
       if (n4.includes(":")) e2[n4] = t[n4];
       else {
-        const r3 = Gt2(t[n4].accounts);
+        const r3 = zt2(t[n4].accounts);
         r3?.forEach((o4) => {
           e2[o4] = { accounts: t[n4].accounts.filter((s2) => s2.includes(`${o4}:`)), methods: t[n4].methods, events: t[n4].events };
         });
@@ -15206,10 +15206,10 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }), e2;
   }
   function pu(t, e2) {
-    return We2(t, false) && t <= e2.max && t >= e2.min;
+    return Xe2(t, false) && t <= e2.max && t >= e2.min;
   }
   function gu() {
-    const t = Vt2();
+    const t = Mt2();
     return new Promise((e2) => {
       switch (t) {
         case et.browser:
@@ -15227,7 +15227,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     });
   }
   function $s() {
-    return Wt2() && navigator?.onLine;
+    return Xt2() && navigator?.onLine;
   }
   async function Ts() {
     if (It2() && typeof global < "u" && global != null && global.NetInfo) {
@@ -15240,7 +15240,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     return true;
   }
   function bu(t) {
-    switch (Vt2()) {
+    switch (Mt2()) {
       case et.browser:
         js(t);
         break;
@@ -15252,14 +15252,14 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }
   }
   function js(t) {
-    !It2() && Wt2() && (window.addEventListener("online", () => t(true)), window.addEventListener("offline", () => t(false)));
+    !It2() && Xt2() && (window.addEventListener("online", () => t(true)), window.addEventListener("offline", () => t(false)));
   }
   function Ls(t) {
     It2() && typeof global < "u" && global != null && global.NetInfo && global?.NetInfo.addEventListener((e2) => t(e2?.isConnected));
   }
   function yu() {
     var t;
-    return Wt2() && (0, import_window_getters.getDocument)() ? ((t = (0, import_window_getters.getDocument)()) == null ? void 0 : t.visibilityState) === "visible" : true;
+    return Xt2() && (0, import_window_getters.getDocument)() ? ((t = (0, import_window_getters.getDocument)()) == null ? void 0 : t.visibilityState) === "visible" : true;
   }
   function ks(t) {
     const e2 = base58.decode(t);
@@ -15268,16 +15268,16 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   }
   function Ps({ publicKey: t, signature: e2, payload: n4 }) {
     var r3;
-    const o4 = Xn2(n4.method), s2 = 128 | parseInt(((r3 = n4.version) == null ? void 0 : r3.toString()) || "4"), i3 = vu(n4.address), c5 = n4.era === "00" ? new Uint8Array([0]) : Xn2(n4.era);
+    const o4 = Wn2(n4.method), s2 = 128 | parseInt(((r3 = n4.version) == null ? void 0 : r3.toString()) || "4"), i3 = vu(n4.address), c5 = n4.era === "00" ? new Uint8Array([0]) : Wn2(n4.era);
     if (c5.length !== 1 && c5.length !== 2) throw new Error("Invalid era length");
     const f4 = parseInt(n4.nonce, 16), u2 = new Uint8Array([f4 & 255, f4 >> 8 & 255]), a3 = BigInt(`0x${wu(n4.tip)}`), l5 = Eu(a3), d4 = new Uint8Array([0, ...t, i3, ...e2, ...c5, ...u2, ...l5, ...o4]), h4 = xu(d4.length + 1);
     return new Uint8Array([...h4, s2, ...d4]);
   }
   function Hs(t) {
-    const e2 = Xn2(t), n4 = (0, import_blakejs.blake2b)(e2, void 0, 32);
+    const e2 = Wn2(t), n4 = (0, import_blakejs.blake2b)(e2, void 0, 32);
     return "0x" + Buffer.from(n4).toString("hex");
   }
-  function Xn2(t) {
+  function Wn2(t) {
     return new Uint8Array(t.replace(/^0x/, "").match(/.{1,2}/g).map((e2) => parseInt(e2, 16)));
   }
   function wu(t) {
@@ -15315,7 +15315,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     const n4 = typeof t == "string" ? Ue({ opts: { level: t, name: e2 } }).logger : t;
     return n4.level = typeof t == "string" ? t : t.level, n4;
   }
-  var import_time3, import_window_getters, import_window_metadata, import_blakejs, Ae3, ri, oi, si, ar2, ii, ci, en2, ur2, fi, lr2, dr2, et, pr2, Hi, Ne3, Nr2, Rr2, $r2, St2, Ot2, de3, he3, Di, Vi, Mi, Ki, qi, Fi, fn, an, Zi, Gi, zi, Yi, Xt2, Tr2, wt2, Ut2, jr2, Xi, vt2, $e3, Qi, be3, tc, ec, nc, rc, Pr2, Hr2, Dr2, Vr2, oc, sc, Mr2, Kr2, Jn2, cc, fc, qr2, Rt2, X2, J4, dc, $t2, hc, Fr2, pc, gc, Tt2, Ct, dn, bc, Q3, yc, Te3, mc, wc, vc, xc, z3, S2, Bc, Ic, Ac, Sc, Cc, jc, Lc, Wr2, kc, Pc, Xr2, gn2, Jr2, Qr2, Hc, Dc, ye3, to2, eo2, no2, bn2, ro2, Jc, nf, mo2, sf, cf, ff, af, Le3, uf, wo2, vo2, W3, hf, gf, yf, mf, xo2, wf, vf, Bo2, Io2, ke3, An2, Ao2, Bf, Pe3, Sn2, On2, _n2, me3, st, nt2, qt2, Uo2, _o2, Ro2, Sf, $o2, Of, To2, Rf, te3, Ft2, jn2, qo2, kf, we3, ee2, Fe2, Kf, Go2, qf, Ff, Zf, zo2, Gf, Wf, kn2, Yo2, Jf, xt2, Et2, ne2, Wo2, Ze2, Qf, Qo2, ts, es, ca, fa, aa, ua, la, Vn2, rt2, oe2, Ge3, se2, Mn2, ie2, ve3, da, ns, xe3, Kn2, cs, Na, Ua, _a, fs, Ra, $a, as, Zn2, Ta, ka, Pa, Ha, hs, Da, Va, ps, Ma, Ka, vs, xs, Wn2, mu;
+  var import_time3, import_window_getters, import_window_metadata, import_blakejs, Ae3, ar2, ur2, ri, oi, si, lr2, ii, ci, en2, dr2, fi, hr2, pr2, et, br2, Hi, Ne3, _r2, Tr2, Cr2, St2, Ot2, de3, he3, Di, Vi, Mi, Ki, qi, Fi, fn, an, Zi, Gi, zi, Yi, Wt2, jr2, vt2, Ut2, kr2, Wi, xt2, $e3, Qi, be3, tc, ec, nc, rc, Dr2, Vr2, Mr2, Kr2, oc, sc, qr2, Fr2, Jn2, cc, fc, Zr2, Rt2, W3, J4, dc, $t2, hc, Gr2, pc, gc, Tt2, Ct, dn, bc, Q3, yc, Te3, mc, wc, vc, xc, z3, S2, Bc, Ic, Ac, Sc, Cc, jc, Lc, Jr2, kc, Pc, Qr2, gn2, to2, eo2, Hc, Dc, ye3, no2, ro2, oo2, bn2, so2, Jc, nf, vo2, sf, cf, ff, af, Le3, uf, xo2, Eo2, X2, hf, gf, yf, mf, Bo2, wf, vf, Ao2, So2, ke3, An2, Oo2, Bf, Pe3, Sn2, On2, _n2, me3, st, nt2, Ft2, Ro2, $o2, To2, Sf, Co2, Of, jo2, Rf, te3, Zt2, jn2, Zo2, kf, we3, ee2, Fe2, Kf, Yo2, qf, Ff, Zf, Xo, Gf, Xf, kn2, Wo2, Jf, Et2, Bt2, ne2, Jo2, Ze2, Qf, es, ns, rs, ca, fa, aa, ua, la, Vn2, rt2, oe2, Ge3, se2, Mn2, ie2, ve3, da, os, xe3, Kn2, as, Na, Ua, _a, us, Ra, $a, ls, Zn2, Ta, ka, Pa, Ha, gs, Da, Va, bs, Ma, Ka, Xn2, mu;
   var init_dist7 = __esm({
     "node_modules/@walletconnect/utils/dist/index.js"() {
       init_es();
@@ -15331,26 +15331,28 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       import_blakejs = __toESM(require_blakejs(), 1);
       init_index_es3();
       Ae3 = ":";
+      ar2 = { INVALID_METHOD: { message: "Invalid method.", code: 1001 }, INVALID_EVENT: { message: "Invalid event.", code: 1002 }, INVALID_UPDATE_REQUEST: { message: "Invalid update request.", code: 1003 }, INVALID_EXTEND_REQUEST: { message: "Invalid extend request.", code: 1004 }, INVALID_SESSION_SETTLE_REQUEST: { message: "Invalid session settle request.", code: 1005 }, UNAUTHORIZED_METHOD: { message: "Unauthorized method.", code: 3001 }, UNAUTHORIZED_EVENT: { message: "Unauthorized event.", code: 3002 }, UNAUTHORIZED_UPDATE_REQUEST: { message: "Unauthorized update request.", code: 3003 }, UNAUTHORIZED_EXTEND_REQUEST: { message: "Unauthorized extend request.", code: 3004 }, USER_REJECTED: { message: "User rejected.", code: 5e3 }, USER_REJECTED_CHAINS: { message: "User rejected chains.", code: 5001 }, USER_REJECTED_METHODS: { message: "User rejected methods.", code: 5002 }, USER_REJECTED_EVENTS: { message: "User rejected events.", code: 5003 }, UNSUPPORTED_CHAINS: { message: "Unsupported chains.", code: 5100 }, UNSUPPORTED_METHODS: { message: "Unsupported methods.", code: 5101 }, UNSUPPORTED_EVENTS: { message: "Unsupported events.", code: 5102 }, UNSUPPORTED_ACCOUNTS: { message: "Unsupported accounts.", code: 5103 }, UNSUPPORTED_NAMESPACE_KEY: { message: "Unsupported namespace key.", code: 5104 }, USER_DISCONNECTED: { message: "User disconnected.", code: 6e3 }, SESSION_SETTLEMENT_FAILED: { message: "Session settlement failed.", code: 7e3 }, WC_METHOD_UNSUPPORTED: { message: "Unsupported wc_ method.", code: 10001 } };
+      ur2 = { NOT_INITIALIZED: { message: "Not initialized.", code: 1 }, NO_MATCHING_KEY: { message: "No matching key.", code: 2 }, RESTORE_WILL_OVERRIDE: { message: "Restore will override.", code: 3 }, RESUBSCRIBED: { message: "Resubscribed.", code: 4 }, MISSING_OR_INVALID: { message: "Missing or invalid.", code: 5 }, EXPIRED: { message: "Expired.", code: 6 }, UNKNOWN_TYPE: { message: "Unknown type.", code: 7 }, MISMATCHED_TOPIC: { message: "Mismatched topic.", code: 8 }, NON_CONFORMING_NAMESPACES: { message: "Non conforming namespaces.", code: 9 } };
       ri = Object.defineProperty;
       oi = Object.defineProperties;
       si = Object.getOwnPropertyDescriptors;
-      ar2 = Object.getOwnPropertySymbols;
+      lr2 = Object.getOwnPropertySymbols;
       ii = Object.prototype.hasOwnProperty;
       ci = Object.prototype.propertyIsEnumerable;
       en2 = (t, e2, n4) => e2 in t ? ri(t, e2, { enumerable: true, configurable: true, writable: true, value: n4 }) : t[e2] = n4;
-      ur2 = (t, e2) => {
+      dr2 = (t, e2) => {
         for (var n4 in e2 || (e2 = {})) ii.call(e2, n4) && en2(t, n4, e2[n4]);
-        if (ar2) for (var n4 of ar2(e2)) ci.call(e2, n4) && en2(t, n4, e2[n4]);
+        if (lr2) for (var n4 of lr2(e2)) ci.call(e2, n4) && en2(t, n4, e2[n4]);
         return t;
       };
       fi = (t, e2) => oi(t, si(e2));
-      lr2 = (t, e2, n4) => en2(t, typeof e2 != "symbol" ? e2 + "" : e2, n4);
-      dr2 = "ReactNative";
+      hr2 = (t, e2, n4) => en2(t, typeof e2 != "symbol" ? e2 + "" : e2, n4);
+      pr2 = "ReactNative";
       et = { reactNative: "react-native", node: "node", browser: "browser", unknown: "unknown" };
-      pr2 = "js";
+      br2 = "js";
       Hi = class {
         constructor({ limit: e2 }) {
-          lr2(this, "limit"), lr2(this, "set"), this.limit = e2, this.set = /* @__PURE__ */ new Set();
+          hr2(this, "limit"), hr2(this, "set"), this.limit = e2, this.set = /* @__PURE__ */ new Set();
         }
         add(e2) {
           if (!this.set.has(e2)) {
@@ -15366,9 +15368,9 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
       };
       Ne3 = BigInt(2 ** 32 - 1);
-      Nr2 = BigInt(32);
-      Rr2 = (t, e2, n4) => t >>> n4;
-      $r2 = (t, e2, n4) => t << 32 - n4 | e2 >>> n4;
+      _r2 = BigInt(32);
+      Tr2 = (t, e2, n4) => t >>> n4;
+      Cr2 = (t, e2, n4) => t << 32 - n4 | e2 >>> n4;
       St2 = (t, e2, n4) => t >>> n4 | e2 << 32 - n4;
       Ot2 = (t, e2, n4) => t << 32 - n4 | e2 >>> n4;
       de3 = (t, e2, n4) => t << 64 - n4 | e2 >>> n4 - 32;
@@ -15385,13 +15387,13 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       Gi = (t, e2, n4, r3, o4) => e2 + n4 + r3 + o4 + (t / 2 ** 32 | 0) | 0;
       zi = (t, e2, n4, r3, o4) => (t >>> 0) + (e2 >>> 0) + (n4 >>> 0) + (r3 >>> 0) + (o4 >>> 0);
       Yi = (t, e2, n4, r3, o4, s2) => e2 + n4 + r3 + o4 + s2 + (t / 2 ** 32 | 0) | 0;
-      Xt2 = typeof globalThis == "object" && "crypto" in globalThis ? globalThis.crypto : void 0;
-      Tr2 = new Uint8Array(new Uint32Array([287454020]).buffer)[0] === 68;
-      wt2 = Tr2 ? (t) => t : (t) => Cr2(t);
-      Ut2 = Tr2 ? (t) => t : Wi;
-      jr2 = typeof Uint8Array.from([]).toHex == "function" && typeof Uint8Array.fromHex == "function";
-      Xi = Array.from({ length: 256 }, (t, e2) => e2.toString(16).padStart(2, "0"));
-      vt2 = { _0: 48, _9: 57, A: 65, F: 70, a: 97, f: 102 };
+      Wt2 = typeof globalThis == "object" && "crypto" in globalThis ? globalThis.crypto : void 0;
+      jr2 = new Uint8Array(new Uint32Array([287454020]).buffer)[0] === 68;
+      vt2 = jr2 ? (t) => t : (t) => Lr2(t);
+      Ut2 = jr2 ? (t) => t : Xi;
+      kr2 = typeof Uint8Array.from([]).toHex == "function" && typeof Uint8Array.fromHex == "function";
+      Wi = Array.from({ length: 256 }, (t, e2) => e2.toString(16).padStart(2, "0"));
+      xt2 = { _0: 48, _9: 57, A: 65, F: 70, a: 97, f: 102 };
       $e3 = class {
       };
       Qi = BigInt(0);
@@ -15400,23 +15402,23 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       ec = BigInt(7);
       nc = BigInt(256);
       rc = BigInt(113);
-      Pr2 = [];
-      Hr2 = [];
       Dr2 = [];
+      Vr2 = [];
+      Mr2 = [];
       for (let t = 0, e2 = be3, n4 = 1, r3 = 0; t < 24; t++) {
-        [n4, r3] = [r3, (2 * n4 + 3 * r3) % 5], Pr2.push(2 * (5 * r3 + n4)), Hr2.push((t + 1) * (t + 2) / 2 % 64);
+        [n4, r3] = [r3, (2 * n4 + 3 * r3) % 5], Dr2.push(2 * (5 * r3 + n4)), Vr2.push((t + 1) * (t + 2) / 2 % 64);
         let o4 = Qi;
         for (let s2 = 0; s2 < 7; s2++) e2 = (e2 << be3 ^ (e2 >> ec) * rc) % nc, e2 & tc && (o4 ^= be3 << (be3 << BigInt(s2)) - be3);
-        Dr2.push(o4);
+        Mr2.push(o4);
       }
-      Vr2 = _r2(Dr2, true);
-      oc = Vr2[0];
-      sc = Vr2[1];
-      Mr2 = (t, e2, n4) => n4 > 32 ? qi(t, e2, n4) : Mi(t, e2, n4);
-      Kr2 = (t, e2, n4) => n4 > 32 ? Fi(t, e2, n4) : Ki(t, e2, n4);
+      Kr2 = $r2(Mr2, true);
+      oc = Kr2[0];
+      sc = Kr2[1];
+      qr2 = (t, e2, n4) => n4 > 32 ? qi(t, e2, n4) : Mi(t, e2, n4);
+      Fr2 = (t, e2, n4) => n4 > 32 ? Fi(t, e2, n4) : Ki(t, e2, n4);
       Jn2 = class _Jn extends $e3 {
         constructor(e2, n4, r3, o4 = false, s2 = 24) {
-          if (super(), this.pos = 0, this.posOut = 0, this.finished = false, this.destroyed = false, this.enableXOF = false, this.blockLen = e2, this.suffix = n4, this.outputLen = r3, this.enableXOF = o4, this.rounds = s2, mt(r3), !(0 < e2 && e2 < 200)) throw new Error("only keccak-f1600 function is supported");
+          if (super(), this.pos = 0, this.posOut = 0, this.finished = false, this.destroyed = false, this.enableXOF = false, this.blockLen = e2, this.suffix = n4, this.outputLen = r3, this.enableXOF = o4, this.rounds = s2, wt2(r3), !(0 < e2 && e2 < 200)) throw new Error("only keccak-f1600 function is supported");
           this.state = new Uint8Array(200), this.state32 = pe3(this.state);
         }
         clone() {
@@ -15456,7 +15458,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           return this.writeInto(e2);
         }
         xof(e2) {
-          return mt(e2), this.xofInto(new Uint8Array(e2));
+          return wt2(e2), this.xofInto(new Uint8Array(e2));
         }
         digestInto(e2) {
           if (un(e2, this), this.finished) throw new Error("digest() was already called");
@@ -15475,7 +15477,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       };
       cc = (t, e2, n4) => ge3(() => new Jn2(e2, t, n4));
       fc = cc(1, 136, 256 / 8);
-      qr2 = class extends $e3 {
+      Zr2 = class extends $e3 {
         constructor(e2, n4, r3, o4) {
           super(), this.finished = false, this.length = 0, this.pos = 0, this.destroyed = false, this.blockLen = e2, this.outputLen = n4, this.padOffset = r3, this.isLE = o4, this.buffer = new Uint8Array(e2), this.view = ln(this.buffer);
         }
@@ -15522,11 +15524,11 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
       };
       Rt2 = Uint32Array.from([1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225]);
-      X2 = Uint32Array.from([3418070365, 3238371032, 1654270250, 914150663, 2438529370, 812702999, 355462360, 4144912697, 1731405415, 4290775857, 2394180231, 1750603025, 3675008525, 1694076839, 1203062813, 3204075428]);
+      W3 = Uint32Array.from([3418070365, 3238371032, 1654270250, 914150663, 2438529370, 812702999, 355462360, 4144912697, 1731405415, 4290775857, 2394180231, 1750603025, 3675008525, 1694076839, 1203062813, 3204075428]);
       J4 = Uint32Array.from([1779033703, 4089235720, 3144134277, 2227873595, 1013904242, 4271175723, 2773480762, 1595750129, 1359893119, 2917565137, 2600822924, 725511199, 528734635, 4215389547, 1541459225, 327033209]);
       dc = Uint32Array.from([1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298]);
       $t2 = new Uint32Array(64);
-      hc = class extends qr2 {
+      hc = class extends Zr2 {
         constructor(e2 = 32) {
           super(64, e2, 8, false), this.A = Rt2[0] | 0, this.B = Rt2[1] | 0, this.C = Rt2[2] | 0, this.D = Rt2[3] | 0, this.E = Rt2[4] | 0, this.F = Rt2[5] | 0, this.G = Rt2[6] | 0, this.H = Rt2[7] | 0;
         }
@@ -15540,12 +15542,12 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         process(e2, n4) {
           for (let l5 = 0; l5 < 16; l5++, n4 += 4) $t2[l5] = e2.getUint32(n4, false);
           for (let l5 = 16; l5 < 64; l5++) {
-            const d4 = $t2[l5 - 15], h4 = $t2[l5 - 2], y4 = bt2(d4, 7) ^ bt2(d4, 18) ^ d4 >>> 3, m3 = bt2(h4, 17) ^ bt2(h4, 19) ^ h4 >>> 10;
+            const d4 = $t2[l5 - 15], h4 = $t2[l5 - 2], y4 = yt2(d4, 7) ^ yt2(d4, 18) ^ d4 >>> 3, m3 = yt2(h4, 17) ^ yt2(h4, 19) ^ h4 >>> 10;
             $t2[l5] = m3 + $t2[l5 - 7] + y4 + $t2[l5 - 16] | 0;
           }
           let { A: r3, B: o4, C: s2, D: i3, E: c5, F: f4, G: u2, H: a3 } = this;
           for (let l5 = 0; l5 < 64; l5++) {
-            const d4 = bt2(c5, 6) ^ bt2(c5, 11) ^ bt2(c5, 25), h4 = a3 + d4 + uc(c5, f4, u2) + dc[l5] + $t2[l5] | 0, m3 = (bt2(r3, 2) ^ bt2(r3, 13) ^ bt2(r3, 22)) + lc(r3, o4, s2) | 0;
+            const d4 = yt2(c5, 6) ^ yt2(c5, 11) ^ yt2(c5, 25), h4 = a3 + d4 + uc(c5, f4, u2) + dc[l5] + $t2[l5] | 0, m3 = (yt2(r3, 2) ^ yt2(r3, 13) ^ yt2(r3, 22)) + lc(r3, o4, s2) | 0;
             a3 = u2, u2 = f4, f4 = c5, c5 = i3 + h4 | 0, i3 = s2, s2 = o4, o4 = r3, r3 = h4 + m3 | 0;
           }
           r3 = r3 + this.A | 0, o4 = o4 + this.B | 0, s2 = s2 + this.C | 0, i3 = i3 + this.D | 0, c5 = c5 + this.E | 0, f4 = f4 + this.F | 0, u2 = u2 + this.G | 0, a3 = a3 + this.H | 0, this.set(r3, o4, s2, i3, c5, f4, u2, a3);
@@ -15557,12 +15559,12 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           this.set(0, 0, 0, 0, 0, 0, 0, 0), lt2(this.buffer);
         }
       };
-      Fr2 = _r2(["0x428a2f98d728ae22", "0x7137449123ef65cd", "0xb5c0fbcfec4d3b2f", "0xe9b5dba58189dbbc", "0x3956c25bf348b538", "0x59f111f1b605d019", "0x923f82a4af194f9b", "0xab1c5ed5da6d8118", "0xd807aa98a3030242", "0x12835b0145706fbe", "0x243185be4ee4b28c", "0x550c7dc3d5ffb4e2", "0x72be5d74f27b896f", "0x80deb1fe3b1696b1", "0x9bdc06a725c71235", "0xc19bf174cf692694", "0xe49b69c19ef14ad2", "0xefbe4786384f25e3", "0x0fc19dc68b8cd5b5", "0x240ca1cc77ac9c65", "0x2de92c6f592b0275", "0x4a7484aa6ea6e483", "0x5cb0a9dcbd41fbd4", "0x76f988da831153b5", "0x983e5152ee66dfab", "0xa831c66d2db43210", "0xb00327c898fb213f", "0xbf597fc7beef0ee4", "0xc6e00bf33da88fc2", "0xd5a79147930aa725", "0x06ca6351e003826f", "0x142929670a0e6e70", "0x27b70a8546d22ffc", "0x2e1b21385c26c926", "0x4d2c6dfc5ac42aed", "0x53380d139d95b3df", "0x650a73548baf63de", "0x766a0abb3c77b2a8", "0x81c2c92e47edaee6", "0x92722c851482353b", "0xa2bfe8a14cf10364", "0xa81a664bbc423001", "0xc24b8b70d0f89791", "0xc76c51a30654be30", "0xd192e819d6ef5218", "0xd69906245565a910", "0xf40e35855771202a", "0x106aa07032bbd1b8", "0x19a4c116b8d2d0c8", "0x1e376c085141ab53", "0x2748774cdf8eeb99", "0x34b0bcb5e19b48a8", "0x391c0cb3c5c95a63", "0x4ed8aa4ae3418acb", "0x5b9cca4f7763e373", "0x682e6ff3d6b2b8a3", "0x748f82ee5defb2fc", "0x78a5636f43172f60", "0x84c87814a1f0ab72", "0x8cc702081a6439ec", "0x90befffa23631e28", "0xa4506cebde82bde9", "0xbef9a3f7b2c67915", "0xc67178f2e372532b", "0xca273eceea26619c", "0xd186b8c721c0c207", "0xeada7dd6cde0eb1e", "0xf57d4f7fee6ed178", "0x06f067aa72176fba", "0x0a637dc5a2c898a6", "0x113f9804bef90dae", "0x1b710b35131c471b", "0x28db77f523047d84", "0x32caab7b40c72493", "0x3c9ebe0a15c9bebc", "0x431d67c49c100d4c", "0x4cc5d4becb3e42b6", "0x597f299cfc657e2a", "0x5fcb6fab3ad6faec", "0x6c44198c4a475817"].map((t) => BigInt(t)));
-      pc = Fr2[0];
-      gc = Fr2[1];
+      Gr2 = $r2(["0x428a2f98d728ae22", "0x7137449123ef65cd", "0xb5c0fbcfec4d3b2f", "0xe9b5dba58189dbbc", "0x3956c25bf348b538", "0x59f111f1b605d019", "0x923f82a4af194f9b", "0xab1c5ed5da6d8118", "0xd807aa98a3030242", "0x12835b0145706fbe", "0x243185be4ee4b28c", "0x550c7dc3d5ffb4e2", "0x72be5d74f27b896f", "0x80deb1fe3b1696b1", "0x9bdc06a725c71235", "0xc19bf174cf692694", "0xe49b69c19ef14ad2", "0xefbe4786384f25e3", "0x0fc19dc68b8cd5b5", "0x240ca1cc77ac9c65", "0x2de92c6f592b0275", "0x4a7484aa6ea6e483", "0x5cb0a9dcbd41fbd4", "0x76f988da831153b5", "0x983e5152ee66dfab", "0xa831c66d2db43210", "0xb00327c898fb213f", "0xbf597fc7beef0ee4", "0xc6e00bf33da88fc2", "0xd5a79147930aa725", "0x06ca6351e003826f", "0x142929670a0e6e70", "0x27b70a8546d22ffc", "0x2e1b21385c26c926", "0x4d2c6dfc5ac42aed", "0x53380d139d95b3df", "0x650a73548baf63de", "0x766a0abb3c77b2a8", "0x81c2c92e47edaee6", "0x92722c851482353b", "0xa2bfe8a14cf10364", "0xa81a664bbc423001", "0xc24b8b70d0f89791", "0xc76c51a30654be30", "0xd192e819d6ef5218", "0xd69906245565a910", "0xf40e35855771202a", "0x106aa07032bbd1b8", "0x19a4c116b8d2d0c8", "0x1e376c085141ab53", "0x2748774cdf8eeb99", "0x34b0bcb5e19b48a8", "0x391c0cb3c5c95a63", "0x4ed8aa4ae3418acb", "0x5b9cca4f7763e373", "0x682e6ff3d6b2b8a3", "0x748f82ee5defb2fc", "0x78a5636f43172f60", "0x84c87814a1f0ab72", "0x8cc702081a6439ec", "0x90befffa23631e28", "0xa4506cebde82bde9", "0xbef9a3f7b2c67915", "0xc67178f2e372532b", "0xca273eceea26619c", "0xd186b8c721c0c207", "0xeada7dd6cde0eb1e", "0xf57d4f7fee6ed178", "0x06f067aa72176fba", "0x0a637dc5a2c898a6", "0x113f9804bef90dae", "0x1b710b35131c471b", "0x28db77f523047d84", "0x32caab7b40c72493", "0x3c9ebe0a15c9bebc", "0x431d67c49c100d4c", "0x4cc5d4becb3e42b6", "0x597f299cfc657e2a", "0x5fcb6fab3ad6faec", "0x6c44198c4a475817"].map((t) => BigInt(t)));
+      pc = Gr2[0];
+      gc = Gr2[1];
       Tt2 = new Uint32Array(80);
       Ct = new Uint32Array(80);
-      dn = class extends qr2 {
+      dn = class extends Zr2 {
         constructor(e2 = 64) {
           super(128, e2, 16, false), this.Ah = J4[0] | 0, this.Al = J4[1] | 0, this.Bh = J4[2] | 0, this.Bl = J4[3] | 0, this.Ch = J4[4] | 0, this.Cl = J4[5] | 0, this.Dh = J4[6] | 0, this.Dl = J4[7] | 0, this.Eh = J4[8] | 0, this.El = J4[9] | 0, this.Fh = J4[10] | 0, this.Fl = J4[11] | 0, this.Gh = J4[12] | 0, this.Gl = J4[13] | 0, this.Hh = J4[14] | 0, this.Hl = J4[15] | 0;
         }
@@ -15576,7 +15578,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         process(e2, n4) {
           for (let R3 = 0; R3 < 16; R3++, n4 += 4) Tt2[R3] = e2.getUint32(n4), Ct[R3] = e2.getUint32(n4 += 4);
           for (let R3 = 16; R3 < 80; R3++) {
-            const Z2 = Tt2[R3 - 15] | 0, H3 = Ct[R3 - 15] | 0, j5 = St2(Z2, H3, 1) ^ St2(Z2, H3, 8) ^ Rr2(Z2, H3, 7), L = Ot2(Z2, H3, 1) ^ Ot2(Z2, H3, 8) ^ $r2(Z2, H3, 7), k5 = Tt2[R3 - 2] | 0, O6 = Ct[R3 - 2] | 0, T3 = St2(k5, O6, 19) ^ de3(k5, O6, 61) ^ Rr2(k5, O6, 6), C3 = Ot2(k5, O6, 19) ^ he3(k5, O6, 61) ^ $r2(k5, O6, 6), _3 = Zi(L, C3, Ct[R3 - 7], Ct[R3 - 16]), p3 = Gi(_3, j5, T3, Tt2[R3 - 7], Tt2[R3 - 16]);
+            const Z2 = Tt2[R3 - 15] | 0, H3 = Ct[R3 - 15] | 0, j5 = St2(Z2, H3, 1) ^ St2(Z2, H3, 8) ^ Tr2(Z2, H3, 7), L = Ot2(Z2, H3, 1) ^ Ot2(Z2, H3, 8) ^ Cr2(Z2, H3, 7), k5 = Tt2[R3 - 2] | 0, O6 = Ct[R3 - 2] | 0, T3 = St2(k5, O6, 19) ^ de3(k5, O6, 61) ^ Tr2(k5, O6, 6), C3 = Ot2(k5, O6, 19) ^ he3(k5, O6, 61) ^ Cr2(k5, O6, 6), _3 = Zi(L, C3, Ct[R3 - 7], Ct[R3 - 16]), p3 = Gi(_3, j5, T3, Tt2[R3 - 7], Tt2[R3 - 16]);
             Tt2[R3] = p3 | 0, Ct[R3] = _3 | 0;
           }
           let { Ah: r3, Al: o4, Bh: s2, Bl: i3, Ch: c5, Cl: f4, Dh: u2, Dl: a3, Eh: l5, El: d4, Fh: h4, Fl: y4, Gh: m3, Gl: w3, Hh: U3, Hl: F2 } = this;
@@ -15597,7 +15599,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       };
       bc = class extends dn {
         constructor() {
-          super(48), this.Ah = X2[0] | 0, this.Al = X2[1] | 0, this.Bh = X2[2] | 0, this.Bl = X2[3] | 0, this.Ch = X2[4] | 0, this.Cl = X2[5] | 0, this.Dh = X2[6] | 0, this.Dl = X2[7] | 0, this.Eh = X2[8] | 0, this.El = X2[9] | 0, this.Fh = X2[10] | 0, this.Fl = X2[11] | 0, this.Gh = X2[12] | 0, this.Gl = X2[13] | 0, this.Hh = X2[14] | 0, this.Hl = X2[15] | 0;
+          super(48), this.Ah = W3[0] | 0, this.Al = W3[1] | 0, this.Bh = W3[2] | 0, this.Bl = W3[3] | 0, this.Ch = W3[4] | 0, this.Cl = W3[5] | 0, this.Dh = W3[6] | 0, this.Dl = W3[7] | 0, this.Eh = W3[8] | 0, this.El = W3[9] | 0, this.Fh = W3[10] | 0, this.Fl = W3[11] | 0, this.Gh = W3[12] | 0, this.Gl = W3[13] | 0, this.Hh = W3[14] | 0, this.Hl = W3[15] | 0;
         }
       };
       Q3 = Uint32Array.from([573645204, 4230739756, 2673172387, 3360449730, 596883563, 1867755857, 2520282905, 1497426621, 2519219938, 2827943907, 3193839141, 1401305490, 721525244, 746961066, 246885852, 2177182882]);
@@ -15615,7 +15617,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       S2 = new Uint32Array(32);
       Bc = class extends $e3 {
         constructor(e2, n4) {
-          super(), this.finished = false, this.destroyed = false, this.length = 0, this.pos = 0, mt(e2), mt(n4), this.blockLen = e2, this.outputLen = n4, this.buffer = new Uint8Array(e2), this.buffer32 = pe3(this.buffer);
+          super(), this.finished = false, this.destroyed = false, this.length = 0, this.pos = 0, wt2(e2), wt2(n4), this.blockLen = e2, this.outputLen = n4, this.buffer = new Uint8Array(e2), this.buffer32 = pe3(this.buffer);
         }
         update(e2) {
           Nt2(this), e2 = pt(e2), ht2(e2);
@@ -15639,7 +15641,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           const { pos: n4, buffer32: r3 } = this;
           this.finished = true, lt2(this.buffer.subarray(n4)), Ut2(r3), this.compress(r3, 0, true), Ut2(r3);
           const o4 = pe3(e2);
-          this.get().forEach((s2, i3) => o4[i3] = wt2(s2));
+          this.get().forEach((s2, i3) => o4[i3] = vt2(s2));
         }
         digest() {
           const { buffer: e2, outputLen: n4 } = this;
@@ -15663,12 +15665,12 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           if (r3 !== void 0 && (r3 = pt(r3), i3 = r3.length), this.v0l ^= this.outputLen | i3 << 8 | 65536 | 1 << 24, s2 !== void 0) {
             s2 = pt(s2);
             const c5 = pe3(s2);
-            this.v4l ^= wt2(c5[0]), this.v4h ^= wt2(c5[1]), this.v5l ^= wt2(c5[2]), this.v5h ^= wt2(c5[3]);
+            this.v4l ^= vt2(c5[0]), this.v4h ^= vt2(c5[1]), this.v5l ^= vt2(c5[2]), this.v5h ^= vt2(c5[3]);
           }
           if (o4 !== void 0) {
             o4 = pt(o4);
             const c5 = pe3(o4);
-            this.v6l ^= wt2(c5[0]), this.v6h ^= wt2(c5[1]), this.v7l ^= wt2(c5[2]), this.v7h ^= wt2(c5[3]);
+            this.v6l ^= vt2(c5[0]), this.v6h ^= vt2(c5[1]), this.v7l ^= vt2(c5[2]), this.v7h ^= vt2(c5[3]);
           }
           if (r3 !== void 0) {
             const c5 = new Uint8Array(this.blockLen);
@@ -15684,7 +15686,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         compress(e2, n4, r3) {
           this.get().forEach((f4, u2) => S2[u2] = f4), S2.set(z3, 16);
-          let { h: o4, l: s2 } = Ur2(BigInt(this.length));
+          let { h: o4, l: s2 } = Rr2(BigInt(this.length));
           S2[24] = z3[8] ^ s2, S2[25] = z3[9] ^ o4, r3 && (S2[28] = ~S2[28], S2[29] = ~S2[29]);
           let i3 = 0;
           const c5 = xc;
@@ -15700,29 +15702,29 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       Cc = Object.defineProperty;
       jc = Object.defineProperties;
       Lc = Object.getOwnPropertyDescriptors;
-      Wr2 = Object.getOwnPropertySymbols;
+      Jr2 = Object.getOwnPropertySymbols;
       kc = Object.prototype.hasOwnProperty;
       Pc = Object.prototype.propertyIsEnumerable;
-      Xr2 = (t, e2, n4) => e2 in t ? Cc(t, e2, { enumerable: true, configurable: true, writable: true, value: n4 }) : t[e2] = n4;
+      Qr2 = (t, e2, n4) => e2 in t ? Cc(t, e2, { enumerable: true, configurable: true, writable: true, value: n4 }) : t[e2] = n4;
       gn2 = (t, e2) => {
-        for (var n4 in e2 || (e2 = {})) kc.call(e2, n4) && Xr2(t, n4, e2[n4]);
-        if (Wr2) for (var n4 of Wr2(e2)) Pc.call(e2, n4) && Xr2(t, n4, e2[n4]);
+        for (var n4 in e2 || (e2 = {})) kc.call(e2, n4) && Qr2(t, n4, e2[n4]);
+        if (Jr2) for (var n4 of Jr2(e2)) Pc.call(e2, n4) && Qr2(t, n4, e2[n4]);
         return t;
       };
-      Jr2 = (t, e2) => jc(t, Lc(e2));
-      Qr2 = "did:pkh:";
+      to2 = (t, e2) => jc(t, Lc(e2));
+      eo2 = "did:pkh:";
       Hc = { eip155: "Ethereum", solana: "Solana", bip122: "Bitcoin" };
       Dc = (t) => t ? Hc[t] || t : "";
       ye3 = (t) => t?.split(":");
-      to2 = (t) => {
-        const e2 = t && ye3(t);
-        if (e2) return t.includes(Qr2) ? e2[3] : e2[1];
-      };
-      eo2 = (t) => {
-        const e2 = t && ye3(t);
-        if (e2) return t.includes(Qr2) ? e2[2] : e2[0];
-      };
       no2 = (t) => {
+        const e2 = t && ye3(t);
+        if (e2) return t.includes(eo2) ? e2[3] : e2[1];
+      };
+      ro2 = (t) => {
+        const e2 = t && ye3(t);
+        if (e2) return t.includes(eo2) ? e2[2] : e2[0];
+      };
+      oo2 = (t) => {
         const e2 = t && ye3(t);
         if (e2) return e2[2] + ":" + e2[3];
       };
@@ -15730,13 +15732,13 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         const e2 = t && ye3(t);
         if (e2) return e2.pop();
       };
-      ro2 = (t, e2) => {
-        const n4 = eo2(e2);
+      so2 = (t, e2) => {
+        const n4 = ro2(e2);
         if (!n4) throw new Error("Invalid issuer: " + e2);
         const r3 = `${t.domain} wants you to sign in with your ${Dc(n4)} account:`, o4 = bn2(e2);
         if (!t.aud && !t.uri) throw new Error("Either `aud` or `uri` is required to construct the message");
         let s2 = t.statement || void 0;
-        const i3 = `URI: ${t.aud || t.uri}`, c5 = `Version: ${t.version}`, f4 = `Chain ID: ${to2(e2)}`, u2 = `Nonce: ${t.nonce}`, a3 = `Issued At: ${t.iat}`, l5 = t.exp ? `Expiration Time: ${t.exp}` : void 0, d4 = t.nbf ? `Not Before: ${t.nbf}` : void 0, h4 = t.requestId ? `Request ID: ${t.requestId}` : void 0, y4 = t.resources ? `Resources:${t.resources.map((w3) => `
+        const i3 = `URI: ${t.aud || t.uri}`, c5 = `Version: ${t.version}`, f4 = `Chain ID: ${no2(e2)}`, u2 = `Nonce: ${t.nonce}`, a3 = `Issued At: ${t.iat}`, l5 = t.exp ? `Expiration Time: ${t.exp}` : void 0, d4 = t.nbf ? `Not Before: ${t.nbf}` : void 0, h4 = t.requestId ? `Request ID: ${t.requestId}` : void 0, y4 = t.resources ? `Resources:${t.resources.map((w3) => `
 - ${w3}`).join("")}` : void 0, m3 = je3(t.resources);
         if (m3) {
           const w3 = kt2(m3);
@@ -15773,25 +15775,25 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         return Object.assign(n4, t), n4;
       };
-      mo2 = (t) => Uint8Array.from(t.split("").map((e2) => e2.charCodeAt(0)));
-      sf = mo2("expand 16-byte k");
-      cf = mo2("expand 32-byte k");
+      vo2 = (t) => Uint8Array.from(t.split("").map((e2) => e2.charCodeAt(0)));
+      sf = vo2("expand 16-byte k");
+      cf = vo2("expand 32-byte k");
       ff = Pt2(sf);
       af = Pt2(cf);
       Le3 = 64;
       uf = 16;
-      wo2 = 2 ** 32 - 1;
-      vo2 = new Uint32Array();
-      W3 = (t, e2) => t[e2++] & 255 | (t[e2++] & 255) << 8;
+      xo2 = 2 ** 32 - 1;
+      Eo2 = new Uint32Array();
+      X2 = (t, e2) => t[e2++] & 255 | (t[e2++] & 255) << 8;
       hf = class {
         constructor(e2) {
           this.blockLen = 16, this.outputLen = 16, this.buffer = new Uint8Array(16), this.r = new Uint16Array(10), this.h = new Uint16Array(10), this.pad = new Uint16Array(8), this.pos = 0, this.finished = false, e2 = En2(e2), ot(e2, 32);
-          const n4 = W3(e2, 0), r3 = W3(e2, 2), o4 = W3(e2, 4), s2 = W3(e2, 6), i3 = W3(e2, 8), c5 = W3(e2, 10), f4 = W3(e2, 12), u2 = W3(e2, 14);
+          const n4 = X2(e2, 0), r3 = X2(e2, 2), o4 = X2(e2, 4), s2 = X2(e2, 6), i3 = X2(e2, 8), c5 = X2(e2, 10), f4 = X2(e2, 12), u2 = X2(e2, 14);
           this.r[0] = n4 & 8191, this.r[1] = (n4 >>> 13 | r3 << 3) & 8191, this.r[2] = (r3 >>> 10 | o4 << 6) & 7939, this.r[3] = (o4 >>> 7 | s2 << 9) & 8191, this.r[4] = (s2 >>> 4 | i3 << 12) & 255, this.r[5] = i3 >>> 1 & 8190, this.r[6] = (i3 >>> 14 | c5 << 2) & 8191, this.r[7] = (c5 >>> 11 | f4 << 5) & 8065, this.r[8] = (f4 >>> 8 | u2 << 8) & 8191, this.r[9] = u2 >>> 5 & 127;
-          for (let a3 = 0; a3 < 8; a3++) this.pad[a3] = W3(e2, 16 + 2 * a3);
+          for (let a3 = 0; a3 < 8; a3++) this.pad[a3] = X2(e2, 16 + 2 * a3);
         }
         process(e2, n4, r3 = false) {
-          const o4 = r3 ? 0 : 2048, { h: s2, r: i3 } = this, c5 = i3[0], f4 = i3[1], u2 = i3[2], a3 = i3[3], l5 = i3[4], d4 = i3[5], h4 = i3[6], y4 = i3[7], m3 = i3[8], w3 = i3[9], U3 = W3(e2, n4 + 0), F2 = W3(e2, n4 + 2), R3 = W3(e2, n4 + 4), Z2 = W3(e2, n4 + 6), H3 = W3(e2, n4 + 8), j5 = W3(e2, n4 + 10), L = W3(e2, n4 + 12), k5 = W3(e2, n4 + 14);
+          const o4 = r3 ? 0 : 2048, { h: s2, r: i3 } = this, c5 = i3[0], f4 = i3[1], u2 = i3[2], a3 = i3[3], l5 = i3[4], d4 = i3[5], h4 = i3[6], y4 = i3[7], m3 = i3[8], w3 = i3[9], U3 = X2(e2, n4 + 0), F2 = X2(e2, n4 + 2), R3 = X2(e2, n4 + 4), Z2 = X2(e2, n4 + 6), H3 = X2(e2, n4 + 8), j5 = X2(e2, n4 + 10), L = X2(e2, n4 + 12), k5 = X2(e2, n4 + 14);
           let O6 = s2[0] + (U3 & 8191), T3 = s2[1] + ((U3 >>> 13 | F2 << 3) & 8191), C3 = s2[2] + ((F2 >>> 10 | R3 << 6) & 8191), _3 = s2[3] + ((R3 >>> 7 | Z2 << 9) & 8191), p3 = s2[4] + ((Z2 >>> 4 | H3 << 12) & 8191), b5 = s2[5] + (H3 >>> 1 & 8191), g3 = s2[6] + ((H3 >>> 14 | j5 << 2) & 8191), x5 = s2[7] + ((j5 >>> 11 | L << 5) & 8191), E4 = s2[8] + ((L >>> 8 | k5 << 8) & 8191), I2 = s2[9] + (k5 >>> 5 | o4), v5 = 0, B3 = v5 + O6 * c5 + T3 * (5 * w3) + C3 * (5 * m3) + _3 * (5 * y4) + p3 * (5 * h4);
           v5 = B3 >>> 13, B3 &= 8191, B3 += b5 * (5 * d4) + g3 * (5 * l5) + x5 * (5 * a3) + E4 * (5 * u2) + I2 * (5 * f4), v5 += B3 >>> 13, B3 &= 8191;
           let A3 = v5 + O6 * f4 + T3 * c5 + C3 * (5 * w3) + _3 * (5 * m3) + p3 * (5 * y4);
@@ -15832,7 +15834,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           Qt2(r3);
         }
         update(e2) {
-          go2(this), e2 = En2(e2), ot(e2);
+          yo2(this), e2 = En2(e2), ot(e2);
           const { buffer: n4, blockLen: r3 } = this, o4 = e2.length;
           for (let s2 = 0; s2 < o4; ) {
             const i3 = Math.min(r3 - this.pos, o4 - s2);
@@ -15848,7 +15850,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           Qt2(this.h, this.r, this.buffer, this.pad);
         }
         digestInto(e2) {
-          go2(this), Wc(e2, this), this.finished = true;
+          yo2(this), Xc(e2, this), this.finished = true;
           const { buffer: n4, h: r3 } = this;
           let { pos: o4 } = this;
           if (o4) {
@@ -15870,7 +15872,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       gf = pf((t) => new hf(t));
       yf = df(bf, { counterRight: false, counterLength: 4, allowShortKeys: false });
       mf = new Uint8Array(16);
-      xo2 = (t, e2) => {
+      Bo2 = (t, e2) => {
         t.update(e2);
         const n4 = e2.length % 16;
         n4 && t.update(mf.subarray(n4));
@@ -15878,19 +15880,19 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       wf = new Uint8Array(32);
       vf = (t) => (e2, n4, r3) => ({ encrypt(s2, i3) {
         const c5 = s2.length;
-        i3 = bo2(c5 + 16, i3, false), i3.set(s2);
+        i3 = mo2(c5 + 16, i3, false), i3.set(s2);
         const f4 = i3.subarray(0, -16);
         t(e2, n4, f4, f4, 1);
-        const u2 = Eo2(t, e2, n4, f4, r3);
+        const u2 = Io2(t, e2, n4, f4, r3);
         return i3.set(u2, c5), Qt2(u2), i3;
       }, decrypt(s2, i3) {
-        i3 = bo2(s2.length - 16, i3, false);
-        const c5 = s2.subarray(0, -16), f4 = s2.subarray(-16), u2 = Eo2(t, e2, n4, c5, r3);
+        i3 = mo2(s2.length - 16, i3, false);
+        const c5 = s2.subarray(0, -16), f4 = s2.subarray(-16), u2 = Io2(t, e2, n4, c5, r3);
         if (!ef(f4, u2)) throw new Error("invalid tag");
         return i3.set(s2.subarray(0, -16)), t(e2, n4, i3, i3, 1), Qt2(u2), i3;
       } });
-      Bo2 = nf({ blockSize: 64, nonceLength: 12, tagLength: 16 }, vf(yf));
-      Io2 = class extends $e3 {
+      Ao2 = nf({ blockSize: 64, nonceLength: 12, tagLength: 16 }, vf(yf));
+      So2 = class extends $e3 {
         constructor(e2, n4) {
           super(), this.finished = false, this.destroyed = false, _e3(e2);
           const r3 = pt(n4);
@@ -15925,10 +15927,10 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           this.destroyed = true, this.oHash.destroy(), this.iHash.destroy();
         }
       };
-      ke3 = (t, e2, n4) => new Io2(t, e2).update(n4).digest();
-      ke3.create = (t, e2) => new Io2(t, e2);
+      ke3 = (t, e2, n4) => new So2(t, e2).update(n4).digest();
+      ke3.create = (t, e2) => new So2(t, e2);
       An2 = Uint8Array.from([0]);
-      Ao2 = Uint8Array.of();
+      Oo2 = Uint8Array.of();
       Bf = (t, e2, n4, r3, o4) => Ef(t, xf(t, e2, n4), r3, o4);
       Pe3 = Te3;
       Sn2 = BigInt(0);
@@ -15937,26 +15939,26 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       me3 = (t) => (On2 << BigInt(t)) - On2;
       st = BigInt(0);
       nt2 = BigInt(1);
-      qt2 = BigInt(2);
-      Uo2 = BigInt(3);
-      _o2 = BigInt(4);
-      Ro2 = BigInt(5);
+      Ft2 = BigInt(2);
+      Ro2 = BigInt(3);
+      $o2 = BigInt(4);
+      To2 = BigInt(5);
       Sf = BigInt(7);
-      $o2 = BigInt(8);
+      Co2 = BigInt(8);
       Of = BigInt(9);
-      To2 = BigInt(16);
+      jo2 = BigInt(16);
       Rf = ["create", "isValid", "is0", "neg", "inv", "sqrt", "sqr", "eql", "add", "sub", "mul", "pow", "div", "addN", "subN", "mulN", "sqrN"];
       te3 = BigInt(0);
-      Ft2 = BigInt(1);
+      Zt2 = BigInt(1);
       jn2 = /* @__PURE__ */ new WeakMap();
-      qo2 = /* @__PURE__ */ new WeakMap();
+      Zo2 = /* @__PURE__ */ new WeakMap();
       kf = class {
         constructor(e2, n4) {
           this.BASE = e2.BASE, this.ZERO = e2.ZERO, this.Fn = e2.Fn, this.bits = n4;
         }
         _unsafeLadder(e2, n4, r3 = this.ZERO) {
           let o4 = e2;
-          for (; n4 > te3; ) n4 & Ft2 && (r3 = r3.add(o4)), o4 = o4.double(), n4 >>= Ft2;
+          for (; n4 > te3; ) n4 & Zt2 && (r3 = r3.add(o4)), o4 = o4.double(), n4 >>= Zt2;
           return r3;
         }
         precomputeWindow(e2, n4) {
@@ -15974,21 +15976,21 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           let o4 = this.ZERO, s2 = this.BASE;
           const i3 = Cn2(e2, this.bits);
           for (let c5 = 0; c5 < i3.windows; c5++) {
-            const { nextN: f4, offset: u2, isZero: a3, isNeg: l5, isNegF: d4, offsetF: h4 } = Ko2(r3, c5, i3);
+            const { nextN: f4, offset: u2, isZero: a3, isNeg: l5, isNegF: d4, offsetF: h4 } = Fo2(r3, c5, i3);
             r3 = f4, a3 ? s2 = s2.add(qe2(d4, n4[h4])) : o4 = o4.add(qe2(l5, n4[u2]));
           }
-          return Fo2(r3), { p: o4, f: s2 };
+          return Go2(r3), { p: o4, f: s2 };
         }
         wNAFUnsafe(e2, n4, r3, o4 = this.ZERO) {
           const s2 = Cn2(e2, this.bits);
           for (let i3 = 0; i3 < s2.windows && r3 !== te3; i3++) {
-            const { nextN: c5, offset: f4, isZero: u2, isNeg: a3 } = Ko2(r3, i3, s2);
+            const { nextN: c5, offset: f4, isZero: u2, isNeg: a3 } = Fo2(r3, i3, s2);
             if (r3 = c5, !u2) {
               const l5 = n4[f4];
               o4 = o4.add(a3 ? l5.negate() : l5);
             }
           }
-          return Fo2(r3), o4;
+          return Go2(r3), o4;
         }
         getPrecomputes(e2, n4, r3) {
           let o4 = jn2.get(n4);
@@ -16003,39 +16005,39 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           return s2 === 1 ? this._unsafeLadder(e2, n4, o4) : this.wNAFUnsafe(s2, this.getPrecomputes(s2, e2, r3), n4, o4);
         }
         createCache(e2, n4) {
-          Mo2(n4, this.bits), qo2.set(e2, n4), jn2.delete(e2);
+          qo2(n4, this.bits), Zo2.set(e2, n4), jn2.delete(e2);
         }
         hasCache(e2) {
           return Ln2(e2) !== 1;
         }
       };
-      BigInt(0), BigInt(1), BigInt(2), BigInt(8), kr2("HashToScalar-");
+      BigInt(0), BigInt(1), BigInt(2), BigInt(8), Hr2("HashToScalar-");
       we3 = BigInt(0);
       ee2 = BigInt(1);
       Fe2 = BigInt(2);
       Kf = BigInt(1);
-      Go2 = BigInt(2);
+      Yo2 = BigInt(2);
       qf = BigInt(3);
       Ff = BigInt(5);
       Zf = BigInt(8);
-      zo2 = BigInt("0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffed");
-      Gf = { p: zo2, n: BigInt("0x1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed"), h: Zf, a: BigInt("0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffec"), d: BigInt("0x52036cee2b6ffe738cc740797779e89800700a4d4141d8ab75eb4dca135978a3"), Gx: BigInt("0x216936d3cd6e53fec0a4e231fdd6dc5c692cc7609525a7b2c9562d608f25d51a"), Gy: BigInt("0x6666666666666666666666666666666666666666666666666666666666666658") };
-      Wf = Ht2(Gf.p, { isLE: true });
+      Xo = BigInt("0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffed");
+      Gf = { p: Xo, n: BigInt("0x1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed"), h: Zf, a: BigInt("0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffec"), d: BigInt("0x52036cee2b6ffe738cc740797779e89800700a4d4141d8ab75eb4dca135978a3"), Gx: BigInt("0x216936d3cd6e53fec0a4e231fdd6dc5c692cc7609525a7b2c9562d608f25d51a"), Gy: BigInt("0x6666666666666666666666666666666666666666666666666666666666666658") };
+      Xf = Ht2(Gf.p, { isLE: true });
       kn2 = (() => {
-        const t = Wf.ORDER;
+        const t = Xf.ORDER;
         return Mf({ P: t, type: "x25519", powPminus2: (e2) => {
           const { pow_p_5_8: n4, b2: r3 } = zf(e2);
           return ct2(gt2(n4, qf, t) * r3, t);
         }, adjustScalarBytes: Yf });
       })();
-      Yo2 = (t, e2) => (t + (t >= 0 ? e2 : -e2) / Wo2) / e2;
+      Wo2 = (t, e2) => (t + (t >= 0 ? e2 : -e2) / Jo2) / e2;
       Jf = class extends Error {
         constructor(e2 = "") {
           super(e2);
         }
       };
-      xt2 = { Err: Jf, _tlv: { encode: (t, e2) => {
-        const { Err: n4 } = xt2;
+      Et2 = { Err: Jf, _tlv: { encode: (t, e2) => {
+        const { Err: n4 } = Et2;
         if (t < 0 || t > 256) throw new n4("tlv.encode: wrong tag");
         if (e2.length & 1) throw new n4("tlv.encode: unpadded data");
         const r3 = e2.length / 2, o4 = De3(r3);
@@ -16043,7 +16045,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         const s2 = r3 > 127 ? De3(o4.length / 2 | 128) : "";
         return De3(t) + s2 + o4 + e2;
       }, decode(t, e2) {
-        const { Err: n4 } = xt2;
+        const { Err: n4 } = Et2;
         let r3 = 0;
         if (t < 0 || t > 256) throw new n4("tlv.encode: wrong tag");
         if (e2.length < 2 || e2[r3++] !== t) throw new n4("tlv.decode: wrong tlv");
@@ -16064,39 +16066,39 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         if (c5.length !== i3) throw new n4("tlv.decode: wrong value length");
         return { v: c5, l: e2.subarray(r3 + i3) };
       } }, _int: { encode(t) {
-        const { Err: e2 } = xt2;
-        if (t < Et2) throw new e2("integer: negative integers are not allowed");
+        const { Err: e2 } = Et2;
+        if (t < Bt2) throw new e2("integer: negative integers are not allowed");
         let n4 = De3(t);
         if (Number.parseInt(n4[0], 16) & 8 && (n4 = "00" + n4), n4.length & 1) throw new e2("unexpected DER parsing assertion: unpadded hex");
         return n4;
       }, decode(t) {
-        const { Err: e2 } = xt2;
+        const { Err: e2 } = Et2;
         if (t[0] & 128) throw new e2("invalid signature integer: negative");
         if (t[0] === 0 && !(t[1] & 128)) throw new e2("invalid signature integer: unnecessary leading zero");
         return Ve3(t);
       } }, toSig(t) {
-        const { Err: e2, _int: n4, _tlv: r3 } = xt2, o4 = tt("signature", t), { v: s2, l: i3 } = r3.decode(48, o4);
+        const { Err: e2, _int: n4, _tlv: r3 } = Et2, o4 = tt("signature", t), { v: s2, l: i3 } = r3.decode(48, o4);
         if (i3.length) throw new e2("invalid signature: left bytes after parsing");
         const { v: c5, l: f4 } = r3.decode(2, s2), { v: u2, l: a3 } = r3.decode(2, f4);
         if (a3.length) throw new e2("invalid signature: left bytes after parsing");
         return { r: n4.decode(c5), s: n4.decode(u2) };
       }, hexFromSig(t) {
-        const { _tlv: e2, _int: n4 } = xt2, r3 = e2.encode(2, n4.encode(t.r)), o4 = e2.encode(2, n4.encode(t.s)), s2 = r3 + o4;
+        const { _tlv: e2, _int: n4 } = Et2, r3 = e2.encode(2, n4.encode(t.r)), o4 = e2.encode(2, n4.encode(t.s)), s2 = r3 + o4;
         return e2.encode(48, s2);
       } };
-      Et2 = BigInt(0);
+      Bt2 = BigInt(0);
       ne2 = BigInt(1);
-      Wo2 = BigInt(2);
+      Jo2 = BigInt(2);
       Ze2 = BigInt(3);
       Qf = BigInt(4);
-      Qo2 = { p: BigInt("0xffffffff00000001000000000000000000000000ffffffffffffffffffffffff"), n: BigInt("0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551"), h: BigInt(1), a: BigInt("0xffffffff00000001000000000000000000000000fffffffffffffffffffffffc"), b: BigInt("0x5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b"), Gx: BigInt("0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296"), Gy: BigInt("0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5") };
-      ts = { p: BigInt("0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffff0000000000000000ffffffff"), n: BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52973"), h: BigInt(1), a: BigInt("0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffff0000000000000000fffffffc"), b: BigInt("0xb3312fa7e23ee7e4988e056be3f82d19181d9c6efe8141120314088f5013875ac656398d8a2ed19d2a85c8edd3ec2aef"), Gx: BigInt("0xaa87ca22be8b05378eb1c71ef320ad746e1d3b628ba79b9859f741e082542a385502f25dbf55296c3a545e3872760ab7"), Gy: BigInt("0x3617de4a96262c6f5d9e98bf9292dc29f8f41dbd289a147ce9da3113b5f0b8c00a60b1ce1d7e819d7a431d7c90ea0e5f") };
-      es = { p: BigInt("0x1ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"), n: BigInt("0x01fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa51868783bf2f966b7fcc0148f709a5d03bb5c9b8899c47aebb6fb71e91386409"), h: BigInt(1), a: BigInt("0x1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc"), b: BigInt("0x0051953eb9618e1c9a1f929a21a0b68540eea2da725b99b315f3b8b489918ef109e156193951ec7e937b1652c0bd3bb1bf073573df883d2c34f1ef451fd46b503f00"), Gx: BigInt("0x00c6858e06b70404e9cd9e3ecb662395b4429c648139053fb521f828af606b4d3dbaa14b5e77efe75928fe1dc127a2ffa8de3348b3c1856a429bf97e7e31c2e5bd66"), Gy: BigInt("0x011839296a789a3bc0045c8a5fb42c7d1bd998f54449579b446817afbd17273e662c97ee72995ef42640c550b9013fad0761353c7086a272c24088be94769fd16650") };
-      ca = Ht2(Qo2.p);
-      fa = Ht2(ts.p);
-      aa = Ht2(es.p);
-      ua = Dn({ ...Qo2, Fp: ca, lowS: false }, Te3);
-      Dn({ ...ts, Fp: fa, lowS: false }, wc), Dn({ ...es, Fp: aa, lowS: false, allowedPrivateKeyLengths: [130, 131, 132] }, mc);
+      es = { p: BigInt("0xffffffff00000001000000000000000000000000ffffffffffffffffffffffff"), n: BigInt("0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551"), h: BigInt(1), a: BigInt("0xffffffff00000001000000000000000000000000fffffffffffffffffffffffc"), b: BigInt("0x5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b"), Gx: BigInt("0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296"), Gy: BigInt("0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5") };
+      ns = { p: BigInt("0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffff0000000000000000ffffffff"), n: BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffc7634d81f4372ddf581a0db248b0a77aecec196accc52973"), h: BigInt(1), a: BigInt("0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffff0000000000000000fffffffc"), b: BigInt("0xb3312fa7e23ee7e4988e056be3f82d19181d9c6efe8141120314088f5013875ac656398d8a2ed19d2a85c8edd3ec2aef"), Gx: BigInt("0xaa87ca22be8b05378eb1c71ef320ad746e1d3b628ba79b9859f741e082542a385502f25dbf55296c3a545e3872760ab7"), Gy: BigInt("0x3617de4a96262c6f5d9e98bf9292dc29f8f41dbd289a147ce9da3113b5f0b8c00a60b1ce1d7e819d7a431d7c90ea0e5f") };
+      rs = { p: BigInt("0x1ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"), n: BigInt("0x01fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa51868783bf2f966b7fcc0148f709a5d03bb5c9b8899c47aebb6fb71e91386409"), h: BigInt(1), a: BigInt("0x1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc"), b: BigInt("0x0051953eb9618e1c9a1f929a21a0b68540eea2da725b99b315f3b8b489918ef109e156193951ec7e937b1652c0bd3bb1bf073573df883d2c34f1ef451fd46b503f00"), Gx: BigInt("0x00c6858e06b70404e9cd9e3ecb662395b4429c648139053fb521f828af606b4d3dbaa14b5e77efe75928fe1dc127a2ffa8de3348b3c1856a429bf97e7e31c2e5bd66"), Gy: BigInt("0x011839296a789a3bc0045c8a5fb42c7d1bd998f54449579b446817afbd17273e662c97ee72995ef42640c550b9013fad0761353c7086a272c24088be94769fd16650") };
+      ca = Ht2(es.p);
+      fa = Ht2(ns.p);
+      aa = Ht2(rs.p);
+      ua = Dn({ ...es, Fp: ca, lowS: false }, Te3);
+      Dn({ ...ns, Fp: fa, lowS: false }, wc), Dn({ ...rs, Fp: aa, lowS: false, allowedPrivateKeyLengths: [130, 131, 132] }, mc);
       la = ua;
       Vn2 = "base10";
       rt2 = "base16";
@@ -16107,48 +16109,46 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       ie2 = 1;
       ve3 = 2;
       da = 0;
-      ns = 1;
+      os = 1;
       xe3 = 12;
       Kn2 = 32;
-      cs = "irn";
+      as = "irn";
       Na = Object.defineProperty;
       Ua = Object.defineProperties;
       _a = Object.getOwnPropertyDescriptors;
-      fs = Object.getOwnPropertySymbols;
+      us = Object.getOwnPropertySymbols;
       Ra = Object.prototype.hasOwnProperty;
       $a = Object.prototype.propertyIsEnumerable;
-      as = (t, e2, n4) => e2 in t ? Na(t, e2, { enumerable: true, configurable: true, writable: true, value: n4 }) : t[e2] = n4;
+      ls = (t, e2, n4) => e2 in t ? Na(t, e2, { enumerable: true, configurable: true, writable: true, value: n4 }) : t[e2] = n4;
       Zn2 = (t, e2) => {
-        for (var n4 in e2 || (e2 = {})) Ra.call(e2, n4) && as(t, n4, e2[n4]);
-        if (fs) for (var n4 of fs(e2)) $a.call(e2, n4) && as(t, n4, e2[n4]);
+        for (var n4 in e2 || (e2 = {})) Ra.call(e2, n4) && ls(t, n4, e2[n4]);
+        if (us) for (var n4 of us(e2)) $a.call(e2, n4) && ls(t, n4, e2[n4]);
         return t;
       };
       Ta = (t, e2) => Ua(t, _a(e2));
       ka = Object.defineProperty;
       Pa = Object.defineProperties;
       Ha = Object.getOwnPropertyDescriptors;
-      hs = Object.getOwnPropertySymbols;
+      gs = Object.getOwnPropertySymbols;
       Da = Object.prototype.hasOwnProperty;
       Va = Object.prototype.propertyIsEnumerable;
-      ps = (t, e2, n4) => e2 in t ? ka(t, e2, { enumerable: true, configurable: true, writable: true, value: n4 }) : t[e2] = n4;
+      bs = (t, e2, n4) => e2 in t ? ka(t, e2, { enumerable: true, configurable: true, writable: true, value: n4 }) : t[e2] = n4;
       Ma = (t, e2) => {
-        for (var n4 in e2 || (e2 = {})) Da.call(e2, n4) && ps(t, n4, e2[n4]);
-        if (hs) for (var n4 of hs(e2)) Va.call(e2, n4) && ps(t, n4, e2[n4]);
+        for (var n4 in e2 || (e2 = {})) Da.call(e2, n4) && bs(t, n4, e2[n4]);
+        if (gs) for (var n4 of gs(e2)) Va.call(e2, n4) && bs(t, n4, e2[n4]);
         return t;
       };
       Ka = (t, e2) => Pa(t, Ha(e2));
-      vs = { INVALID_METHOD: { message: "Invalid method.", code: 1001 }, INVALID_EVENT: { message: "Invalid event.", code: 1002 }, INVALID_UPDATE_REQUEST: { message: "Invalid update request.", code: 1003 }, INVALID_EXTEND_REQUEST: { message: "Invalid extend request.", code: 1004 }, INVALID_SESSION_SETTLE_REQUEST: { message: "Invalid session settle request.", code: 1005 }, UNAUTHORIZED_METHOD: { message: "Unauthorized method.", code: 3001 }, UNAUTHORIZED_EVENT: { message: "Unauthorized event.", code: 3002 }, UNAUTHORIZED_UPDATE_REQUEST: { message: "Unauthorized update request.", code: 3003 }, UNAUTHORIZED_EXTEND_REQUEST: { message: "Unauthorized extend request.", code: 3004 }, USER_REJECTED: { message: "User rejected.", code: 5e3 }, USER_REJECTED_CHAINS: { message: "User rejected chains.", code: 5001 }, USER_REJECTED_METHODS: { message: "User rejected methods.", code: 5002 }, USER_REJECTED_EVENTS: { message: "User rejected events.", code: 5003 }, UNSUPPORTED_CHAINS: { message: "Unsupported chains.", code: 5100 }, UNSUPPORTED_METHODS: { message: "Unsupported methods.", code: 5101 }, UNSUPPORTED_EVENTS: { message: "Unsupported events.", code: 5102 }, UNSUPPORTED_ACCOUNTS: { message: "Unsupported accounts.", code: 5103 }, UNSUPPORTED_NAMESPACE_KEY: { message: "Unsupported namespace key.", code: 5104 }, USER_DISCONNECTED: { message: "User disconnected.", code: 6e3 }, SESSION_SETTLEMENT_FAILED: { message: "Session settlement failed.", code: 7e3 }, WC_METHOD_UNSUPPORTED: { message: "Unsupported wc_ method.", code: 10001 } };
-      xs = { NOT_INITIALIZED: { message: "Not initialized.", code: 1 }, NO_MATCHING_KEY: { message: "No matching key.", code: 2 }, RESTORE_WILL_OVERRIDE: { message: "Restore will override.", code: 3 }, RESUBSCRIBED: { message: "Resubscribed.", code: 4 }, MISSING_OR_INVALID: { message: "Missing or invalid.", code: 5 }, EXPIRED: { message: "Expired.", code: 6 }, UNKNOWN_TYPE: { message: "Unknown type.", code: 7 }, MISMATCHED_TOPIC: { message: "Mismatched topic.", code: 8 }, NON_CONFORMING_NAMESPACES: { message: "Non conforming namespaces.", code: 9 } };
-      Wn2 = {};
+      Xn2 = {};
       mu = class {
         static get(e2) {
-          return Wn2[e2];
+          return Xn2[e2];
         }
         static set(e2, n4) {
-          Wn2[e2] = n4;
+          Xn2[e2] = n4;
         }
         static delete(e2) {
-          delete Wn2[e2];
+          delete Xn2[e2];
         }
       };
     }
@@ -16234,333 +16234,6 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }
   });
 
-  // node_modules/@walletconnect/environment/node_modules/tslib/tslib.es6.js
-  var tslib_es6_exports2 = {};
-  __export(tslib_es6_exports2, {
-    __assign: () => __assign2,
-    __asyncDelegator: () => __asyncDelegator2,
-    __asyncGenerator: () => __asyncGenerator2,
-    __asyncValues: () => __asyncValues2,
-    __await: () => __await2,
-    __awaiter: () => __awaiter2,
-    __classPrivateFieldGet: () => __classPrivateFieldGet2,
-    __classPrivateFieldSet: () => __classPrivateFieldSet2,
-    __createBinding: () => __createBinding2,
-    __decorate: () => __decorate2,
-    __exportStar: () => __exportStar2,
-    __extends: () => __extends2,
-    __generator: () => __generator2,
-    __importDefault: () => __importDefault2,
-    __importStar: () => __importStar2,
-    __makeTemplateObject: () => __makeTemplateObject2,
-    __metadata: () => __metadata2,
-    __param: () => __param2,
-    __read: () => __read2,
-    __rest: () => __rest2,
-    __spread: () => __spread2,
-    __spreadArrays: () => __spreadArrays2,
-    __values: () => __values2
-  });
-  function __extends2(d4, b5) {
-    extendStatics2(d4, b5);
-    function __() {
-      this.constructor = d4;
-    }
-    d4.prototype = b5 === null ? Object.create(b5) : (__.prototype = b5.prototype, new __());
-  }
-  function __rest2(s2, e2) {
-    var t = {};
-    for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3) && e2.indexOf(p3) < 0)
-      t[p3] = s2[p3];
-    if (s2 != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i3 = 0, p3 = Object.getOwnPropertySymbols(s2); i3 < p3.length; i3++) {
-        if (e2.indexOf(p3[i3]) < 0 && Object.prototype.propertyIsEnumerable.call(s2, p3[i3]))
-          t[p3[i3]] = s2[p3[i3]];
-      }
-    return t;
-  }
-  function __decorate2(decorators, target, key, desc) {
-    var c5 = arguments.length, r3 = c5 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d4;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r3 = Reflect.decorate(decorators, target, key, desc);
-    else for (var i3 = decorators.length - 1; i3 >= 0; i3--) if (d4 = decorators[i3]) r3 = (c5 < 3 ? d4(r3) : c5 > 3 ? d4(target, key, r3) : d4(target, key)) || r3;
-    return c5 > 3 && r3 && Object.defineProperty(target, key, r3), r3;
-  }
-  function __param2(paramIndex, decorator) {
-    return function(target, key) {
-      decorator(target, key, paramIndex);
-    };
-  }
-  function __metadata2(metadataKey, metadataValue) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
-  }
-  function __awaiter2(thisArg, _arguments, P5, generator) {
-    function adopt(value) {
-      return value instanceof P5 ? value : new P5(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P5 || (P5 = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e2) {
-          reject(e2);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e2) {
-          reject(e2);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  }
-  function __generator2(thisArg, body) {
-    var _3 = { label: 0, sent: function() {
-      if (t[0] & 1) throw t[1];
-      return t[1];
-    }, trys: [], ops: [] }, f4, y4, t, g3;
-    return g3 = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g3[Symbol.iterator] = function() {
-      return this;
-    }), g3;
-    function verb(n4) {
-      return function(v5) {
-        return step([n4, v5]);
-      };
-    }
-    function step(op) {
-      if (f4) throw new TypeError("Generator is already executing.");
-      while (_3) try {
-        if (f4 = 1, y4 && (t = op[0] & 2 ? y4["return"] : op[0] ? y4["throw"] || ((t = y4["return"]) && t.call(y4), 0) : y4.next) && !(t = t.call(y4, op[1])).done) return t;
-        if (y4 = 0, t) op = [op[0] & 2, t.value];
-        switch (op[0]) {
-          case 0:
-          case 1:
-            t = op;
-            break;
-          case 4:
-            _3.label++;
-            return { value: op[1], done: false };
-          case 5:
-            _3.label++;
-            y4 = op[1];
-            op = [0];
-            continue;
-          case 7:
-            op = _3.ops.pop();
-            _3.trys.pop();
-            continue;
-          default:
-            if (!(t = _3.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _3 = 0;
-              continue;
-            }
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _3.label = op[1];
-              break;
-            }
-            if (op[0] === 6 && _3.label < t[1]) {
-              _3.label = t[1];
-              t = op;
-              break;
-            }
-            if (t && _3.label < t[2]) {
-              _3.label = t[2];
-              _3.ops.push(op);
-              break;
-            }
-            if (t[2]) _3.ops.pop();
-            _3.trys.pop();
-            continue;
-        }
-        op = body.call(thisArg, _3);
-      } catch (e2) {
-        op = [6, e2];
-        y4 = 0;
-      } finally {
-        f4 = t = 0;
-      }
-      if (op[0] & 5) throw op[1];
-      return { value: op[0] ? op[1] : void 0, done: true };
-    }
-  }
-  function __createBinding2(o4, m3, k5, k22) {
-    if (k22 === void 0) k22 = k5;
-    o4[k22] = m3[k5];
-  }
-  function __exportStar2(m3, exports) {
-    for (var p3 in m3) if (p3 !== "default" && !exports.hasOwnProperty(p3)) exports[p3] = m3[p3];
-  }
-  function __values2(o4) {
-    var s2 = typeof Symbol === "function" && Symbol.iterator, m3 = s2 && o4[s2], i3 = 0;
-    if (m3) return m3.call(o4);
-    if (o4 && typeof o4.length === "number") return {
-      next: function() {
-        if (o4 && i3 >= o4.length) o4 = void 0;
-        return { value: o4 && o4[i3++], done: !o4 };
-      }
-    };
-    throw new TypeError(s2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
-  }
-  function __read2(o4, n4) {
-    var m3 = typeof Symbol === "function" && o4[Symbol.iterator];
-    if (!m3) return o4;
-    var i3 = m3.call(o4), r3, ar4 = [], e2;
-    try {
-      while ((n4 === void 0 || n4-- > 0) && !(r3 = i3.next()).done) ar4.push(r3.value);
-    } catch (error) {
-      e2 = { error };
-    } finally {
-      try {
-        if (r3 && !r3.done && (m3 = i3["return"])) m3.call(i3);
-      } finally {
-        if (e2) throw e2.error;
-      }
-    }
-    return ar4;
-  }
-  function __spread2() {
-    for (var ar4 = [], i3 = 0; i3 < arguments.length; i3++)
-      ar4 = ar4.concat(__read2(arguments[i3]));
-    return ar4;
-  }
-  function __spreadArrays2() {
-    for (var s2 = 0, i3 = 0, il = arguments.length; i3 < il; i3++) s2 += arguments[i3].length;
-    for (var r3 = Array(s2), k5 = 0, i3 = 0; i3 < il; i3++)
-      for (var a3 = arguments[i3], j5 = 0, jl = a3.length; j5 < jl; j5++, k5++)
-        r3[k5] = a3[j5];
-    return r3;
-  }
-  function __await2(v5) {
-    return this instanceof __await2 ? (this.v = v5, this) : new __await2(v5);
-  }
-  function __asyncGenerator2(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g3 = generator.apply(thisArg, _arguments || []), i3, q3 = [];
-    return i3 = {}, verb("next"), verb("throw"), verb("return"), i3[Symbol.asyncIterator] = function() {
-      return this;
-    }, i3;
-    function verb(n4) {
-      if (g3[n4]) i3[n4] = function(v5) {
-        return new Promise(function(a3, b5) {
-          q3.push([n4, v5, a3, b5]) > 1 || resume(n4, v5);
-        });
-      };
-    }
-    function resume(n4, v5) {
-      try {
-        step(g3[n4](v5));
-      } catch (e2) {
-        settle(q3[0][3], e2);
-      }
-    }
-    function step(r3) {
-      r3.value instanceof __await2 ? Promise.resolve(r3.value.v).then(fulfill, reject) : settle(q3[0][2], r3);
-    }
-    function fulfill(value) {
-      resume("next", value);
-    }
-    function reject(value) {
-      resume("throw", value);
-    }
-    function settle(f4, v5) {
-      if (f4(v5), q3.shift(), q3.length) resume(q3[0][0], q3[0][1]);
-    }
-  }
-  function __asyncDelegator2(o4) {
-    var i3, p3;
-    return i3 = {}, verb("next"), verb("throw", function(e2) {
-      throw e2;
-    }), verb("return"), i3[Symbol.iterator] = function() {
-      return this;
-    }, i3;
-    function verb(n4, f4) {
-      i3[n4] = o4[n4] ? function(v5) {
-        return (p3 = !p3) ? { value: __await2(o4[n4](v5)), done: n4 === "return" } : f4 ? f4(v5) : v5;
-      } : f4;
-    }
-  }
-  function __asyncValues2(o4) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m3 = o4[Symbol.asyncIterator], i3;
-    return m3 ? m3.call(o4) : (o4 = typeof __values2 === "function" ? __values2(o4) : o4[Symbol.iterator](), i3 = {}, verb("next"), verb("throw"), verb("return"), i3[Symbol.asyncIterator] = function() {
-      return this;
-    }, i3);
-    function verb(n4) {
-      i3[n4] = o4[n4] && function(v5) {
-        return new Promise(function(resolve, reject) {
-          v5 = o4[n4](v5), settle(resolve, reject, v5.done, v5.value);
-        });
-      };
-    }
-    function settle(resolve, reject, d4, v5) {
-      Promise.resolve(v5).then(function(v6) {
-        resolve({ value: v6, done: d4 });
-      }, reject);
-    }
-  }
-  function __makeTemplateObject2(cooked, raw) {
-    if (Object.defineProperty) {
-      Object.defineProperty(cooked, "raw", { value: raw });
-    } else {
-      cooked.raw = raw;
-    }
-    return cooked;
-  }
-  function __importStar2(mod2) {
-    if (mod2 && mod2.__esModule) return mod2;
-    var result = {};
-    if (mod2 != null) {
-      for (var k5 in mod2) if (Object.hasOwnProperty.call(mod2, k5)) result[k5] = mod2[k5];
-    }
-    result.default = mod2;
-    return result;
-  }
-  function __importDefault2(mod2) {
-    return mod2 && mod2.__esModule ? mod2 : { default: mod2 };
-  }
-  function __classPrivateFieldGet2(receiver, privateMap) {
-    if (!privateMap.has(receiver)) {
-      throw new TypeError("attempted to get private field on non-instance");
-    }
-    return privateMap.get(receiver);
-  }
-  function __classPrivateFieldSet2(receiver, privateMap, value) {
-    if (!privateMap.has(receiver)) {
-      throw new TypeError("attempted to set private field on non-instance");
-    }
-    privateMap.set(receiver, value);
-    return value;
-  }
-  var extendStatics2, __assign2;
-  var init_tslib_es62 = __esm({
-    "node_modules/@walletconnect/environment/node_modules/tslib/tslib.es6.js"() {
-      extendStatics2 = function(d4, b5) {
-        extendStatics2 = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d5, b6) {
-          d5.__proto__ = b6;
-        } || function(d5, b6) {
-          for (var p3 in b6) if (b6.hasOwnProperty(p3)) d5[p3] = b6[p3];
-        };
-        return extendStatics2(d4, b5);
-      };
-      __assign2 = function() {
-        __assign2 = Object.assign || function __assign3(t) {
-          for (var s2, i3 = 1, n4 = arguments.length; i3 < n4; i3++) {
-            s2 = arguments[i3];
-            for (var p3 in s2) if (Object.prototype.hasOwnProperty.call(s2, p3)) t[p3] = s2[p3];
-          }
-          return t;
-        };
-        return __assign2.apply(this, arguments);
-      };
-    }
-  });
-
   // node_modules/@walletconnect/environment/dist/cjs/crypto.js
   var require_crypto = __commonJS({
     "node_modules/@walletconnect/environment/dist/cjs/crypto.js"(exports) {
@@ -16609,7 +16282,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     "node_modules/@walletconnect/environment/dist/cjs/index.js"(exports) {
       "use strict";
       Object.defineProperty(exports, "__esModule", { value: true });
-      var tslib_1 = (init_tslib_es62(), __toCommonJS(tslib_es6_exports2));
+      var tslib_1 = (init_tslib_es6(), __toCommonJS(tslib_es6_exports));
       tslib_1.__exportStar(require_crypto(), exports);
       tslib_1.__exportStar(require_env(), exports);
     }
@@ -17196,13 +16869,13 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         const c5 = r3.valueOf(), h4 = e2.valueOf();
         return ao3(c5, h4);
       }
-      case uo2:
+      case uo3:
       case po3:
-      case go3:
+      case go2:
         return Object.is(r3.valueOf(), e2.valueOf());
-      case co3:
+      case co2:
         return r3.source === e2.source && r3.flags === e2.flags;
-      case fo3:
+      case fo2:
         return r3 === e2;
     }
     t = t ?? /* @__PURE__ */ new Map();
@@ -17272,7 +16945,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
   function zo3(r3, e2) {
     return No3(r3, e2, $o3);
   }
-  var import_events7, import_time4, import_window_getters2, Ue4, Me4, pe4, W4, Et3, It3, Tt3, Fe3, Ct2, Pt3, St3, Rt3, Ot3, At2, xt3, Nt3, $t3, Be4, zt3, C2, Lt3, F, kt3, Se4, ee3, ye4, jt3, Ut3, Ke3, j3, Mt3, Ft3, Qs, Bt3, Kt3, oe3, ae3, V3, Vt3, qt3, Gt3, q2, Wt3, Ht3, ir2, Yt2, be4, Jt3, Xt3, Zt3, Qt3, Y2, X3, rr3, nr3, or3, ar3, ei, ti, ii2, si2, hr2, lr3, ri2, ur3, dr3, gr3, pr3, yr3, ni, br3, Re4, me4, mr3, fr2, N10, Dr3, vr2, _r3, wr3, Er2, Ir3, Tr3, Cr3, Pr3, Sr3, Rr3, Or3, Ar3, xr2, Nr3, $r3, zr3, Lr3, kr3, jr3, Ur3, Mr3, Fr3, Br3, Kr3, Vr3, qr3, Gr3, Wr3, Hr3, Yr3, Jr3, oi2, Xr3, Zr3, tn, sn2, rn3, ai, nn2, on3, an2, cn2, hn2, hi2, ln2, un2, dn2, gn3, pn2, yn3, bn3, mn3, fn2, Dn2, vn3, li2, ui, di2, qe3, _n3, gi, wn2, pi2, En3, In3, Tn3, yi, Cn3, bi2, Pn3, Sn3, Rn3, mi, vi2, Ge4, An3, Nn3, $n3, J5, _i2, zn3, Ln3, A2, wi, kn3, jn3, Un3, Ei, Mn3, Fn3, We3, Bn3, Kn3, B2, Ii, Vn3, qn3, Gn3, Ti2, Wn3, Hn3, He3, ce2, Ci2, G3, Yn3, Jn3, Xn3, he4, Zn3, Qn2, eo3, to3, Pi2, io2, so2, Ye3, fe3, Je3, f3, Si2, ro3, Ri2, no3, oo2, Xe3, Oi2, d3, Ai2, co3, ho2, lo3, uo2, $i2, go3, po3, yo3, bo3, mo3, fo3, Do3, Ze3, vo3, _o3, wo3, Eo3, Io3, To3, Co3, Po3, So3, Ro3, Oo3, Ao3, xo3, Lo3, Li2, ko3, jo3, Qe2, ki2, U2, ji2, Uo3, Mo3, g2, Ui2, Fo3, Bo3, $2, Mi2, Ko3, Vo3, z4, Fi2, qo3, Go3, P4, Bi, Wo3, Ho3, Ki2, Vi2, Yo3, qi2, Jo3, Xo2, et2, _e4, x4, Gi2, Zo3, Wi2, Qo3, ea2, tt2, Hi2, v4, Oe3, ta2;
+  var import_events7, import_time4, import_window_getters2, Ue4, Me4, pe4, W4, Et3, It3, Tt3, Fe3, Ct2, Pt3, St3, Rt3, Ot3, At2, xt3, Nt3, $t3, Be4, zt3, C2, Lt3, F, kt3, Se4, ee3, ye4, jt3, Ut3, Ke3, j3, Mt3, Ft3, Qs, Bt3, Kt3, oe3, ae3, V3, Vt3, qt3, Gt3, q2, Wt3, Ht3, ir2, Yt2, be4, Jt3, Xt3, Zt3, Qt3, Y2, X3, rr3, nr3, or3, ar3, ei, ti, ii2, si2, hr3, lr3, ri2, ur3, dr3, gr2, pr3, yr3, ni, br3, Re4, me4, mr3, fr2, N10, Dr3, vr3, _r3, wr3, Er2, Ir2, Tr3, Cr3, Pr3, Sr3, Rr3, Or3, Ar3, xr3, Nr3, $r3, zr3, Lr3, kr3, jr3, Ur3, Mr3, Fr3, Br2, Kr3, Vr3, qr3, Gr3, Wr3, Hr3, Yr3, Jr3, oi2, Xr3, Zr3, tn, sn2, rn3, ai, nn2, on3, an2, cn2, hn2, hi2, ln2, un2, dn2, gn3, pn2, yn3, bn3, mn3, fn2, Dn2, vn3, li2, ui, di2, qe3, _n3, gi, wn2, pi2, En3, In3, Tn3, yi, Cn3, bi2, Pn3, Sn3, Rn3, mi, vi2, Ge4, An3, Nn3, $n3, J5, _i2, zn3, Ln3, A2, wi, kn3, jn3, Un3, Ei, Mn3, Fn3, We3, Bn3, Kn3, B2, Ii, Vn3, qn3, Gn3, Ti2, Wn3, Hn3, He3, ce2, Ci2, G3, Yn3, Jn3, Xn3, he4, Zn3, Qn2, eo3, to3, Pi2, io2, so3, Ye3, fe3, Je3, f3, Si2, ro3, Ri2, no3, oo3, Xe3, Oi2, d3, Ai2, co2, ho2, lo3, uo3, $i2, go2, po3, yo3, bo3, mo3, fo2, Do3, Ze3, vo3, _o3, wo3, Eo3, Io3, To3, Co3, Po3, So3, Ro3, Oo3, Ao3, xo3, Lo3, Li2, ko3, jo3, Qe2, ki2, U2, ji2, Uo3, Mo3, g2, Ui2, Fo3, Bo3, $2, Mi2, Ko3, Vo3, z4, Fi2, qo3, Go3, P4, Bi, Wo3, Ho3, Ki2, Vi2, Yo3, qi2, Jo3, Xo2, et2, _e4, x4, Gi2, Zo3, Wi2, Qo3, ea2, tt2, Hi2, v4, Oe3, ta2;
   var init_dist8 = __esm({
     "node_modules/@walletconnect/core/dist/index.js"() {
       import_events7 = __toESM(require_events(), 1);
@@ -17313,7 +16986,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       Lt3 = "_subscription";
       F = { payload: "payload", connect: "connect", disconnect: "disconnect", error: "error" };
       kt3 = 0.1;
-      Se4 = "2.23.6";
+      Se4 = "2.23.7";
       ee3 = { link_mode: "link_mode", relay: "relay" };
       ye4 = { inbound: "inbound", outbound: "outbound" };
       jt3 = "0.3";
@@ -17351,8 +17024,8 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       ti = "event-client";
       ii2 = 86400;
       si2 = "https://pulse.walletconnect.org/batch";
-      hr2 = cr2;
-      lr3 = hr2;
+      hr3 = cr2;
+      lr3 = hr3;
       ri2 = (r3) => {
         if (r3 instanceof Uint8Array && r3.constructor.name === "Uint8Array") return r3;
         if (r3 instanceof ArrayBuffer) return new Uint8Array(r3);
@@ -17361,7 +17034,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       };
       ur3 = (r3) => new TextEncoder().encode(r3);
       dr3 = (r3) => new TextDecoder().decode(r3);
-      gr3 = class {
+      gr2 = class {
         constructor(e2, t, i3) {
           this.name = e2, this.prefix = t, this.baseEncode = i3;
         }
@@ -17401,7 +17074,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       ni = (r3, e2) => new yr3({ ...r3.decoders || { [r3.prefix]: r3 }, ...e2.decoders || { [e2.prefix]: e2 } });
       br3 = class {
         constructor(e2, t, i3, s2) {
-          this.name = e2, this.prefix = t, this.baseEncode = i3, this.baseDecode = s2, this.encoder = new gr3(e2, t, i3), this.decoder = new pr3(e2, t, s2);
+          this.name = e2, this.prefix = t, this.baseEncode = i3, this.baseDecode = s2, this.encoder = new gr2(e2, t, i3), this.decoder = new pr3(e2, t, s2);
         }
         encode(e2) {
           return this.encoder.encode(e2);
@@ -17443,11 +17116,11 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         return mr3(s2, i3, t, r3);
       } });
       Dr3 = Re4({ prefix: "\0", name: "identity", encode: (r3) => dr3(r3), decode: (r3) => ur3(r3) });
-      vr2 = Object.freeze({ __proto__: null, identity: Dr3 });
+      vr3 = Object.freeze({ __proto__: null, identity: Dr3 });
       _r3 = N10({ prefix: "0", name: "base2", alphabet: "01", bitsPerChar: 1 });
       wr3 = Object.freeze({ __proto__: null, base2: _r3 });
       Er2 = N10({ prefix: "7", name: "base8", alphabet: "01234567", bitsPerChar: 3 });
-      Ir3 = Object.freeze({ __proto__: null, base8: Er2 });
+      Ir2 = Object.freeze({ __proto__: null, base8: Er2 });
       Tr3 = me4({ prefix: "9", name: "base10", alphabet: "0123456789" });
       Cr3 = Object.freeze({ __proto__: null, base10: Tr3 });
       Pr3 = N10({ prefix: "f", name: "base16", alphabet: "0123456789abcdef", bitsPerChar: 4 });
@@ -17455,17 +17128,17 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       Rr3 = Object.freeze({ __proto__: null, base16: Pr3, base16upper: Sr3 });
       Or3 = N10({ prefix: "b", name: "base32", alphabet: "abcdefghijklmnopqrstuvwxyz234567", bitsPerChar: 5 });
       Ar3 = N10({ prefix: "B", name: "base32upper", alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567", bitsPerChar: 5 });
-      xr2 = N10({ prefix: "c", name: "base32pad", alphabet: "abcdefghijklmnopqrstuvwxyz234567=", bitsPerChar: 5 });
+      xr3 = N10({ prefix: "c", name: "base32pad", alphabet: "abcdefghijklmnopqrstuvwxyz234567=", bitsPerChar: 5 });
       Nr3 = N10({ prefix: "C", name: "base32padupper", alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=", bitsPerChar: 5 });
       $r3 = N10({ prefix: "v", name: "base32hex", alphabet: "0123456789abcdefghijklmnopqrstuv", bitsPerChar: 5 });
       zr3 = N10({ prefix: "V", name: "base32hexupper", alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUV", bitsPerChar: 5 });
       Lr3 = N10({ prefix: "t", name: "base32hexpad", alphabet: "0123456789abcdefghijklmnopqrstuv=", bitsPerChar: 5 });
       kr3 = N10({ prefix: "T", name: "base32hexpadupper", alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUV=", bitsPerChar: 5 });
       jr3 = N10({ prefix: "h", name: "base32z", alphabet: "ybndrfg8ejkmcpqxot1uwisza345h769", bitsPerChar: 5 });
-      Ur3 = Object.freeze({ __proto__: null, base32: Or3, base32upper: Ar3, base32pad: xr2, base32padupper: Nr3, base32hex: $r3, base32hexupper: zr3, base32hexpad: Lr3, base32hexpadupper: kr3, base32z: jr3 });
+      Ur3 = Object.freeze({ __proto__: null, base32: Or3, base32upper: Ar3, base32pad: xr3, base32padupper: Nr3, base32hex: $r3, base32hexupper: zr3, base32hexpad: Lr3, base32hexpadupper: kr3, base32z: jr3 });
       Mr3 = me4({ prefix: "k", name: "base36", alphabet: "0123456789abcdefghijklmnopqrstuvwxyz" });
       Fr3 = me4({ prefix: "K", name: "base36upper", alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" });
-      Br3 = Object.freeze({ __proto__: null, base36: Mr3, base36upper: Fr3 });
+      Br2 = Object.freeze({ __proto__: null, base36: Mr3, base36upper: Fr3 });
       Kr3 = me4({ name: "base58btc", prefix: "z", alphabet: "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz" });
       Vr3 = me4({ name: "base58flickr", prefix: "Z", alphabet: "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ" });
       qr3 = Object.freeze({ __proto__: null, base58btc: Kr3, base58flickr: Vr3 });
@@ -17535,7 +17208,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       Sn3 = { code: yi, name: Cn3, encode: bi2, digest: Pn3 };
       Rn3 = Object.freeze({ __proto__: null, identity: Sn3 });
       new TextEncoder(), new TextDecoder();
-      mi = { ...vr2, ...wr3, ...Ir3, ...Cr3, ...Rr3, ...Ur3, ...Br3, ...qr3, ...Jr3, ...sn2 };
+      mi = { ...vr3, ...wr3, ...Ir2, ...Cr3, ...Rr3, ...Ur3, ...Br2, ...qr3, ...Jr3, ...sn2 };
       ({ ...Tn3, ...Rn3 });
       vi2 = Di2("utf8", "u", (r3) => "u" + new TextDecoder("utf8").decode(r3), (r3) => new TextEncoder().encode(r3.substring(1)));
       Ge4 = Di2("ascii", "a", (r3) => {
@@ -17565,7 +17238,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             this.isInitialized();
             const s2 = this.keychain.get(i3);
             if (typeof s2 > "u") {
-              const { message: n4 } = Bt2("NO_MATCHING_KEY", `${this.name}: ${i3}`);
+              const { message: n4 } = bt2("NO_MATCHING_KEY", `${this.name}: ${i3}`);
               throw new Error(n4);
             }
             return s2;
@@ -17591,7 +17264,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: e2 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: e2 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(e2);
           }
         }
@@ -17629,7 +17302,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             this.isInitialized(), await this.keychain.del(s2);
           }), A2(this, "encode", async (s2, n4, o4) => {
             this.isInitialized();
-            const a3 = ss(o4), c5 = safeJsonStringify(n4);
+            const a3 = cs(o4), c5 = safeJsonStringify(n4);
             if (Ia(a3)) return va(c5, o4?.encoding);
             if (Ba(a3)) {
               const y4 = a3.senderPublicKey, _3 = a3.receiverPublicKey;
@@ -17656,7 +17329,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             }
           }), A2(this, "getPayloadType", (s2, n4 = oe2) => {
             const o4 = ze3({ encoded: s2, encoding: n4 });
-            return Zt2(o4.type);
+            return Gt2(o4.type);
           }), A2(this, "getPayloadSenderPublicKey", (s2, n4 = oe2) => {
             const o4 = ze3({ encoded: s2, encoding: n4 });
             return o4.senderPublicKey ? toString2(o4.senderPublicKey, rt2) : void 0;
@@ -17685,7 +17358,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: e2 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: e2 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(e2);
           }
         }
@@ -17784,7 +17457,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: e2 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: e2 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(e2);
           }
         }
@@ -17938,11 +17611,11 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       to3 = Object.getOwnPropertyDescriptors;
       Pi2 = Object.getOwnPropertySymbols;
       io2 = Object.prototype.hasOwnProperty;
-      so2 = Object.prototype.propertyIsEnumerable;
+      so3 = Object.prototype.propertyIsEnumerable;
       Ye3 = (r3, e2, t) => e2 in r3 ? Qn2(r3, e2, { enumerable: true, configurable: true, writable: true, value: t }) : r3[e2] = t;
       fe3 = (r3, e2) => {
         for (var t in e2 || (e2 = {})) io2.call(e2, t) && Ye3(r3, t, e2[t]);
-        if (Pi2) for (var t of Pi2(e2)) so2.call(e2, t) && Ye3(r3, t, e2[t]);
+        if (Pi2) for (var t of Pi2(e2)) so3.call(e2, t) && Ye3(r3, t, e2[t]);
         return r3;
       };
       Je3 = (r3, e2) => eo3(r3, to3(e2));
@@ -18044,7 +17717,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           try {
             const s2 = Sa(i3);
             await this.restartToComplete({ topic: e2, id: t, relay: s2 }), await this.rpcUnsubscribe(e2, t, s2);
-            const n4 = zt2("USER_DISCONNECTED", `${this.name}, ${e2}`);
+            const n4 = Vt2("USER_DISCONNECTED", `${this.name}, ${e2}`);
             await this.onUnsubscribe(e2, t, n4), this.logger.debug("Successfully Unsubscribed Topic"), this.logger.trace({ type: "method", method: "unsubscribe", params: { topic: e2, id: t, opts: i3 } });
           } catch (s2) {
             throw this.logger.debug("Failed to Unsubscribe Topic"), this.logger.error(s2), s2;
@@ -18145,7 +17818,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           this.logger.debug("Getting subscription"), this.logger.trace({ type: "method", method: "getSubscription", id: e2 });
           const t = this.subscriptions.get(e2);
           if (!t) {
-            const { message: i3 } = Bt2("NO_MATCHING_KEY", `${this.name}: ${e2}`);
+            const { message: i3 } = bt2("NO_MATCHING_KEY", `${this.name}: ${e2}`);
             throw new Error(i3);
           }
           return t;
@@ -18176,7 +17849,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
               var i3;
               return t.topic === ((i3 = this.subscriptions.get(t.id)) == null ? void 0 : i3.topic);
             })) {
-              const { message: t } = Bt2("RESTORE_WILL_OVERRIDE", this.name);
+              const { message: t } = bt2("RESTORE_WILL_OVERRIDE", this.name);
               throw this.logger.error(t), this.logger.error(`${this.name}: ${JSON.stringify(this.values)}`), new Error(t);
             }
             this.cached = e2, this.logger.debug(`Successfully Restored subscriptions for ${this.name}`), this.logger.trace({ type: "method", method: "restore", subscriptions: this.values });
@@ -18209,7 +17882,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: e2 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: e2 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(e2);
           }
         }
@@ -18226,11 +17899,11 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       ro3 = Object.defineProperty;
       Ri2 = Object.getOwnPropertySymbols;
       no3 = Object.prototype.hasOwnProperty;
-      oo2 = Object.prototype.propertyIsEnumerable;
+      oo3 = Object.prototype.propertyIsEnumerable;
       Xe3 = (r3, e2, t) => e2 in r3 ? ro3(r3, e2, { enumerable: true, configurable: true, writable: true, value: t }) : r3[e2] = t;
       Oi2 = (r3, e2) => {
         for (var t in e2 || (e2 = {})) no3.call(e2, t) && Xe3(r3, t, e2[t]);
-        if (Ri2) for (var t of Ri2(e2)) oo2.call(e2, t) && Xe3(r3, t, e2[t]);
+        if (Ri2) for (var t of Ri2(e2)) oo3.call(e2, t) && Xe3(r3, t, e2[t]);
         return r3;
       };
       d3 = (r3, e2, t) => Xe3(r3, typeof e2 != "symbol" ? e2 + "" : e2, t);
@@ -18486,7 +18159,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: e2 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: e2 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(e2);
           }
         }
@@ -18500,17 +18173,17 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           }
         }
       };
-      co3 = "[object RegExp]";
+      co2 = "[object RegExp]";
       ho2 = "[object String]";
       lo3 = "[object Number]";
-      uo2 = "[object Boolean]";
+      uo3 = "[object Boolean]";
       $i2 = "[object Arguments]";
-      go3 = "[object Symbol]";
+      go2 = "[object Symbol]";
       po3 = "[object Date]";
       yo3 = "[object Map]";
       bo3 = "[object Set]";
       mo3 = "[object Array]";
-      fo3 = "[object Function]";
+      fo2 = "[object Function]";
       Do3 = "[object ArrayBuffer]";
       Ze3 = "[object Object]";
       vo3 = "[object Error]";
@@ -18581,10 +18254,10 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           const t = this.map.get(e2);
           if (!t) {
             if (this.recentlyDeleted.includes(e2)) {
-              const { message: s2 } = Bt2("MISSING_OR_INVALID", `Record was recently deleted - ${this.name}: ${e2}`);
+              const { message: s2 } = bt2("MISSING_OR_INVALID", `Record was recently deleted - ${this.name}: ${e2}`);
               throw this.logger.error(s2), new Error(s2);
             }
-            const { message: i3 } = Bt2("NO_MATCHING_KEY", `${this.name}: ${e2}`);
+            const { message: i3 } = bt2("NO_MATCHING_KEY", `${this.name}: ${e2}`);
             throw this.logger.error(i3), new Error(i3);
           }
           return t;
@@ -18597,7 +18270,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             const e2 = await this.getDataStore();
             if (typeof e2 > "u" || !e2.length) return;
             if (this.map.size) {
-              const { message: t } = Bt2("RESTORE_WILL_OVERRIDE", this.name);
+              const { message: t } = bt2("RESTORE_WILL_OVERRIDE", this.name);
               throw this.logger.error(t), new Error(t);
             }
             this.cached = e2, this.logger.debug(`Successfully Restored value for ${this.name}`), this.logger.trace({ type: "method", method: "restore", value: this.values });
@@ -18607,7 +18280,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: e2 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: e2 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(e2);
           }
         }
@@ -18669,7 +18342,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           }), g2(this, "getPairings", () => (this.isInitialized(), this.pairings.values)), g2(this, "disconnect", async (i3) => {
             this.isInitialized(), await this.isValidDisconnect(i3);
             const { topic: s2 } = i3;
-            this.pairings.keys.includes(s2) && (await this.sendRequest(s2, "wc_pairingDelete", zt2("USER_DISCONNECTED")), await this.deletePairing(s2));
+            this.pairings.keys.includes(s2) && (await this.sendRequest(s2, "wc_pairingDelete", Vt2("USER_DISCONNECTED")), await this.deletePairing(s2));
           }), g2(this, "formatUriFromPairing", (i3) => {
             this.isInitialized();
             const { topic: s2, relay: n4, expiry: o4, methods: a3 } = i3, c5 = this.core.crypto.keychain.get(s2);
@@ -18684,7 +18357,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             const o4 = formatJsonRpcError(i3, n4), a3 = await this.core.crypto.encode(s2, o4), c5 = (await this.core.history.get(s2, i3)).request.method, h4 = oe3[c5] ? oe3[c5].res : oe3.unregistered_method.res;
             await this.core.relayer.publish(s2, a3, h4), await this.core.history.resolve(o4);
           }), g2(this, "deletePairing", async (i3, s2) => {
-            await this.core.relayer.unsubscribe(i3), await Promise.all([this.pairings.delete(i3, zt2("USER_DISCONNECTED")), this.core.crypto.deleteSymKey(i3), s2 ? Promise.resolve() : this.core.expirer.del(i3)]);
+            await this.core.relayer.unsubscribe(i3), await Promise.all([this.pairings.delete(i3, Vt2("USER_DISCONNECTED")), this.core.crypto.deleteSymKey(i3), s2 ? Promise.resolve() : this.core.expirer.del(i3)]);
           }), g2(this, "cleanup", async () => {
             const i3 = this.pairings.getAll().filter((s2) => Ri(s2.expiry));
             await Promise.all(i3.map((s2) => this.deletePairing(s2.topic)));
@@ -18729,63 +18402,63 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             const { id: n4, method: o4 } = s2;
             try {
               if (this.registeredMethods.includes(o4)) return;
-              const a3 = zt2("WC_METHOD_UNSUPPORTED", o4);
+              const a3 = Vt2("WC_METHOD_UNSUPPORTED", o4);
               await this.sendError(n4, i3, a3), this.logger.error(a3);
             } catch (a3) {
               await this.sendError(n4, i3, a3), this.logger.error(a3);
             }
           }), g2(this, "onUnknownRpcMethodResponse", (i3) => {
-            this.registeredMethods.includes(i3) || this.logger.error(zt2("WC_METHOD_UNSUPPORTED", i3));
+            this.registeredMethods.includes(i3) || this.logger.error(Vt2("WC_METHOD_UNSUPPORTED", i3));
           }), g2(this, "isValidPair", (i3, s2) => {
             var n4;
             if (!ou(i3)) {
-              const { message: a3 } = Bt2("MISSING_OR_INVALID", `pair() params: ${i3}`);
+              const { message: a3 } = bt2("MISSING_OR_INVALID", `pair() params: ${i3}`);
               throw s2.setError(X3.malformed_pairing_uri), new Error(a3);
             }
-            if (!Xa(i3.uri)) {
-              const { message: a3 } = Bt2("MISSING_OR_INVALID", `pair() uri: ${i3.uri}`);
+            if (!Wa(i3.uri)) {
+              const { message: a3 } = bt2("MISSING_OR_INVALID", `pair() uri: ${i3.uri}`);
               throw s2.setError(X3.malformed_pairing_uri), new Error(a3);
             }
             const o4 = Ca(i3?.uri);
             if (!((n4 = o4?.relay) != null && n4.protocol)) {
-              const { message: a3 } = Bt2("MISSING_OR_INVALID", "pair() uri#relay-protocol");
+              const { message: a3 } = bt2("MISSING_OR_INVALID", "pair() uri#relay-protocol");
               throw s2.setError(X3.malformed_pairing_uri), new Error(a3);
             }
             if (!(o4 != null && o4.symKey)) {
-              const { message: a3 } = Bt2("MISSING_OR_INVALID", "pair() uri#symKey");
+              const { message: a3 } = bt2("MISSING_OR_INVALID", "pair() uri#symKey");
               throw s2.setError(X3.malformed_pairing_uri), new Error(a3);
             }
             if (o4 != null && o4.expiryTimestamp && (0, import_time4.toMiliseconds)(o4?.expiryTimestamp) < Date.now()) {
               s2.setError(X3.pairing_expired);
-              const { message: a3 } = Bt2("EXPIRED", "pair() URI has expired. Please try again with a new connection URI.");
+              const { message: a3 } = bt2("EXPIRED", "pair() URI has expired. Please try again with a new connection URI.");
               throw new Error(a3);
             }
           }), g2(this, "isValidPing", async (i3) => {
             if (!ou(i3)) {
-              const { message: n4 } = Bt2("MISSING_OR_INVALID", `ping() params: ${i3}`);
+              const { message: n4 } = bt2("MISSING_OR_INVALID", `ping() params: ${i3}`);
               throw new Error(n4);
             }
             const { topic: s2 } = i3;
             await this.isValidPairingTopic(s2);
           }), g2(this, "isValidDisconnect", async (i3) => {
             if (!ou(i3)) {
-              const { message: n4 } = Bt2("MISSING_OR_INVALID", `disconnect() params: ${i3}`);
+              const { message: n4 } = bt2("MISSING_OR_INVALID", `disconnect() params: ${i3}`);
               throw new Error(n4);
             }
             const { topic: s2 } = i3;
             await this.isValidPairingTopic(s2);
           }), g2(this, "isValidPairingTopic", async (i3) => {
             if (!ft2(i3, false)) {
-              const { message: s2 } = Bt2("MISSING_OR_INVALID", `pairing topic should be a string: ${i3}`);
+              const { message: s2 } = bt2("MISSING_OR_INVALID", `pairing topic should be a string: ${i3}`);
               throw new Error(s2);
             }
             if (!this.pairings.keys.includes(i3)) {
-              const { message: s2 } = Bt2("NO_MATCHING_KEY", `pairing topic doesn't exist: ${i3}`);
+              const { message: s2 } = bt2("NO_MATCHING_KEY", `pairing topic doesn't exist: ${i3}`);
               throw new Error(s2);
             }
             if (Ri(this.pairings.get(i3).expiry)) {
               await this.deletePairing(i3);
-              const { message: s2 } = Bt2("EXPIRED", `pairing topic: ${i3}`);
+              const { message: s2 } = bt2("EXPIRED", `pairing topic: ${i3}`);
               throw new Error(s2);
             }
           }), this.core = e2, this.logger = Re(t, this.name), this.pairings = new ji2(this.core, this.logger, this.name, this.storagePrefix);
@@ -18795,7 +18468,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: e2 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: e2 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(e2);
           }
         }
@@ -18882,7 +18555,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           this.isInitialized();
           const t = this.records.get(e2);
           if (!t) {
-            const { message: i3 } = Bt2("NO_MATCHING_KEY", `${this.name}: ${e2}`);
+            const { message: i3 } = bt2("NO_MATCHING_KEY", `${this.name}: ${e2}`);
             throw new Error(i3);
           }
           return t;
@@ -18895,7 +18568,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             const e2 = await this.getJsonRpcRecords();
             if (typeof e2 > "u" || !e2.length) return;
             if (this.records.size) {
-              const { message: t } = Bt2("RESTORE_WILL_OVERRIDE", this.name);
+              const { message: t } = bt2("RESTORE_WILL_OVERRIDE", this.name);
               throw this.logger.error(t), new Error(t);
             }
             this.cached = e2, this.logger.debug(`Successfully Restored records for ${this.name}`), this.logger.trace({ type: "method", method: "restore", records: this.values });
@@ -18930,7 +18603,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: e2 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: e2 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(e2);
           }
         }
@@ -18990,7 +18663,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         formatTarget(e2) {
           if (typeof e2 == "string") return Oi(e2);
           if (typeof e2 == "number") return Ni(e2);
-          const { message: t } = Bt2("UNKNOWN_TYPE", `Target type: ${typeof e2}`);
+          const { message: t } = bt2("UNKNOWN_TYPE", `Target type: ${typeof e2}`);
           throw new Error(t);
         }
         async setExpirations(e2) {
@@ -19007,7 +18680,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             const e2 = await this.getExpirations();
             if (typeof e2 > "u" || !e2.length) return;
             if (this.expirations.size) {
-              const { message: t } = Bt2("RESTORE_WILL_OVERRIDE", this.name);
+              const { message: t } = bt2("RESTORE_WILL_OVERRIDE", this.name);
               throw this.logger.error(t), new Error(t);
             }
             this.cached = e2, this.logger.debug(`Successfully Restored expirations for ${this.name}`), this.logger.trace({ type: "method", method: "restore", expirations: this.values });
@@ -19018,7 +18691,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         getExpiration(e2) {
           const t = this.expirations.get(e2);
           if (!t) {
-            const { message: i3 } = Bt2("NO_MATCHING_KEY", `${this.name}: ${e2}`);
+            const { message: i3 } = bt2("NO_MATCHING_KEY", `${this.name}: ${e2}`);
             throw this.logger.warn(i3), new Error(i3);
           }
           return t;
@@ -19047,7 +18720,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: e2 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: e2 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(e2);
           }
         }
@@ -19061,7 +18734,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             var s2;
             this.isDevEnv || (this.publicKey = await this.store.getItem(this.storeKey), this.publicKey && (0, import_time4.toMiliseconds)((s2 = this.publicKey) == null ? void 0 : s2.expiresAt) < Date.now() && (this.logger.debug("verify v2 public key expired"), await this.removePublicKey()));
           }), P4(this, "register", async (s2) => {
-            if (!Wt2() || this.isDevEnv) return;
+            if (!Xt2() || this.isDevEnv) return;
             const n4 = window.location.origin, { id: o4, decryptedId: a3 } = s2, c5 = `${this.verifyUrlV3}/attestation?projectId=${this.core.projectId}&origin=${n4}&id=${o4}&decryptedId=${a3}`;
             try {
               const h4 = (0, import_window_getters2.getDocument)(), l5 = this.startAbortTimer(import_time4.ONE_SECOND * 5), p3 = await new Promise((y4, _3) => {
@@ -19192,7 +18865,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         constructor(e2, t, i3 = true) {
           super(e2, t, i3), this.core = e2, this.logger = t, x4(this, "context", ti), x4(this, "storagePrefix", W4), x4(this, "storageVersion", ei), x4(this, "events", /* @__PURE__ */ new Map()), x4(this, "shouldPersist", false), x4(this, "init", async () => {
             if (!ki()) try {
-              const s2 = { eventId: Li(), timestamp: Date.now(), domain: this.getAppDomain(), props: { event: "INIT", type: "", properties: { client_id: await this.core.crypto.getClientId(), user_agent: wr2(this.core.relayer.protocol, this.core.relayer.version, Se4) } } };
+              const s2 = { eventId: Li(), timestamp: Date.now(), domain: this.getAppDomain(), props: { event: "INIT", type: "", properties: { client_id: await this.core.crypto.getClientId(), user_agent: xr2(this.core.relayer.protocol, this.core.relayer.version, Se4) } } };
               await this.sendEvent([s2]);
             } catch (s2) {
               this.logger.warn(s2);
@@ -19244,7 +18917,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           }), x4(this, "sendEvent", async (s2) => {
             const n4 = this.getAppDomain() ? "" : "&sp=desktop";
             return await fetch(`${si2}?projectId=${this.core.projectId}&st=events_sdk&sv=js-${Se4}${n4}`, { method: "POST", body: JSON.stringify(s2) });
-          }), x4(this, "getAppDomain", () => br2().url), this.logger = Re(t, this.context), this.telemetryEnabled = i3, i3 ? this.restore().then(async () => {
+          }), x4(this, "getAppDomain", () => mr2().url), this.logger = Re(t, this.context), this.telemetryEnabled = i3, i3 ? this.restore().then(async () => {
             await this.submit(), this.setEventListeners();
           }) : this.persist();
         }
@@ -19365,7 +19038,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
       ut3 = "session";
       se3 = import_time5.SEVEN_DAYS;
       gt3 = "engine";
-      N11 = { wc_sessionPropose: { req: { ttl: import_time5.FIVE_MINUTES, prompt: true, tag: 1100 }, res: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1101 }, reject: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1120 }, autoReject: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1121 } }, wc_sessionSettle: { req: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1102 }, res: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1103 } }, wc_sessionUpdate: { req: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1104 }, res: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1105 } }, wc_sessionExtend: { req: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1106 }, res: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1107 } }, wc_sessionRequest: { req: { ttl: import_time5.FIVE_MINUTES, prompt: true, tag: 1108 }, res: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1109 } }, wc_sessionEvent: { req: { ttl: import_time5.FIVE_MINUTES, prompt: true, tag: 1110 }, res: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1111 } }, wc_sessionDelete: { req: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1112 }, res: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1113 } }, wc_sessionPing: { req: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1114 }, res: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1115 } }, wc_sessionAuthenticate: { req: { ttl: import_time5.ONE_HOUR, prompt: true, tag: 1116 }, res: { ttl: import_time5.ONE_HOUR, prompt: false, tag: 1117 }, reject: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1118 }, autoReject: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1119 } } };
+      N11 = { wc_sessionPropose: { req: { ttl: import_time5.FIVE_MINUTES, prompt: true, tag: 1100 }, res: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1101 }, reject: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1120 }, autoReject: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1121 } }, wc_sessionSettle: { req: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1102 }, res: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1103 } }, wc_sessionUpdate: { req: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1104 }, res: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1105 } }, wc_sessionExtend: { req: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1106 }, res: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1107 } }, wc_sessionRequest: { req: { ttl: import_time5.FIVE_MINUTES * 3, prompt: true, tag: 1108 }, res: { ttl: import_time5.FIVE_MINUTES * 3, prompt: false, tag: 1109 } }, wc_sessionEvent: { req: { ttl: import_time5.FIVE_MINUTES, prompt: true, tag: 1110 }, res: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1111 } }, wc_sessionDelete: { req: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1112 }, res: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1113 } }, wc_sessionPing: { req: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1114 }, res: { ttl: import_time5.ONE_DAY, prompt: false, tag: 1115 } }, wc_sessionAuthenticate: { req: { ttl: import_time5.ONE_HOUR, prompt: true, tag: 1116 }, res: { ttl: import_time5.ONE_HOUR, prompt: false, tag: 1117 }, reject: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1118 }, autoReject: { ttl: import_time5.FIVE_MINUTES, prompt: false, tag: 1119 } } };
       Te4 = { min: import_time5.FIVE_MINUTES, max: import_time5.SEVEN_DAYS };
       K5 = { idle: "IDLE", active: "ACTIVE" };
       yt3 = { eth_sendTransaction: { key: "" }, eth_sendRawTransaction: { key: "" }, wallet_sendCalls: { key: "" }, solana_signTransaction: { key: "signature" }, solana_signAllTransactions: { key: "transactions" }, solana_signAndSendTransaction: { key: "signature" }, sui_signAndExecuteTransaction: { key: "digest" }, sui_signTransaction: { key: "" }, hedera_signAndExecuteTransaction: { key: "transactionId" }, hedera_executeTransaction: { key: "transactionId" }, near_signTransaction: { key: "" }, near_signTransactions: { key: "" }, tron_signTransaction: { key: "txID" }, xrpl_signTransaction: { key: "" }, xrpl_signTransactionFor: { key: "" }, algo_signTxn: { key: "" }, sendTransfer: { key: "txid" }, stacks_stxTransfer: { key: "txId" }, polkadot_signTransaction: { key: "" }, cosmos_signDirect: { key: "" } };
@@ -19419,7 +19092,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
               u2 = R3, w3 = q3;
             }
             if (!u2) {
-              const { message: R3 } = Bt2("NO_MATCHING_KEY", `connect() pairing topic: ${u2}`);
+              const { message: R3 } = bt2("NO_MATCHING_KEY", `connect() pairing topic: ${u2}`);
               throw new Error(R3);
             }
             const f4 = await this.client.core.crypto.generateKeyPair(), v5 = _i(d4), T3 = E3(b4(E3(E3({ requiredNamespaces: r3, optionalNamespaces: n4, relays: h4 ?? [{ protocol: Nt3 }], proposer: { publicKey: f4, metadata: this.client.metadata }, expiryTimestamp: v5, pairingTopic: u2 }, a3 && { sessionProperties: a3 }), l5 && { scopedProperties: l5 }), { id: payloadId() }), (p3 || y4) && { requests: { authentication: p3?.map((R3) => {
@@ -19476,7 +19149,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             try {
               await this.sendApproveSession({ sessionTopic: x5, proposal: u2, pairingProposalResponse: { relay: { protocol: a3 ?? "irn" }, responderPublicKey: A3 }, sessionSettleRequest: U3, publishOpts: { internal: { throwOnFailedPublish: true }, tvf: E3({ correlationId: n4 }, this.getTVFApproveParams(R3)) } }), T3.addTrace(rr3.session_approve_publish_success);
             } catch (q3) {
-              throw this.client.logger.error(q3), this.client.session.delete(x5, zt2("USER_DISCONNECTED")), await this.client.core.relayer.unsubscribe(x5), q3;
+              throw this.client.logger.error(q3), this.client.session.delete(x5, Vt2("USER_DISCONNECTED")), await this.client.core.relayer.unsubscribe(x5), q3;
             }
             return this.client.core.eventClient.deleteEvent({ eventId: T3.eventId }), await this.client.core.pairing.updateMetadata({ topic: w3, metadata: g3.metadata }), await this.deleteProposal(n4), await this.client.core.pairing.activate({ topic: w3 }), await this.setExpiry(x5, _i(se3)), { topic: x5, acknowledged: () => Promise.resolve(this.client.session.get(x5)) };
           }), c4(this, "reject", async (e2) => {
@@ -19585,13 +19258,13 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           }), c4(this, "disconnect", async (e2) => {
             this.isInitialized(), await this.confirmOnlineStateOrThrow(), await this.isValidDisconnect(e2);
             const { topic: t } = e2;
-            if (this.client.session.keys.includes(t)) await this.sendRequest({ topic: t, method: "wc_sessionDelete", params: zt2("USER_DISCONNECTED"), throwOnFailedPublish: true }), await this.deleteSession({ topic: t, emitEvent: false });
+            if (this.client.session.keys.includes(t)) await this.sendRequest({ topic: t, method: "wc_sessionDelete", params: Vt2("USER_DISCONNECTED"), throwOnFailedPublish: true }), await this.deleteSession({ topic: t, emitEvent: false });
             else if (this.client.core.pairing.pairings.keys.includes(t)) await this.client.core.pairing.disconnect({ topic: t });
             else {
-              const { message: s2 } = Bt2("MISMATCHED_TOPIC", `Session or pairing topic not found: ${t}`);
+              const { message: s2 } = bt2("MISMATCHED_TOPIC", `Session or pairing topic not found: ${t}`);
               throw new Error(s2);
             }
-          }), c4(this, "find", (e2) => (this.isInitialized(), this.client.session.getAll().filter((t) => Wa(t, e2)))), c4(this, "getPendingSessionRequests", () => this.client.pendingRequest.getAll()), c4(this, "authenticate", async (e2, t) => {
+          }), c4(this, "find", (e2) => (this.isInitialized(), this.client.session.getAll().filter((t) => Xa(t, e2)))), c4(this, "getPendingSessionRequests", () => this.client.pendingRequest.getAll()), c4(this, "authenticate", async (e2, t) => {
             var s2;
             this.isInitialized(), this.isValidAuthenticate(e2);
             const i3 = t && this.client.core.linkModeSupportedApps.includes(t) && ((s2 = this.client.metadata.redirect) == null ? void 0 : s2.linkMode), r3 = i3 ? ee3.link_mode : ee3.relay;
@@ -19609,14 +19282,14 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             }, pe5 = async (C3) => {
               var D2, je4, Fe4;
               if (await this.deletePendingAuthRequest(Y3, { message: "fulfilled", code: 0 }), C3.error) {
-                const ue2 = zt2("WC_METHOD_UNSUPPORTED", "wc_sessionAuthenticate");
+                const ue2 = Vt2("WC_METHOD_UNSUPPORTED", "wc_sessionAuthenticate");
                 return C3.error.code === ue2.code ? void 0 : (this.events.off(ie4, J6), ce3(C3.error.message));
               }
               await this.deleteProposal(R3.id), this.events.off(ie4, J6);
               const { cacaos: He4, responder: X4 } = C3.result, Pe4 = [], Qe3 = [];
               for (const ue2 of He4) {
-                await Vc({ cacao: ue2, projectId: this.client.core.projectId }) || (this.client.logger.error(ue2, "Signature verification failed"), ce3(zt2("SESSION_SETTLEMENT_FAILED", "Signature verification failed")));
-                const { p: Ne4 } = ue2, Oe4 = je3(Ne4.resources), ze4 = [no2(Ne4.iss)], Tt4 = bn2(Ne4.iss);
+                await Vc({ cacao: ue2, projectId: this.client.core.projectId }) || (this.client.logger.error(ue2, "Signature verification failed"), ce3(Vt2("SESSION_SETTLEMENT_FAILED", "Signature verification failed")));
+                const { p: Ne4 } = ue2, Oe4 = je3(Ne4.resources), ze4 = [oo2(Ne4.iss)], Tt4 = bn2(Ne4.iss);
                 if (Oe4) {
                   const be5 = zc(Oe4), qt4 = Yc(Oe4);
                   Pe4.push(...be5), ze4.push(...qt4);
@@ -19655,11 +19328,11 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             for (const g3 of s2) {
               if (!await Vc({ cacao: g3, projectId: this.client.core.projectId })) {
                 i3.setError(ar3.invalid_cacao);
-                const V4 = zt2("SESSION_SETTLEMENT_FAILED", "Signature verification failed");
+                const V4 = Vt2("SESSION_SETTLEMENT_FAILED", "Signature verification failed");
                 throw await this.sendError({ id: t, topic: h4, error: V4, encodeOpts: p3 }), new Error(V4.message);
               }
               i3.addTrace(or3.cacaos_verified);
-              const { p: f4 } = g3, v5 = je3(f4.resources), T3 = [no2(f4.iss)], A3 = bn2(f4.iss);
+              const { p: f4 } = g3, v5 = je3(f4.resources), T3 = [oo2(f4.iss)], A3 = bn2(f4.iss);
               if (v5) {
                 const V4 = zc(v5), x5 = Yc(v5);
                 y4.push(...V4), T3.push(...x5);
@@ -19695,7 +19368,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           }), c4(this, "formatAuthMessage", (e2) => {
             this.isInitialized();
             const { request: t, iss: s2 } = e2;
-            return ro2(t, s2);
+            return so2(t, s2);
           }), c4(this, "processRelayMessageCache", () => {
             setTimeout(async () => {
               if (this.relayMessageCache.length !== 0) for (; this.relayMessageCache.length > 0; ) try {
@@ -19719,14 +19392,14 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           }), c4(this, "deleteSession", async (e2) => {
             var t;
             const { topic: s2, expirerHasDeleted: i3 = false, emitEvent: r3 = true, id: n4 = 0 } = e2, { self: a3 } = this.client.session.get(s2);
-            await this.client.core.relayer.unsubscribe(s2), await this.client.session.delete(s2, zt2("USER_DISCONNECTED")), this.addToRecentlyDeleted(s2, "session"), this.client.core.crypto.keychain.has(a3.publicKey) && await this.client.core.crypto.deleteKeyPair(a3.publicKey), this.client.core.crypto.keychain.has(s2) && await this.client.core.crypto.deleteSymKey(s2), i3 || this.client.core.expirer.del(s2), this.client.core.storage.removeItem($e4).catch((l5) => this.client.logger.warn(l5)), s2 === ((t = this.sessionRequestQueue.queue[0]) == null ? void 0 : t.topic) && (this.sessionRequestQueue.state = K5.idle), await Promise.all(this.getPendingSessionRequests().filter((l5) => l5.topic === s2).map((l5) => this.deletePendingSessionRequest(l5.id, zt2("USER_DISCONNECTED")))), r3 && this.client.events.emit("session_delete", { id: n4, topic: s2 });
+            await this.client.core.relayer.unsubscribe(s2), await this.client.session.delete(s2, Vt2("USER_DISCONNECTED")), this.addToRecentlyDeleted(s2, "session"), this.client.core.crypto.keychain.has(a3.publicKey) && await this.client.core.crypto.deleteKeyPair(a3.publicKey), this.client.core.crypto.keychain.has(s2) && await this.client.core.crypto.deleteSymKey(s2), i3 || this.client.core.expirer.del(s2), this.client.core.storage.removeItem($e4).catch((l5) => this.client.logger.warn(l5)), s2 === ((t = this.sessionRequestQueue.queue[0]) == null ? void 0 : t.topic) && (this.sessionRequestQueue.state = K5.idle), await Promise.all(this.getPendingSessionRequests().filter((l5) => l5.topic === s2).map((l5) => this.deletePendingSessionRequest(l5.id, Vt2("USER_DISCONNECTED")))), r3 && this.client.events.emit("session_delete", { id: n4, topic: s2 });
           }), c4(this, "deleteProposal", async (e2, t) => {
             if (t) try {
               const s2 = this.client.proposal.get(e2), i3 = this.client.core.eventClient.getEvent({ topic: s2.pairingTopic });
               i3?.setError(nr3.proposal_expired);
             } catch {
             }
-            await Promise.all([this.client.proposal.delete(e2, zt2("USER_DISCONNECTED")), t ? Promise.resolve() : this.client.core.expirer.del(e2)]), this.addToRecentlyDeleted(e2, "proposal");
+            await Promise.all([this.client.proposal.delete(e2, Vt2("USER_DISCONNECTED")), t ? Promise.resolve() : this.client.core.expirer.del(e2)]), this.addToRecentlyDeleted(e2, "proposal");
           }), c4(this, "deletePendingSessionRequest", async (e2, t, s2 = false) => {
             await Promise.all([this.client.pendingRequest.delete(e2, t), s2 ? Promise.resolve() : this.client.core.expirer.del(e2)]), this.addToRecentlyDeleted(e2, "request"), this.sessionRequestQueue.queue = this.sessionRequestQueue.queue.filter((i3) => i3.id !== e2), s2 && (this.sessionRequestQueue.state = K5.idle, this.client.events.emit("session_request_expire", { id: e2 }));
           }), c4(this, "deletePendingAuthRequest", async (e2, t, s2 = false) => {
@@ -19896,7 +19569,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
                 return this.client.logger.info(`Unsupported response method ${r3}`);
             }
           }), c4(this, "onRelayEventUnknownPayload", (e2) => {
-            const { topic: t } = e2, { message: s2 } = Bt2("MISSING_OR_INVALID", `Decoded payload on topic ${t} is not identifiable as a JSON-RPC request or a response.`);
+            const { topic: t } = e2, { message: s2 } = bt2("MISSING_OR_INVALID", `Decoded payload on topic ${t} is not identifiable as a JSON-RPC request or a response.`);
             throw new Error(s2);
           }), c4(this, "shouldIgnorePairingRequest", (e2) => {
             const { topic: t, requestMethod: s2 } = e2, i3 = this.expectedPairingMethodMap.get(t);
@@ -19947,13 +19620,13 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             }
           }), c4(this, "onSessionSettleResponse", async (e2, t) => {
             const { id: s2 } = t;
-            isJsonRpcResult(t) ? (await this.client.session.update(e2, { acknowledged: true }), this.events.emit($i("session_approve", s2), {})) : isJsonRpcError(t) && (await this.client.session.delete(e2, zt2("USER_DISCONNECTED")), this.events.emit($i("session_approve", s2), { error: t.error }));
+            isJsonRpcResult(t) ? (await this.client.session.update(e2, { acknowledged: true }), this.events.emit($i("session_approve", s2), {})) : isJsonRpcError(t) && (await this.client.session.delete(e2, Vt2("USER_DISCONNECTED")), this.events.emit($i("session_approve", s2), { error: t.error }));
           }), c4(this, "onSessionUpdateRequest", async (e2, t) => {
             const { params: s2, id: i3 } = t;
             try {
               const r3 = `${e2}_session_update`, n4 = mu.get(r3);
               if (n4 && this.isRequestOutOfSync(n4, i3)) {
-                this.client.logger.warn(`Discarding out of sync request - ${i3}`), this.sendError({ id: i3, topic: e2, error: zt2("INVALID_UPDATE_REQUEST") });
+                this.client.logger.warn(`Discarding out of sync request - ${i3}`), this.sendError({ id: i3, topic: e2, error: Vt2("INVALID_UPDATE_REQUEST") });
                 return;
               }
               this.isValidUpdate(E3({ topic: e2 }, s2));
@@ -19997,7 +19670,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           }), c4(this, "onSessionDeleteRequest", async (e2, t) => {
             const { id: s2 } = t;
             try {
-              await this.isValidDisconnect({ topic: e2, reason: t.params }), this.cleanupPendingSentRequestsForTopic({ topic: e2, error: zt2("USER_DISCONNECTED") }), await this.deleteSession({ topic: e2, id: s2 });
+              await this.isValidDisconnect({ topic: e2, reason: t.params }), this.cleanupPendingSentRequestsForTopic({ topic: e2, error: Vt2("USER_DISCONNECTED") }), await this.deleteSession({ topic: e2, id: s2 });
             } catch (i3) {
               this.client.logger.error(i3);
             }
@@ -20079,12 +19752,12 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             t && this.onSessionProposeRequest({ topic: e2.topic, payload: formatJsonRpcRequest("wc_sessionPropose", b4(E3({}, t), { requiredNamespaces: t.requiredNamespaces, optionalNamespaces: t.optionalNamespaces, relays: t.relays, proposer: t.proposer, sessionProperties: t.sessionProperties, scopedProperties: t.scopedProperties }), t.id), attestation: t.attestation, encryptedId: t.encryptedId });
           }), c4(this, "isValidConnect", async (e2) => {
             if (!ou(e2)) {
-              const { message: l5 } = Bt2("MISSING_OR_INVALID", `connect() params: ${JSON.stringify(e2)}`);
+              const { message: l5 } = bt2("MISSING_OR_INVALID", `connect() params: ${JSON.stringify(e2)}`);
               throw new Error(l5);
             }
             const { pairingTopic: t, requiredNamespaces: s2, optionalNamespaces: i3, sessionProperties: r3, scopedProperties: n4, relays: a3 } = e2;
             if (Dt2(t) || await this.isValidPairingTopic(t), !nu(a3, true)) {
-              const { message: l5 } = Bt2("MISSING_OR_INVALID", `connect() relays: ${a3}`);
+              const { message: l5 } = bt2("MISSING_OR_INVALID", `connect() relays: ${a3}`);
               throw new Error(l5);
             }
             if (s2 && !Dt2(s2) && Ye2(s2) !== 0) {
@@ -20100,7 +19773,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             const s2 = eu(e2, "connect()", t);
             if (s2) throw new Error(s2.message);
           }), c4(this, "isValidApprove", async (e2) => {
-            if (!ou(e2)) throw new Error(Bt2("MISSING_OR_INVALID", `approve() params: ${e2}`).message);
+            if (!ou(e2)) throw new Error(bt2("MISSING_OR_INVALID", `approve() params: ${e2}`).message);
             const { id: t, namespaces: s2, relayProtocol: i3, sessionProperties: r3, scopedProperties: n4 } = e2;
             this.checkRecentlyDeleted(t), await this.isValidProposalId(t);
             const a3 = this.client.proposal.get(t), l5 = Ns(s2, "approve()");
@@ -20108,7 +19781,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             const h4 = _s(a3.requiredNamespaces, s2, "approve()");
             if (h4) throw new Error(h4.message);
             if (!ft2(i3, true)) {
-              const { message: p3 } = Bt2("MISSING_OR_INVALID", `approve() relayProtocol: ${i3}`);
+              const { message: p3 } = bt2("MISSING_OR_INVALID", `approve() relayProtocol: ${i3}`);
               throw new Error(p3);
             }
             if (r3 && !Dt2(r3) && this.validateSessionProps(r3, "sessionProperties"), n4 && !Dt2(n4)) {
@@ -20118,22 +19791,22 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             }
           }), c4(this, "isValidReject", async (e2) => {
             if (!ou(e2)) {
-              const { message: i3 } = Bt2("MISSING_OR_INVALID", `reject() params: ${e2}`);
+              const { message: i3 } = bt2("MISSING_OR_INVALID", `reject() params: ${e2}`);
               throw new Error(i3);
             }
             const { id: t, reason: s2 } = e2;
             if (this.checkRecentlyDeleted(t), await this.isValidProposalId(t), !su(s2)) {
-              const { message: i3 } = Bt2("MISSING_OR_INVALID", `reject() reason: ${JSON.stringify(s2)}`);
+              const { message: i3 } = bt2("MISSING_OR_INVALID", `reject() reason: ${JSON.stringify(s2)}`);
               throw new Error(i3);
             }
           }), c4(this, "isValidSessionSettleRequest", (e2) => {
             if (!ou(e2)) {
-              const { message: l5 } = Bt2("MISSING_OR_INVALID", `onSessionSettleRequest() params: ${e2}`);
+              const { message: l5 } = bt2("MISSING_OR_INVALID", `onSessionSettleRequest() params: ${e2}`);
               throw new Error(l5);
             }
             const { relay: t, controller: s2, namespaces: i3, expiry: r3 } = e2;
             if (!Us(t)) {
-              const { message: l5 } = Bt2("MISSING_OR_INVALID", "onSessionSettleRequest() relay protocol should be a string");
+              const { message: l5 } = bt2("MISSING_OR_INVALID", "onSessionSettleRequest() relay protocol should be a string");
               throw new Error(l5);
             }
             const n4 = tu(s2, "onSessionSettleRequest()");
@@ -20141,12 +19814,12 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             const a3 = Ns(i3, "onSessionSettleRequest()");
             if (a3) throw new Error(a3.message);
             if (Ri(r3)) {
-              const { message: l5 } = Bt2("EXPIRED", "onSessionSettleRequest()");
+              const { message: l5 } = bt2("EXPIRED", "onSessionSettleRequest()");
               throw new Error(l5);
             }
           }), c4(this, "isValidUpdate", async (e2) => {
             if (!ou(e2)) {
-              const { message: a3 } = Bt2("MISSING_OR_INVALID", `update() params: ${e2}`);
+              const { message: a3 } = bt2("MISSING_OR_INVALID", `update() params: ${e2}`);
               throw new Error(a3);
             }
             const { topic: t, namespaces: s2 } = e2;
@@ -20157,36 +19830,36 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             if (n4) throw new Error(n4.message);
           }), c4(this, "isValidExtend", async (e2) => {
             if (!ou(e2)) {
-              const { message: s2 } = Bt2("MISSING_OR_INVALID", `extend() params: ${e2}`);
+              const { message: s2 } = bt2("MISSING_OR_INVALID", `extend() params: ${e2}`);
               throw new Error(s2);
             }
             const { topic: t } = e2;
             this.checkRecentlyDeleted(t), await this.isValidSessionTopic(t);
           }), c4(this, "isValidRequest", async (e2) => {
             if (!ou(e2)) {
-              const { message: a3 } = Bt2("MISSING_OR_INVALID", `request() params: ${e2}`);
+              const { message: a3 } = bt2("MISSING_OR_INVALID", `request() params: ${e2}`);
               throw new Error(a3);
             }
             const { topic: t, request: s2, chainId: i3, expiry: r3 } = e2;
             this.checkRecentlyDeleted(t), await this.isValidSessionTopic(t);
             const { namespaces: n4 } = this.client.session.get(t);
             if (!au(n4, i3)) {
-              const { message: a3 } = Bt2("MISSING_OR_INVALID", `request() chainId: ${i3}`);
+              const { message: a3 } = bt2("MISSING_OR_INVALID", `request() chainId: ${i3}`);
               throw new Error(a3);
             }
             if (!iu(s2)) {
-              const { message: a3 } = Bt2("MISSING_OR_INVALID", `request() ${JSON.stringify(s2)}`);
+              const { message: a3 } = bt2("MISSING_OR_INVALID", `request() ${JSON.stringify(s2)}`);
               throw new Error(a3);
             }
             if (!uu(n4, i3, s2.method)) {
-              const { message: a3 } = Bt2("MISSING_OR_INVALID", `request() method: ${s2.method}`);
+              const { message: a3 } = bt2("MISSING_OR_INVALID", `request() method: ${s2.method}`);
               throw new Error(a3);
             }
             this.validateRequestExpiry(r3);
           }), c4(this, "isValidRespond", async (e2) => {
             var t;
             if (!ou(e2)) {
-              const { message: n4 } = Bt2("MISSING_OR_INVALID", `respond() params: ${e2}`);
+              const { message: n4 } = bt2("MISSING_OR_INVALID", `respond() params: ${e2}`);
               throw new Error(n4);
             }
             const { topic: s2, response: i3 } = e2;
@@ -20196,44 +19869,44 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
               throw (t = e2?.response) != null && t.id && this.cleanupAfterResponse(e2), n4;
             }
             if (!cu(i3)) {
-              const { message: n4 } = Bt2("MISSING_OR_INVALID", `respond() response: ${JSON.stringify(i3)}`);
+              const { message: n4 } = bt2("MISSING_OR_INVALID", `respond() response: ${JSON.stringify(i3)}`);
               throw new Error(n4);
             }
             const r3 = this.client.pendingRequest.get(i3.id);
             if (r3.topic !== s2) {
-              const { message: n4 } = Bt2("MISMATCHED_TOPIC", `Request response topic mismatch. reqId: ${i3.id}, expected topic: ${r3.topic}, received topic: ${s2}`);
+              const { message: n4 } = bt2("MISMATCHED_TOPIC", `Request response topic mismatch. reqId: ${i3.id}, expected topic: ${r3.topic}, received topic: ${s2}`);
               throw new Error(n4);
             }
           }), c4(this, "isValidPing", async (e2) => {
             if (!ou(e2)) {
-              const { message: s2 } = Bt2("MISSING_OR_INVALID", `ping() params: ${e2}`);
+              const { message: s2 } = bt2("MISSING_OR_INVALID", `ping() params: ${e2}`);
               throw new Error(s2);
             }
             const { topic: t } = e2;
             await this.isValidSessionOrPairingTopic(t);
           }), c4(this, "isValidEmit", async (e2) => {
             if (!ou(e2)) {
-              const { message: n4 } = Bt2("MISSING_OR_INVALID", `emit() params: ${e2}`);
+              const { message: n4 } = bt2("MISSING_OR_INVALID", `emit() params: ${e2}`);
               throw new Error(n4);
             }
             const { topic: t, event: s2, chainId: i3 } = e2;
             await this.isValidSessionTopic(t);
             const { namespaces: r3 } = this.client.session.get(t);
             if (!au(r3, i3)) {
-              const { message: n4 } = Bt2("MISSING_OR_INVALID", `emit() chainId: ${i3}`);
+              const { message: n4 } = bt2("MISSING_OR_INVALID", `emit() chainId: ${i3}`);
               throw new Error(n4);
             }
             if (!fu(s2)) {
-              const { message: n4 } = Bt2("MISSING_OR_INVALID", `emit() event: ${JSON.stringify(s2)}`);
+              const { message: n4 } = bt2("MISSING_OR_INVALID", `emit() event: ${JSON.stringify(s2)}`);
               throw new Error(n4);
             }
             if (!lu(r3, i3, s2.name)) {
-              const { message: n4 } = Bt2("MISSING_OR_INVALID", `emit() event: ${JSON.stringify(s2)}`);
+              const { message: n4 } = bt2("MISSING_OR_INVALID", `emit() event: ${JSON.stringify(s2)}`);
               throw new Error(n4);
             }
           }), c4(this, "isValidDisconnect", async (e2) => {
             if (!ou(e2)) {
-              const { message: s2 } = Bt2("MISSING_OR_INVALID", `disconnect() params: ${e2}`);
+              const { message: s2 } = bt2("MISSING_OR_INVALID", `disconnect() params: ${e2}`);
               throw new Error(s2);
             }
             const { topic: t } = e2;
@@ -20263,7 +19936,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           }), c4(this, "validateSessionProps", (e2, t) => {
             Object.values(e2).forEach((s2, i3) => {
               if (s2 == null) {
-                const { message: r3 } = Bt2("MISSING_OR_INVALID", `${t} must contain an existing value for each key. Received: ${s2} for key ${Object.keys(e2)[i3]}`);
+                const { message: r3 } = bt2("MISSING_OR_INVALID", `${t} must contain an existing value for each key. Received: ${s2} for key ${Object.keys(e2)[i3]}`);
                 throw new Error(r3);
               }
             });
@@ -20282,7 +19955,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           }), c4(this, "checkRecentlyDeleted", (e2) => {
             const t = this.recentlyDeletedMap.get(e2);
             if (t) {
-              const { message: s2 } = Bt2("MISSING_OR_INVALID", `Record was recently deleted - ${t}: ${e2}`);
+              const { message: s2 } = bt2("MISSING_OR_INVALID", `Record was recently deleted - ${t}: ${e2}`);
               throw new Error(s2);
             }
           }), c4(this, "isLinkModeEnabled", (e2, t) => {
@@ -20309,7 +19982,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
             }
           }), c4(this, "getTVFApproveParams", (e2) => {
             try {
-              const t = gs(e2.namespaces), s2 = qa(e2.namespaces), i3 = Fa(e2.namespaces), r3 = e2.sessionProperties, n4 = e2.scopedProperties;
+              const t = ys(e2.namespaces), s2 = qa(e2.namespaces), i3 = Fa(e2.namespaces), r3 = e2.sessionProperties, n4 = e2.scopedProperties;
               return { approvedChains: t, approvedMethods: s2, approvedEvents: i3, sessionProperties: r3, scopedProperties: n4 };
             } catch (t) {
               return this.client.logger.warn(t, "Error getting TVF approve params"), {};
@@ -20373,7 +20046,7 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isInitialized() {
           if (!this.initialized) {
-            const { message: o4 } = Bt2("NOT_INITIALIZED", this.name);
+            const { message: o4 } = bt2("NOT_INITIALIZED", this.name);
             throw new Error(o4);
           }
         }
@@ -20397,8 +20070,8 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         registerExpirerEvents() {
           this.client.core.expirer.on(q2.expired, async (o4) => {
             const { topic: e2, id: t } = Ui(o4.target);
-            if (t && this.client.pendingRequest.keys.includes(t)) return await this.deletePendingSessionRequest(t, Bt2("EXPIRED"), true);
-            if (t && this.client.auth.requests.keys.includes(t)) return await this.deletePendingAuthRequest(t, Bt2("EXPIRED"), true);
+            if (t && this.client.pendingRequest.keys.includes(t)) return await this.deletePendingSessionRequest(t, bt2("EXPIRED"), true);
+            if (t && this.client.auth.requests.keys.includes(t)) return await this.deletePendingAuthRequest(t, bt2("EXPIRED"), true);
             e2 ? this.client.session.keys.includes(e2) && (await this.deleteSession({ topic: e2, expirerHasDeleted: true }), this.client.events.emit("session_expire", { topic: e2 })) : t && (await this.deleteProposal(t, true), this.client.events.emit("proposal_expire", { id: t }));
           });
         }
@@ -20409,34 +20082,34 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
         }
         isValidPairingTopic(o4) {
           if (!ft2(o4, false)) {
-            const { message: e2 } = Bt2("MISSING_OR_INVALID", `pairing topic should be a string: ${o4}`);
+            const { message: e2 } = bt2("MISSING_OR_INVALID", `pairing topic should be a string: ${o4}`);
             throw new Error(e2);
           }
           if (!this.client.core.pairing.pairings.keys.includes(o4)) {
-            const { message: e2 } = Bt2("NO_MATCHING_KEY", `pairing topic doesn't exist: ${o4}`);
+            const { message: e2 } = bt2("NO_MATCHING_KEY", `pairing topic doesn't exist: ${o4}`);
             throw new Error(e2);
           }
           if (Ri(this.client.core.pairing.pairings.get(o4).expiry)) {
-            const { message: e2 } = Bt2("EXPIRED", `pairing topic: ${o4}`);
+            const { message: e2 } = bt2("EXPIRED", `pairing topic: ${o4}`);
             throw new Error(e2);
           }
         }
         async isValidSessionTopic(o4) {
           if (!ft2(o4, false)) {
-            const { message: e2 } = Bt2("MISSING_OR_INVALID", `session topic should be a string: ${o4}`);
+            const { message: e2 } = bt2("MISSING_OR_INVALID", `session topic should be a string: ${o4}`);
             throw new Error(e2);
           }
           if (this.checkRecentlyDeleted(o4), !this.client.session.keys.includes(o4)) {
-            const { message: e2 } = Bt2("NO_MATCHING_KEY", `session topic doesn't exist: ${o4}`);
+            const { message: e2 } = bt2("NO_MATCHING_KEY", `session topic doesn't exist: ${o4}`);
             throw new Error(e2);
           }
           if (Ri(this.client.session.get(o4).expiry)) {
             await this.deleteSession({ topic: o4 });
-            const { message: e2 } = Bt2("EXPIRED", `session topic: ${o4}`);
+            const { message: e2 } = bt2("EXPIRED", `session topic: ${o4}`);
             throw new Error(e2);
           }
           if (!this.client.core.crypto.keychain.has(o4)) {
-            const { message: e2 } = Bt2("MISSING_OR_INVALID", `session topic does not exist in keychain: ${o4}`);
+            const { message: e2 } = bt2("MISSING_OR_INVALID", `session topic does not exist in keychain: ${o4}`);
             throw await this.deleteSession({ topic: o4 }), new Error(e2);
           }
         }
@@ -20444,31 +20117,31 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
           if (this.checkRecentlyDeleted(o4), this.client.session.keys.includes(o4)) await this.isValidSessionTopic(o4);
           else if (this.client.core.pairing.pairings.keys.includes(o4)) this.isValidPairingTopic(o4);
           else if (ft2(o4, false)) {
-            const { message: e2 } = Bt2("NO_MATCHING_KEY", `session or pairing topic doesn't exist: ${o4}`);
+            const { message: e2 } = bt2("NO_MATCHING_KEY", `session or pairing topic doesn't exist: ${o4}`);
             throw new Error(e2);
           } else {
-            const { message: e2 } = Bt2("MISSING_OR_INVALID", `session or pairing topic should be a string: ${o4}`);
+            const { message: e2 } = bt2("MISSING_OR_INVALID", `session or pairing topic should be a string: ${o4}`);
             throw new Error(e2);
           }
         }
         async isValidProposalId(o4) {
           if (!ru(o4)) {
-            const { message: e2 } = Bt2("MISSING_OR_INVALID", `proposal id should be a number: ${o4}`);
+            const { message: e2 } = bt2("MISSING_OR_INVALID", `proposal id should be a number: ${o4}`);
             throw new Error(e2);
           }
           if (!this.client.proposal.keys.includes(o4)) {
-            const { message: e2 } = Bt2("NO_MATCHING_KEY", `proposal id doesn't exist: ${o4}`);
+            const { message: e2 } = bt2("NO_MATCHING_KEY", `proposal id doesn't exist: ${o4}`);
             throw new Error(e2);
           }
           if (Ri(this.client.proposal.get(o4).expiryTimestamp)) {
             await this.deleteProposal(o4);
-            const { message: e2 } = Bt2("EXPIRED", `proposal id: ${o4}`);
+            const { message: e2 } = bt2("EXPIRED", `proposal id: ${o4}`);
             throw new Error(e2);
           }
         }
         validateRequestExpiry(o4) {
           if (o4 && !pu(o4, Te4)) {
-            const { message: e2 } = Bt2("MISSING_OR_INVALID", `request() expiry: ${o4}. Expiry must be a number (in seconds) between ${Te4.min} and ${Te4.max}`);
+            const { message: e2 } = bt2("MISSING_OR_INVALID", `request() expiry: ${o4}. Expiry must be a number (in seconds) between ${Te4.min} and ${Te4.max}`);
             throw new Error(e2);
           }
         }
@@ -26015,13 +25688,232 @@ ${t.length}`, n4 = new TextEncoder().encode(e2 + t);
     }
   });
 
-  // client/sdk-entry.js
+  // public/js/verify.js
   init_dist10();
-  window.ConcordiumVerificationWebUI = ConcordiumVerificationWebUI;
+  console.log("[verify] verify.js loaded");
+  var statusEl = document.getElementById("status");
+  var btnStart = document.getElementById("btnStart");
+  var btnReset = document.getElementById("btnReset");
+  var WC_TOPIC_KEY = "ccd_wc_topic";
+  function setStatus(msg) {
+    console.log("[verify] status:", msg);
+    statusEl.textContent = msg;
+  }
+  btnReset.addEventListener("click", async (e2) => {
+    e2.preventDefault();
+    ["ccd_wc_topic", "activeSession", "sdkNetwork", "sdkProjectId", "connectionMode"].forEach((k5) => localStorage.removeItem(k5));
+    await fetch("/api/reset", { method: "POST" });
+    if (webUi) {
+      try {
+        await webUi.disconnect?.();
+      } catch (_3) {
+      }
+      webUi = null;
+    }
+    listenerAttached = false;
+    currentVPR = null;
+    vprInFlight = false;
+    setStatus("Reset. Ready.");
+  });
+  var webUi = null;
+  var listenerAttached = false;
+  var currentVPR = null;
+  function getActiveTopic(data) {
+    if (data?.topic) {
+      localStorage.setItem(WC_TOPIC_KEY, data.topic);
+      return data.topic;
+    }
+    if (data?.session?.topic) {
+      localStorage.setItem(WC_TOPIC_KEY, data.session.topic);
+      return data.session.topic;
+    }
+    const stored = localStorage.getItem(WC_TOPIC_KEY);
+    if (stored) return stored;
+    try {
+      const session = webUi?.getCurrentSession?.() || webUi?.currentSession;
+      if (session?.topic) {
+        localStorage.setItem(WC_TOPIC_KEY, session.topic);
+        return session.topic;
+      }
+    } catch (e2) {
+    }
+    return null;
+  }
+  var vprInFlight = false;
+  async function sendVPR(topic) {
+    if (vprInFlight) {
+      console.log("[verify] VPR already in flight, ignoring duplicate trigger");
+      return;
+    }
+    vprInFlight = true;
+    setStatus("Wallet connected. Creating verification request\u2026");
+    try {
+      const vprRes = await fetch("/api/create-verification-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ connectionId: topic })
+      });
+      if (!vprRes.ok) {
+        setStatus("Error creating VPR: " + await vprRes.text());
+        vprInFlight = false;
+        return;
+      }
+      currentVPR = await vprRes.json();
+      console.log("[verify] VPR created:", currentVPR);
+      setStatus("Sending proof request to your wallet\u2026");
+      const TIMEOUT_MS = 15e3;
+      let presentation = null;
+      try {
+        const timeout = new Promise(
+          (_3, reject) => setTimeout(() => reject(new Error("timeout")), TIMEOUT_MS)
+        );
+        const result = await Promise.race([
+          webUi.sendPresentationRequest(currentVPR, topic),
+          timeout
+        ]);
+        console.log("[verify] sendPresentationRequest resolved:", result);
+        if (result) {
+          presentation = result;
+        }
+      } catch (err) {
+        console.error("[verify] sendPresentationRequest threw:", err);
+        if (err.message === "timeout") {
+          console.log("[verify] relay timeout, clearing session and falling back to fresh QR");
+          setStatus("Session expired \u2014 starting fresh connection\u2026");
+          ["ccd_wc_topic", "activeSession", "sdkNetwork", "sdkProjectId", "connectionMode"].forEach((k5) => localStorage.removeItem(k5));
+          try {
+            indexedDB.deleteDatabase("WALLET_CONNECT_V2_INDEXED_DB");
+          } catch (_3) {
+          }
+          vprInFlight = false;
+          currentVPR = null;
+          try {
+            await webUi.disconnect?.();
+          } catch (_3) {
+          }
+          webUi = null;
+          listenerAttached = false;
+          await new Promise((r3) => setTimeout(r3, 500));
+          await initAndConnect();
+        } else {
+          setStatus("Error sending proof request: " + err.message);
+          vprInFlight = false;
+        }
+        return;
+      }
+      if (presentation) {
+        await verifyPresentation(presentation);
+      } else {
+        setStatus("Waiting for you to approve in the Concordium ID App\u2026");
+      }
+    } finally {
+      vprInFlight = false;
+    }
+  }
+  async function verifyPresentation(presentation) {
+    setStatus("Proof received. Verifying with gateway\u2026");
+    console.log("[verify] verifying presentation:", presentation);
+    if (!currentVPR) {
+      setStatus("Error: no VPR found. Please reset and try again.");
+      return;
+    }
+    const vp = presentation?.verifiablePresentationJson ?? presentation;
+    console.log("[verify] VP keys:", Object.keys(vp || {}));
+    const verifyRes = await fetch("/api/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        presentation: vp,
+        verificationRequest: currentVPR
+      })
+    });
+    if (!verifyRes.ok) {
+      setStatus("Verification failed: " + await verifyRes.text());
+      return;
+    }
+    const out = await verifyRes.json();
+    console.log("[verify] verify response:", out);
+    if (out.ok) {
+      setStatus("Age verified! Redirecting\u2026");
+      webUi.showSuccessState?.();
+      localStorage.setItem("ccd_verified", "1");
+      setTimeout(() => location.href = "/joke", 1200);
+    } else {
+      setStatus("Verification failed. Please try again.");
+      webUi.closeModal?.();
+    }
+  }
+  async function handleConcordiumEvent(event) {
+    try {
+      const { type, data } = event?.detail || {};
+      if (!type) return;
+      console.log("[verify] concordium-event:", type, data);
+      if (type === "session_approved" || type === "active_session") {
+        const topic = getActiveTopic(data);
+        console.log("[verify] resolved topic:", topic);
+        if (!topic) {
+          setStatus("Error: could not resolve WalletConnect session topic. Please disconnect and try again.");
+          return;
+        }
+        if (type === "active_session") {
+          console.log("[verify] returning session - waiting 5s for relay to reconnect...");
+          await new Promise((r3) => setTimeout(r3, 5e3));
+        }
+        await sendVPR(topic);
+        return;
+      }
+      if (type === "presentation_received") {
+        console.log("[verify] presentation received via event:", data);
+        await verifyPresentation(data);
+        return;
+      }
+      if (type === "session_disconnected") {
+        localStorage.removeItem(WC_TOPIC_KEY);
+        setStatus("Wallet disconnected. Please start again.");
+      }
+      if (type === "error") {
+        setStatus("SDK error: " + (data?.message || JSON.stringify(data)));
+      }
+    } catch (err) {
+      console.error("[verify] event handler error:", err);
+      setStatus("Error: " + (err?.message || String(err)));
+    }
+  }
+  async function initAndConnect() {
+    const cfg = window.__VNA__ || {};
+    if (!cfg.walletConnectProjectId) {
+      setStatus("Missing WALLETCONNECT_PROJECT_ID. Set it in .env / docker-compose.");
+      return;
+    }
+    currentVPR = null;
+    setStatus("Initialising WalletConnect\u2026");
+    if (!listenerAttached) {
+      window.addEventListener("verification-web-ui-event", handleConcordiumEvent);
+      listenerAttached = true;
+    }
+    if (!webUi) {
+      webUi = new ConcordiumVerificationWebUI({
+        projectId: cfg.walletConnectProjectId,
+        network: cfg.network || "mainnet",
+        metadata: {
+          name: "Peachy Pints",
+          description: "Age verification",
+          url: window.location.origin,
+          icons: []
+        }
+      });
+      await webUi.renderUIModals();
+      window.__webUi__ = webUi;
+    }
+  }
+  btnStart.addEventListener("click", async (e2) => {
+    e2.preventDefault();
+    console.log("[verify] Start verification clicked");
+    await initAndConnect();
+  });
 })();
 /*! Bundled license information:
 
-tslib/tslib.es6.js:
 tslib/tslib.es6.js:
   (*! *****************************************************************************
   Copyright (c) Microsoft Corporation.
@@ -26062,4 +25954,4 @@ tslib/tslib.es6.js:
 @walletconnect/utils/dist/index.js:
   (*! noble-ciphers - MIT License (c) 2023 Paul Miller (paulmillr.com) *)
 */
-//# sourceMappingURL=verification-sdk.js.map
+//# sourceMappingURL=verify.js.map

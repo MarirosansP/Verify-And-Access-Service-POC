@@ -16,7 +16,7 @@ export function Card({ title, children }: { title: string; children: React.React
 
 export function Button({ children, variant = "primary", ...props }: any) {
   const variants: Record<string, React.CSSProperties> = {
-    primary:   { background: "#28C76F", color: "#fff",     border: "none" },
+    primary:   { background: "#2667FF", color: "#fff",     border: "none" },
     secondary: { background: "transparent", color: "#9FB2D3", border: "1px solid rgba(255,255,255,0.15)" },
     danger:    { background: "transparent", color: "#f87171", border: "1px solid rgba(248,113,113,0.3)" },
     info:      { background: "#0891b2",     color: "#fff",     border: "none" },

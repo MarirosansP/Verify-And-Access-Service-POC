@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { Button, Card, Input, Small } from "../ui";
+import { Button, Card, Input, Small } from "../../ui";
 
 /* ── Types ── */
 type ApiKeyRow = {
@@ -53,7 +53,7 @@ function StatsPanel({ data }: { data: AnyKeyStats | "loading" | undefined }) {
   const quotaPct = data.quotaLimit > 0
     ? Math.min(100, Math.round((data.quotaUsed / data.quotaLimit) * 100))
     : 0;
-  const barColor = quotaPct >= 100 ? "#ef4444" : quotaPct >= 80 ? "#f59e0b" : "#28C76F";
+  const barColor = quotaPct >= 100 ? "#ef4444" : quotaPct >= 80 ? "#f59e0b" : "#2667FF";
   const maxDay = Math.max(...data.dailyRows.map(r => r.count), 1);
 
   return (
@@ -107,7 +107,7 @@ function StatsPanel({ data }: { data: AnyKeyStats | "loading" | undefined }) {
               >
                 <div style={{
                   height: h,
-                  background: "#28C76F",
+                  background: "#2667FF",
                   opacity: 0.7,
                   borderRadius: "2px 2px 0 0",
                 }} />
@@ -145,7 +145,7 @@ function StatsPanel({ data }: { data: AnyKeyStats | "loading" | undefined }) {
                 // key is like "/v1/verify (200)"
                 const match = r.key.match(/\((\d+)\)$/);
                 const code = match ? parseInt(match[1]) : 0;
-                const codeColor = code < 300 ? "#28C76F" : code < 500 ? "#f59e0b" : "#ef4444";
+                const codeColor = code < 300 ? "#2667FF" : code < 500 ? "#f59e0b" : "#ef4444";
                 return (
                   <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
                     <span style={{ color: "#9FB2D3", fontFamily: "monospace", fontSize: 11 }}>
@@ -289,7 +289,7 @@ export default function Dashboard() {
   }
 
   const statusColor = (s: string) =>
-    s === "active" ? "#28C76F" : s === "paused" ? "#f59e0b" : "#f87171";
+    s === "active" ? "#2667FF" : s === "paused" ? "#f59e0b" : "#f87171";
 
   const actionBtn = (color = "#9FB2D3"): React.CSSProperties => ({
     background: "transparent",
@@ -326,17 +326,19 @@ export default function Dashboard() {
       </div>
 
       {/* ── Gateway URL ── */}
-      <Card title="Gateway URL">
-        <Small>Use this base URL from merchants / plugins:</Small>
-        <div style={{ marginTop: 8 }}>
-          <code style={{
-            background: "#0D1825", padding: "7px 10px", borderRadius: 8,
-            display: "inline-block", border: "1px solid rgba(255,255,255,0.08)", fontSize: 13,
-          }}>
-            http://localhost:3002/v1
-          </code>
-        </div>
-      </Card>
+      {process.env.NEXT_PUBLIC_GATEWAY_URL && (
+        <Card title="Gateway URL">
+          <Small>Use this base URL from merchants / plugins:</Small>
+          <div style={{ marginTop: 8 }}>
+            <code style={{
+              background: "#0D1825", padding: "7px 10px", borderRadius: 8,
+              display: "inline-block", border: "1px solid rgba(255,255,255,0.08)", fontSize: 13,
+            }}>
+              {process.env.NEXT_PUBLIC_GATEWAY_URL}/v1
+            </code>
+          </div>
+        </Card>
+      )}
 
       {/* ── Create API key ── */}
       <Card title="Create API Key">
@@ -353,7 +355,7 @@ export default function Dashboard() {
           {apiKeyOnce && (
             <div style={{
               background: "#0D1825",
-              border: "1px solid rgba(40,199,111,0.25)",
+              border: "1px solid rgba(38,103,255,0.25)",
               borderRadius: 10,
               padding: 14,
             }}>
@@ -362,7 +364,7 @@ export default function Dashboard() {
                 <code style={{
                   wordBreak: "break-all", background: "#090E1A", padding: "10px 12px",
                   borderRadius: 8, display: "block",
-                  border: "1px solid rgba(40,199,111,0.2)", fontSize: 13, color: "#28C76F",
+                  border: "1px solid rgba(38,103,255,0.2)", fontSize: 13, color: "#63A1FF",
                 }}>
                   {apiKeyOnce}
                 </code>
@@ -405,8 +407,8 @@ export default function Dashboard() {
                   <button
                     onClick={() => toggleStats(k.id, `/api/keys/${k.id}/usage?days=14`)}
                     style={{
-                      ...actionBtn(openStatsId === k.id ? "#28C76F" : "#9FB2D3"),
-                      ...(openStatsId === k.id ? { borderColor: "rgba(40,199,111,0.4)" } : {}),
+                      ...actionBtn(openStatsId === k.id ? "#2667FF" : "#9FB2D3"),
+                      ...(openStatsId === k.id ? { borderColor: "rgba(38,103,255,0.4)" } : {}),
                     }}
                   >
                     {openStatsId === k.id ? "▲ Stats" : "▼ Stats"}
@@ -446,7 +448,7 @@ export default function Dashboard() {
               href="/dashboard/worker-keys"
               style={{
                 display: "inline-block", padding: "7px 14px",
-                background: "#28C76F", color: "#fff", borderRadius: 8,
+                background: "#2667FF", color: "#fff", borderRadius: 8,
                 textDecoration: "none", fontWeight: 600, fontSize: 13,
                 whiteSpace: "nowrap",
               }}
@@ -486,8 +488,8 @@ export default function Dashboard() {
                   <button
                     onClick={() => toggleStats(wk.id, `/api/worker-keys/${wk.id}/usage?days=14`)}
                     style={{
-                      ...actionBtn(openStatsId === wk.id ? "#28C76F" : "#9FB2D3"),
-                      ...(openStatsId === wk.id ? { borderColor: "rgba(40,199,111,0.4)" } : {}),
+                      ...actionBtn(openStatsId === wk.id ? "#2667FF" : "#9FB2D3"),
+                      ...(openStatsId === wk.id ? { borderColor: "rgba(38,103,255,0.4)" } : {}),
                     }}
                   >
                     {openStatsId === wk.id ? "▲ Stats" : "▼ Stats"}

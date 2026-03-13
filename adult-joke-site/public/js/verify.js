@@ -170,10 +170,9 @@ async function handleConcordiumEvent(event) {
     if (!type) return;
     console.log('[verify] concordium-event:', type, data);
 
-    // active_session fires on load when SDK detects a saved session - don't send VPR yet
-    // active-session-continue fires when user clicks 'Start private verification'
-    // session-approved fires after fresh QR scan
-    if (type === 'session-approved' || type === 'active-session-continue') {
+    // session_approved fires after fresh QR scan
+    // active_session fires when user clicks 'Start private verification' (returning user)
+    if (type === 'session_approved' || type === 'active_session') {
       const topic = getActiveTopic(data);
       console.log('[verify] resolved topic:', topic);
       if (!topic) {
@@ -182,7 +181,7 @@ async function handleConcordiumEvent(event) {
       }
       // For returning sessions give the WalletConnect relay a moment to
       // fully reconnect before sending the presentation request.
-      if (type === 'active-session-continue') {
+      if (type === 'active_session') {
         console.log('[verify] returning session - waiting 5s for relay to reconnect...');
         await new Promise(r => setTimeout(r, 5000));
       }
@@ -190,14 +189,14 @@ async function handleConcordiumEvent(event) {
       return;
     }
 
-    // Catch VP return via event in case the SDK uses this path
-    if (type === 'presentation_received' || type === 'presentation-received') {
+    // VP received via event
+    if (type === 'presentation_received') {
       console.log('[verify] presentation received via event:', data);
       await verifyPresentation(data);
       return;
     }
 
-    if (type === 'session_disconnected' || type === 'session-deleted') {
+    if (type === 'session_disconnected') {
       localStorage.removeItem(WC_TOPIC_KEY);
       setStatus('Wallet disconnected. Please start again.');
     }
@@ -223,21 +222,24 @@ async function initAndConnect() {
   setStatus('Initialising WalletConnect…');
 
   if (!listenerAttached) {
-    window.addEventListener('concordium-event', handleConcordiumEvent);
     window.addEventListener('verification-web-ui-event', handleConcordiumEvent);
     listenerAttached = true;
   }
 
   if (!webUi) {
     webUi = new ConcordiumVerificationWebUI({
-      walletConnectProjectId: cfg.walletConnectProjectId,
+      projectId: cfg.walletConnectProjectId,
       network: cfg.network || 'mainnet',
+      metadata: {
+        name: 'Peachy Pints',
+        description: 'Age verification',
+        url: window.location.origin,
+        icons: [],
+      },
     });
-    webUi.renderUIModals();
+    await webUi.renderUIModals();
     window.__webUi__ = webUi;
   }
-
-  await webUi.initWalletConnect({ projectId: cfg.walletConnectProjectId });
 }
 
 btnStart.addEventListener('click', async (e) => {
